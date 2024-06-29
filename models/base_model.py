@@ -23,7 +23,8 @@ class BaseModel:
 
         if kwargs:
             for key, val in kwargs.items():
-                setattr(self, key, val)
+                if key != '__class__':
+                    setattr(self, key, val)
             
             if 'id' in kwargs and kwargs.get('id') is str:
                 self.id = kwargs.get('id')
