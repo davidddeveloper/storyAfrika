@@ -4,6 +4,7 @@
 """
 
 from models.base_model import BaseModel
+from uuid import uuid4
 
 
 class TopicFollower(BaseModel):
@@ -16,6 +17,7 @@ class TopicFollower(BaseModel):
     """
 
     def __init__(self, user_id, topic_id):
+        self.id = uuid4()
         if isinstance(user_id, str) and isinstance(topic_id, str):
             self.user_id = user_id
             self.topic_id = topic_id

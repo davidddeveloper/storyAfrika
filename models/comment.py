@@ -17,8 +17,8 @@ class Comment(BaseModel):
 
     """
 
-    def __init__(self, comment, story_id, user_id):
-        super().__init__(self)
+    def __init__(self, comment, story_id, user_id, **kwargs):
+        super().__init__(self, **kwargs)
         arguments = {
             'comment': comment,
             'story_id': story_id,

@@ -12,8 +12,8 @@ class Topic(BaseModel):
         
     """
 
-    def __init__(self, name, description=None):
-        super().__init__(self)
+    def __init__(self, name, description=None, **kwargs):
+        super().__init__(self, **kwargs)
 
         if isinstance(name, str):
             self.name = name

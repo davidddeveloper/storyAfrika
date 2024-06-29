@@ -18,8 +18,8 @@ class Story(BaseModel):
 
     """
 
-    def __init__(self, title, text, user_id, topics_id):
-        super().__init__(self)
+    def __init__(self, title, text, user_id, topics_id, **kwargs):
+        super().__init__(self, **kwargs)
 
         arguments = {
             'title': title,

@@ -19,9 +19,9 @@ class User(BaseModel):
     """
 
     def __init__(
-            self, username, email, password
+            self, username, email, password, **kwargs
         ):
-        super().__init__(self)
+        super().__init__(self, **kwargs)
 
         arguments = {
             'username': username,
