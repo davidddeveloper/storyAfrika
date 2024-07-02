@@ -4,11 +4,12 @@
     story: represent a model for creating a story
 
 """
-from models.base_model import BaseModel
+from models.imports import *
+from models.base_model import BaseModel, Base
 
 
-class Story(BaseModel):
-    """ Represents a story 
+class Story(BaseModel, Base):
+    """ Represents a story
 
          Attributes:
             - title: short text representing the title
@@ -18,32 +19,31 @@ class Story(BaseModel):
 
     """
 
-    def __init__(self, title, text, user_id, topics_id, **kwargs):
+    if os.getenv('STORAGE') in ['db', 'DB']:
+        __tablename__ = 'stories'
+        title = Column(String(200), nullable=False)
+        text = Column(Text, nullable=False)
+        user_id = Column('User', ForeignKey('users.id'), nullable=False)
+
+        comments = relationship('Comment', backref='story', lazy=True)
+        likes = relationship('Like', backref='story', lazy=True)
+        bookmarks = relationship('Bookmark', backref='story', lazy=True)
+
+    else:
+        title = ''
+        text = ''
+        user_id = ''
+
+    def __init__(self, title, text, user_id, **kwargs):
         super().__init__(self, **kwargs)
 
         arguments = {
             'title': title,
             'text': text,
             'user_id': user_id,
-            'topics_id': topics_id
         }
-        for argument, value in arguments.items(): 
-            if argument == 'topics_id' and not isinstance(value, list):
-                raise ValueError(f"{argument} must ba a list")
-            
-            elif argument != 'topics_id' and not isinstance(value, str):
+        for argument, value in arguments.items():
+            if not isinstance(value, str):
                 raise ValueError(f"{argument} must ba a string")
-            
-            # check if value inside topics_id list is all string
-            # otherwise raise a value error
-            for idx, id_val in enumerate(topics_id):
-                if type(id_val) != str:
-                    raise ValueError(
-                        f"{id_val} at index {id_val} in topics_id must be a string"
-                    )
-            
-            
+
             setattr(self, argument, value)
-        
-        
-      

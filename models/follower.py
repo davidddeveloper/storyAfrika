@@ -2,17 +2,26 @@
     follower: represents a followers
 
 """
-from models.base_model import BaseModel
+
+from models.imports import *
+from models.base_model import BaseModel, Base
 
 
-class Follower(BaseModel):
-    """ Represent a follower 
-    
+class Follower(BaseModel, Base):
+    """ Represent a follower
+
         Attributes:
             - follower_id: the user id
             - followed_id: the person following the user
     """
 
+    if os.getenv('STORAGE') in ['db', 'DB']:
+        __tablename__ = 'followers'
+        follower_id = Column(String(60), ForeignKey('users.id'), nullable=True)
+        followed_id = Column(String(60), ForeignKey('users.id'), nullable=True)
+    else:
+        follower_id = ''
+        followed_id = ''
 
     def __init__(self, follower_id, followed_id):
         super().__init__(self)
