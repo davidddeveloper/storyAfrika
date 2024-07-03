@@ -5,7 +5,7 @@
 """
 
 from cmd import Cmd
-from models.engine import storage
+
 from models.base_model import BaseModel
 from models.story import Story
 from models.comment import Comment
@@ -148,7 +148,7 @@ class StoryAfrikaShell(Cmd):
 
         # convert args to a sepparate list of string
         args_as_array = self.__extract(args)
-        print(args_as_array)
+
         if self.__check(args_as_array, 3) is None:
             return
         print('okay!\n', args_as_array)
