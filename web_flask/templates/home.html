@@ -1,5 +1,27 @@
 {% extends 'root.html' %}
 
 {% block home %}
-    <div>{{all}}</div>
+    <header class="container">
+        <div>
+            <ul class="topics">
+                {% for key,topic in topics.items() %}
+                    <li>{{topic.name}}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div>
+            <button>profile icon</button>
+        </div>
+
+        <div>Login</div>
+    </header>
+    <main>
+        {% for key,story in stories.items() %}
+        <div>
+
+            {{story.title}}
+        </div>
+        {% endfor %}
+    </main>
 {% endblock %}
