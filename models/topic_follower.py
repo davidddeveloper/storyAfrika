@@ -26,6 +26,7 @@ class TopicFollower(BaseModel, Base):
         topic_id = ''
 
     def __init__(self, user_id, topic_id):
+        super().__init__()
         if isinstance(user_id, str) and isinstance(topic_id, str):
             self.user_id = user_id
             self.topic_id = topic_id

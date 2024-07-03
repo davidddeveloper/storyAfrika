@@ -27,7 +27,7 @@ class Bookmark(BaseModel, Base):
         user_id = ''
 
     def __init__(self, story_id, user_id):
-        super().__init__(self)
+        super().__init__()
         if isinstance(story_id, str) and isinstance(user_id, str):
             self.story_id = story_id
             self.user_id = user_id

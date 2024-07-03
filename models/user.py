@@ -59,7 +59,7 @@ class User(BaseModel, Base):
     def __init__(
             self, username, email, password, **kwargs
             ):
-        super().__init__(self, **kwargs)
+        super().__init__(**kwargs)
 
         arguments = {
             'username': username,

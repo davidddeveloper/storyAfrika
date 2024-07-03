@@ -35,7 +35,7 @@ class Story(BaseModel, Base):
         user_id = ''
 
     def __init__(self, title, text, user_id, **kwargs):
-        super().__init__(self, **kwargs)
+        super().__init__(**kwargs)
 
         arguments = {
             'title': title,

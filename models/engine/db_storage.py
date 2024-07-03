@@ -44,7 +44,7 @@ class DBStorage:
 
     def __init__(self):
         self.__engine = create_engine(
-            'mysql+mysqlconnector://root:root@localhost/test_db',
+            'mysql+mysqlconnector://root:root@localhost/storyafrika',
             echo=True
         )
 

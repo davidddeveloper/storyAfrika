@@ -24,7 +24,7 @@ class Follower(BaseModel, Base):
         followed_id = ''
 
     def __init__(self, follower_id, followed_id):
-        super().__init__(self)
+        super().__init__()
         if isinstance(follower_id, str) and isinstance(followed_id, str):
             self.follower_id = follower_id
             self.followed_id = followed_id

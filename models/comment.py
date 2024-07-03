@@ -31,7 +31,7 @@ class Comment(BaseModel, Base):
         user_id = ''
 
     def __init__(self, comment, story_id, user_id, **kwargs):
-        super().__init__(self, **kwargs)
+        super().__init__(**kwargs)
         arguments = {
             'comment': comment,
             'story_id': story_id,
@@ -41,4 +41,4 @@ class Comment(BaseModel, Base):
             if not isinstance(value, str):
                 raise ValueError(f"{argument} must ba a string")
 
-        setattr(self, argument, value)
+            setattr(self, argument, value)
