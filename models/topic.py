@@ -10,8 +10,12 @@ if os.getenv('STORAGE') in ['db', 'DB']:
     story_topic_association = Table(
         'story_topic_association',
         Base.metadata,
-        Column('story_id', String(60), ForeignKey('stories.id'), primary_key=True),
-        Column('topic_id', String(60), ForeignKey('topics.id'), primary_key=True)
+        Column(
+            'story_id', String(60), ForeignKey('stories.id'), primary_key=True
+        ),
+        Column(
+            'topic_id', String(60), ForeignKey('topics.id'), primary_key=True
+        )
     )
 
 

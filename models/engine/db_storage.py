@@ -48,8 +48,25 @@ class DBStorage:
             echo=True
         )
 
-    def all(self):
-        """ Represent all data """
+    def all(self, cls=None):
+        """ Represent all data
+
+            Attributes:
+                - cls: an optional class name
+
+        """
+        if cls is not None:
+            # get all objects of that specific class
+            try:
+                all = self._session.query(cls).all()
+            except Exception:
+                return {}
+
+            objs = {}
+            for obj in all:
+                objs[f'{obj.__class__.__name__}.{obj.id}'] = obj
+            return objs
+
         return DBStorage.__objects
 
     def new(self, obj):
@@ -73,3 +90,30 @@ class DBStorage:
     def close(self):
         """ Close the current session """
         self._session.close()
+
+    def delete(self, obj=None):
+        """ Deletes an object
+
+            Attributes:
+                - obj: the object to be deleted
+        """
+
+        if obj is not None:
+            self._session.delete(obj)
+
+    def get(self, cls=None, id=None):
+        """ Get a specific object
+
+            Attributes:
+                - cls: the class
+                - id: the uuid of the object
+        """
+
+        if cls is None or id is None:
+            return None
+        try:
+            instance = self._session.query(cls).filter_by(id=id).first()
+        except Exception:
+            return None
+        else:
+            return instance
