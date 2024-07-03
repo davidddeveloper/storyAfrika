@@ -16,10 +16,9 @@ from models.follower import Follower
 from models.topic_follower import TopicFollower
 
 
-
 class FileStorage:
-    """ Represent file storage 
-    
+    """ Represent file storage
+
     """
 
     __objects = {}  # class.instanceid: instance
@@ -34,28 +33,28 @@ class FileStorage:
         'Like': Like,
         'Bookmark': Bookmark,
         'Follower': Follower
-        
+
     }
 
     def all(self):
         """ all objects """
 
         return FileStorage.__objects
-    
+
     def new(self, obj):
         """ Takes an object adds it to __object """
 
         FileStorage.__objects[
             f'{obj.__class__.__name__}.{obj.id}'
         ] = obj
-    
+
     def save(self):
         """ write the a modify data in __objects to a file """
 
         with open(FileStorage.__filename, 'w') as fi:
-            
+
             json.dump(
-                {x:y.to_dict() for x,y in FileStorage.__objects.items()},
+                {x: y.to_dict() for x, y in FileStorage.__objects.items()},
                 fi
             )
 
@@ -68,4 +67,6 @@ class FileStorage:
             print(data)
             for key, values in data.items():
                 print(values)
-                FileStorage.__objects[key] = FileStorage.__classes.get(values.get('__class__'))(**values)
+                FileStorage.__objects[key] = FileStorage.__classes.get(
+                    values.get('__class__')
+                )(**values)
