@@ -5,6 +5,7 @@
 """
 
 from cmd import Cmd
+from models.engine import storage
 from models.base_model import BaseModel
 from models.story import Story
 from models.comment import Comment
