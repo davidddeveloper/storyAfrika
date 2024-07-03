@@ -1,0 +1,438 @@
+#!/usr/bin/python3
+
+"""
+    base_model: represents shared attributes for all other class
+                in the models folder
+
+"""
+
+import os
+import uuid
+import datetime
+from models.imports import *
+
+Base = declarative_base()
+
+
+class BaseModel:
+    """ represents the blueprint for other clases
+
+        Attributes:
+            id - a string representing the uuid of the instance
+            created_at - date and time the instance was created at
+            updated_at - the date and time the instance was modify
+
+    """
+
+    if os.getenv('storage') in ['db', 'DB']:
+        id = Column(String(60), primary_key=True, default=str(uuid.uuid4()))
+        created_at = Column(DateTime, default=datetime.datetime.now())
+        updated_at = Column(DateTime, default=datetime.datetime.now())
+
+    def __init__(self, *args, **kwargs):
+
+        if kwargs:
+            for key, val in kwargs.items():
+                if key != '__class__':
+                    setattr(self, key, val)
+
+            if 'id' in kwargs and kwargs.get('id') is str:
+                self.id = kwargs.get('id')
+            else:
+                self.id = str(uuid.uuid4())
+
+            if 'created_at' in kwargs and isinstance(
+                    kwargs.get('created_at'), str
+                    ):
+                self.created_at = datetime.datetime.fromisoformat(
+                    kwargs.get('created_at')
+                )
+            else:
+                self.created_at = datetime.datetime.now()
+
+            if 'updated_at' in kwargs and isinstance(
+                    kwargs.get('updated_at'), str
+                    ):
+                self.updated_at = datetime.datetime.fromisoformat(
+                    kwargs.get('updated_at')
+                )
+            else:
+                self.updated_at = datetime.datetime.now()
+        else:
+            self.id = str(uuid.uuid4())
+            self.created_at = datetime.datetime.now()
+            self.updated_at = datetime.datetime.now()
+
+    def to_dict(self):
+        """ Dictionary representation of the object """
+
+        dictionary = self.__dict__.copy()
+        dictionary['updated_at'] = dictionary['updated_at'].isoformat()
+        dictionary['created_at'] = dictionary['created_at'].isoformat()
+        dictionary['__class__'] = self.__class__.__name__
+
+        return dictionary
+
+    def __str__(self) -> str:
+        return f"[{self.__class__.__name__}.{self.id}] {self.to_dict()}"
+
+    def save(self):
+        """ write the object to storage """
+        from models.engine import storage
+
+        storage.new(self)
+        self.updated_at = datetime.datetime.now()
+        storage.save()
+"""
+    bookmark: represent the number of bookmarks for a story
+
+"""
+
+import os
+from models.imports import *
+from models.base_model import BaseModel, Base
+
+
+class Bookmark(BaseModel, Base):
+    """ Represent a bookmark
+
+        - Attributes:
+            - story_id: the story that was bookmarked
+            - user_id: the user that bookmarkd the story
+            - created_at: date and time it was created
+
+    """
+
+    if os.getenv('storage') in ['db', 'DB']:
+        __tablename__ = 'bookmarks'
+        story_id = Column(String(60), ForeignKey('stories.id'), nullable=False)
+        user_id = Column(String(60), ForeignKey('users.id'), nullable=False)
+    else:
+        story_id = ''
+        user_id = ''
+
+    def __init__(self, story_id, user_id):
+        super().__init__()
+        if isinstance(story_id, str) and isinstance(user_id, str):
+            self.story_id = story_id
+            self.user_id = user_id
+        else:
+            raise ValueError("arguments must be a string")
+"""
+    comment: represent a comment made on a particular story
+             by a particular user
+
+"""
+
+import os
+from models.imports import *
+from models.base_model import BaseModel, Base
+
+
+class Comment(BaseModel, Base):
+    """ Represent a comment
+
+        Attributes:
+            - comment: text represent the comment
+            - story_id: the story the comment was made on
+            - user_id: user who made the comment
+
+    """
+
+    if os.getenv('STORAGE') in ['db', 'DB']:
+        __tablename__ = 'comments'
+        comment = Column(Text, nullable=False)
+        story_id = Column('Story', ForeignKey('stories.id'), nullable=False)
+        user_id = Column('User', ForeignKey('users.id'), nullable=False)
+
+    else:
+        comment = ''
+        story_id = ''
+        user_id = ''
+
+    def __init__(self, comment, story_id, user_id, **kwargs):
+        super().__init__(**kwargs)
+        arguments = {
+            'comment': comment,
+            'story_id': story_id,
+            'user_id': user_id
+        }
+        for argument, value in arguments.items():
+            if not isinstance(value, str):
+                raise ValueError(f"{argument} must ba a string")
+
+            setattr(self, argument, value)
+"""
+    follower: represents a followers
+
+"""
+
+from models.imports import *
+from models.base_model import BaseModel, Base
+
+
+class Follower(BaseModel, Base):
+    """ Represent a follower
+
+        Attributes:
+            - follower_id: the user id
+            - followed_id: the person following the user
+    """
+
+    if os.getenv('STORAGE') in ['db', 'DB']:
+        __tablename__ = 'followers'
+        follower_id = Column(String(60), ForeignKey('users.id'), nullable=True)
+        followed_id = Column(String(60), ForeignKey('users.id'), nullable=True)
+    else:
+        follower_id = ''
+        followed_id = ''
+
+    def __init__(self, follower_id, followed_id):
+        super().__init__()
+        if isinstance(follower_id, str) and isinstance(followed_id, str):
+            self.follower_id = follower_id
+            self.followed_id = followed_id
+        else:
+            raise ValueError("arguments must be a string")
+import os
+from sqlalchemy.orm import sessionmaker, scoped_session, Session
+from sqlalchemy import create_engine
+from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy import Column, String, Integer, ForeignKey, DateTime, Text
+from sqlalchemy import Table
+"""
+    like: represent the number of likes for a story
+
+"""
+
+from models.imports import *
+from models.base_model import BaseModel, Base
+
+
+class Like(BaseModel, Base):
+    """ Represent a like
+
+        - Attributes:
+            - story_id: the story that was liked
+            - user_id: the user that liked the story
+            - created_at: date and time it was created
+
+    """
+
+    if os.getenv('STORAGE') in ['db', 'DB']:
+        __tablename__ = 'likes'
+        story_id = Column(String(60), ForeignKey('stories.id'), nullable=False)
+        user_id = Column(String(60), ForeignKey('users.id'), nullable=False)
+    else:
+        story_id = ''
+        user_id = ''
+
+    def __init__(self, story_id, user_id):
+        super().__init__()
+        if isinstance(story_id, str) and isinstance(user_id, str):
+            self.story_id = story_id
+            self.user_id = user_id
+        else:
+            raise ValueError("arguments must be a string")
+#!/usr/bin/python3
+
+"""
+    story: represent a model for creating a story
+
+"""
+from models.imports import *
+from models.base_model import BaseModel, Base
+
+
+class Story(BaseModel, Base):
+    """ Represents a story
+
+         Attributes:
+            - title: short text representing the title
+            - text: the actual text content of the story
+            - user_id: id of the user that made the post
+            - category_id: id of the category the post is under
+
+    """
+
+    if os.getenv('STORAGE') in ['db', 'DB']:
+        __tablename__ = 'stories'
+        title = Column(String(200), nullable=False)
+        text = Column(Text, nullable=False)
+        user_id = Column('User', ForeignKey('users.id'), nullable=False)
+
+        comments = relationship('Comment', backref='story', lazy=True)
+        likes = relationship('Like', backref='story', lazy=True)
+        bookmarks = relationship('Bookmark', backref='story', lazy=True)
+
+    else:
+        title = ''
+        text = ''
+        user_id = ''
+
+    def __init__(self, title, text, user_id, **kwargs):
+        super().__init__(**kwargs)
+
+        arguments = {
+            'title': title,
+            'text': text,
+            'user_id': user_id,
+        }
+        for argument, value in arguments.items():
+            if not isinstance(value, str):
+                raise ValueError(f"{argument} must ba a string")
+
+            setattr(self, argument, value)
+"""
+    topic: represent a topic a story fall under
+
+"""
+
+from models.imports import *
+from models.base_model import BaseModel, Base
+
+story_topic_association = Table(
+    'story_topic_association',
+    Base.metadata,
+    Column('story_id', String(60), ForeignKey('stories.id'), primary_key=True),
+    Column('topic_id', String(60), ForeignKey('topics.id'), primary_key=True)
+)
+
+
+class Topic(BaseModel, Base):
+    """ Represent a topic
+
+
+    """
+
+    if os.getenv('STORAGE') in ['db', 'DB']:
+        __tablename__ = 'topics'
+        name = Column(String(80), nullable=False)
+        description = Column(String(200), nullable=True)
+        stories = relationship(
+            'Story',
+            secondary=story_topic_association,
+            backref='topics', lazy=True
+        )
+        followers = relationship('TopicFollower', backref='topic', lazy=True)
+    else:
+        name = ''
+        description = ''
+
+    def __init__(self, name, description=None, **kwargs):
+        super().__init__(self, **kwargs)
+
+        if isinstance(name, str):
+            self.name = name
+        else:
+            raise ValueError(f"{name} must be a string")
+
+        if description:
+            self.description = description
+"""
+    topic_follower: number of people that are following a topic
+
+"""
+
+from uuid import uuid4
+from models.imports import *
+from models.base_model import BaseModel, Base
+
+
+class TopicFollower(BaseModel, Base):
+    """ Represent the number of people that are following a topic
+
+        - Attributes:
+            - id: uuid4 identifier
+            - user_id: users id
+            - topic_id: topic id
+    """
+
+    if os.getenv('STORAGE') in ['db', 'DB']:
+        __tablename__ = 'topic_followers'
+        user_id = Column(String(60), ForeignKey('users.id'), nullable=False)
+        topic_id = Column(String(60), ForeignKey('topics.id'), nullable=False)
+    else:
+        user_id = ''
+        topic_id = ''
+
+    def __init__(self, user_id, topic_id):
+        super().__init__()
+        if isinstance(user_id, str) and isinstance(topic_id, str):
+            self.user_id = user_id
+            self.topic_id = topic_id
+        else:
+            raise ValueError("arguments must be a string")
+"""
+    user: represent a model for creating users
+
+"""
+
+from models.imports import *
+from models.base_model import Base, BaseModel
+
+
+class User(BaseModel, Base):
+    """
+        Represents a user
+
+        Attributes:
+            - username: user identity on the platform
+            - fullname: first name last name and any other name
+            - email: user email address
+            - password: password of the user
+            - short_bio: who the user is
+            - about: detail description of the user
+    """
+
+    if os.getenv('storage') in ['db', 'DB']:
+        __tablename__ = 'users'
+        username = Column(String(80), nullable=False)
+        email = Column(String(120), nullable=False)
+        password = Column(String(200), nullable=False)
+        short_bio = Column(String(160), nullable=True)
+        about = Column(Text, nullable=True)
+        stories = relationship('Story', backref='writer', lazy=True)
+        comments = relationship('Comment', backref='commenter', lazy=True)
+        likes = relationship('Like', backref='liker', lazy=True)
+        bookmarks = relationship('Bookmark', backref='bookmarker', lazy=True)
+        followers = relationship(
+            'Follower',
+            foreign_keys='Follower.followed_id',
+            backref='followed',
+            lazy=True
+        )
+        following = relationship(
+            'Follower',
+            foreign_keys='Follower.follower_id',
+            backref='follower',
+            lazy=True
+        )
+        topic_following = relationship(
+            'TopicFollower',
+            backref='users',
+            lazy=True
+        )
+
+    else:
+        _username = ''
+        _email = ''
+        _password = ''
+        _short_bio = ''
+        _about = ''
+
+    def __init__(
+            self, username, email, password, **kwargs
+            ):
+        super().__init__(**kwargs)
+
+        arguments = {
+            'username': username,
+            'email': email,
+            'password': password
+        }
+        for argument, value in arguments.items():
+            if not isinstance(value, str):
+                raise ValueError(f"{argument} must ba a string")
+
+            setattr(self, argument, value)
