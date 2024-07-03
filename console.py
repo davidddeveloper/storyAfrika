@@ -151,7 +151,7 @@ class StoryAfrikaShell(Cmd):
 
         if self.__check(args_as_array, 3) is None:
             return
-        print('okay!\n', args_as_array)
+
         _, comment, _, story_id, _, user_id = args_as_array
         comment = Comment(comment=comment, story_id=story_id, user_id=user_id)
         comment.save()
