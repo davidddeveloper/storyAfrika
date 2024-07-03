@@ -39,7 +39,8 @@ class BaseModel:
                 if key != '__class__':
                     setattr(self, key, val)
 
-            if 'id' in kwargs and kwargs.get('id') is str:
+            if 'id' in kwargs and isinstance(kwargs.get('id'), str):
+                print('001')
                 self.id = kwargs.get('id')
             else:
                 self.id = str(uuid.uuid4())
@@ -86,3 +87,9 @@ class BaseModel:
         storage.new(self)
         self.updated_at = datetime.datetime.now()
         storage.save()
+
+    def delete(self):
+        """ Deletes an object """
+        from models.engine import storage
+
+        storage.delete(self)

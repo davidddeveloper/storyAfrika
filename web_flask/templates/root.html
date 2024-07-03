@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storyafrika | everything afrika</title>
+    <script src="https://cdn.tailwindcss.com" defer></script>
+
+</head>
+<body>
+    {% block home %} {% endblock %}
+    {% block story %} {% endblock %}
+    <script>
+        tailwind.config = {
+          theme: {
+            extend: {
+              colors: {
+                clifford: '#da373d',
+              }
+            }
+          }
+        }
+      </script>
+</body>
+</html>

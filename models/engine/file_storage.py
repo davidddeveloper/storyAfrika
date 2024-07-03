@@ -36,8 +36,23 @@ class FileStorage:
 
     }
 
-    def all(self):
-        """ all objects """
+    def all(self, cls=None):
+        """ all objects
+
+            Attributes:
+                - cls: an optional class name
+        """
+
+        if cls is not None:
+            objs = {}
+            for key, obj in self.__objects.items():
+                try:
+                    if obj.to_dict()['__class__'] == cls.__name__:
+                        objs[key] = obj
+                except Exception:
+                    return objs
+
+            return objs
 
         return FileStorage.__objects
 
@@ -61,12 +76,42 @@ class FileStorage:
     def reload(self):
         """ Load the data from the storage """
 
+        if not os.path.exists('file.json'):
+            return
+
         with open(FileStorage.__filename, 'r') as fi:
             data = json.load(fi)
 
-            print(data)
             for key, values in data.items():
-                print(values)
+
                 FileStorage.__objects[key] = FileStorage.__classes.get(
                     values.get('__class__')
                 )(**values)
+
+    def delete(self, obj=None):
+        """ Deletes an object
+
+            Attributes:
+                - obj: the object to be deleted
+        """
+
+        if obj is not None:
+            self.__objects.pop(f'{obj.__class__.__name__}.{obj.id}', None)
+
+    def get(self, cls=None, id=None):
+        """ Get a specific object
+
+        Attributes:
+            - cls: the class
+            - id: the uuid of the object
+        """
+
+        if cls is None or id is None:
+            return None
+        try:
+            instance = self.__objects.get(f'{cls.__name__}.{id}')
+            print(instance)
+        except Exception:
+            pass
+
+        return instance
