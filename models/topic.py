@@ -6,12 +6,13 @@
 from models.imports import *
 from models.base_model import BaseModel, Base
 
-story_topic_association = Table(
-    'story_topic_association',
-    Base.metadata,
-    Column('story_id', String(60), ForeignKey('stories.id'), primary_key=True),
-    Column('topic_id', String(60), ForeignKey('topics.id'), primary_key=True)
-)
+if os.getenv('STORAGE') in ['db', 'DB']:
+    story_topic_association = Table(
+        'story_topic_association',
+        Base.metadata,
+        Column('story_id', String(60), ForeignKey('stories.id'), primary_key=True),
+        Column('topic_id', String(60), ForeignKey('topics.id'), primary_key=True)
+    )
 
 
 class Topic(BaseModel, Base):
