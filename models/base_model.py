@@ -11,7 +11,10 @@ import uuid
 import datetime
 from models.imports import *
 
-Base = declarative_base()
+if os.getenv('STORAGE') in ['db', 'DB']:
+    Base = declarative_base()
+else:
+    Base = object
 
 
 class BaseModel:
