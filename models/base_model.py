@@ -75,6 +75,11 @@ class BaseModel:
         dictionary['created_at'] = dictionary['created_at'].isoformat()
         dictionary['__class__'] = self.__class__.__name__
 
+        try:
+            del dictionary['_sa_instance_state']
+        except Exception:
+            pass
+
         return dictionary
 
     def __str__(self) -> str:
