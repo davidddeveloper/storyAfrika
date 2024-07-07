@@ -111,9 +111,5 @@ class DBStorage:
 
         if cls is None or id is None:
             return None
-        try:
-            instance = self._session.query(cls).filter_by(id=id).first()
-        except Exception:
-            return None
-        else:
-            return instance
+
+        return self._session.get(cls, id)

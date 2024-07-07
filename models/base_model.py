@@ -40,7 +40,6 @@ class BaseModel:
                     setattr(self, key, val)
 
             if 'id' in kwargs and isinstance(kwargs.get('id'), str):
-                print('001')
                 self.id = kwargs.get('id')
             else:
                 self.id = str(uuid.uuid4())
@@ -74,6 +73,11 @@ class BaseModel:
         dictionary['updated_at'] = dictionary['updated_at'].isoformat()
         dictionary['created_at'] = dictionary['created_at'].isoformat()
         dictionary['__class__'] = self.__class__.__name__
+
+        try:
+            del dictionary['_sa_instance_state']
+        except Exception:
+            pass
 
         return dictionary
 

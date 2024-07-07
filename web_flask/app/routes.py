@@ -1,20 +1,21 @@
 """
-    app: flask application
+    routes: all application endpoints
 
 """
 
-from flask import Flask, render_template
-from models.engine import storage
+from web_flask.app import app, storage
+from flask import render_template
 from models.topic import Topic
 from models.story import Story
+from models.user import User
 
-app = Flask(__name__)
 
 @app.route("/", strict_slashes=False)
 def home():
     all = storage.all()
     topics = storage.all(Topic)
     stories = storage.all(Story)
+    print(all)
 
     return render_template('home.html', all=all, topics=topics, stories=stories)
 
