@@ -40,7 +40,6 @@ class BaseModel:
                     setattr(self, key, val)
 
             if 'id' in kwargs and isinstance(kwargs.get('id'), str):
-                print('001')
                 self.id = kwargs.get('id')
             else:
                 self.id = str(uuid.uuid4())

@@ -5,6 +5,7 @@
 
 from models.imports import *
 from models.base_model import Base, BaseModel
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class User(BaseModel, Base):
@@ -71,3 +72,31 @@ class User(BaseModel, Base):
                 raise ValueError(f"{argument} must ba a string")
 
             setattr(self, argument, value)
+
+    def set_password(self, password):
+        """ saves the password as hash """
+        self.password = generate_password_hash(password)
+
+    def check_password(self, password) -> bool:
+        """ map a given password against a password hash """
+        return check_password_hash(self.password, password)
+
+    @property
+    def is_active(self):
+        return True
+
+    @property
+    def is_authenticated(self):
+        return self.is_active
+
+    @property
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        try:
+            return str(self.id)
+        except AttributeError:
+            raise NotImplementedError(
+                "No `id` attribute - override `get_id`"
+            ) from None

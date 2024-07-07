@@ -110,7 +110,7 @@ class FileStorage:
             return None
         try:
             instance = self.__objects.get(f'{cls.__name__}.{id}')
-            print(instance)
+
         except Exception:
             pass
 
