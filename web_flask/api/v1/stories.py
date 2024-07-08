@@ -4,9 +4,13 @@
 """
 
 from flask import request, jsonify, abort, url_for
+from flask_login import current_user, login_required
 from web_flask.api.v1 import views
 from web_flask.api.v1.helper_func import create_uri, check_for_valid_json
 from models.story import Story
+from models.comment import Comment
+from models.like import Like
+from models.bookmark import Bookmark
 from models.engine import storage
 
 
@@ -135,6 +139,84 @@ def delete_story(story_id=None):
 
 
 @views.route(
+    '/stories/<string:story_id>/like/',
+    methods=['GET'],
+    strict_slashes=False
+)
+@login_required
+def like_or_unlike_story(story_id=None):
+    """ Like a story
+
+        Attributes:
+            - story_id: id of the story
+
+    """
+
+    story = storage.get(Story, story_id)
+    if story is None:
+        abort(404)
+
+    for like in story.likes:
+        # user has already like the story
+        if like.liker.username == current_user.username:
+            # remove the like
+            storage.delete(like)
+            storage.save()
+            return jsonify({}), 201
+
+    # otherwise the user has not like a story
+    # like the story
+    like = Like(
+        story_id=story_id, user_id=current_user.id
+    )
+    storage.new(like)
+    storage.save()
+
+    return jsonify({}), 201
+
+
+@views.route(
+    '/stories/<string:story_id>/comments/',
+    methods=['POST'],
+    strict_slashes=False
+)
+@login_required
+def make_comment_on_story(story_id=None):
+    """ Comment on a story
+
+        Attributes:
+            - story_id: id of the story
+
+    """
+    if story_id is None:
+        abort(404)
+
+    try:
+        comment_json = request.get_json()
+        check_for_valid_json(comment_json, ['comment'])
+    except Exception:
+        return jsonify({'Error': 'Not a valid json'}), 400
+
+    if isinstance(comment_json, dict):
+        comment = Comment(
+            comment=comment_json['comment'],
+            story_id=story_id,
+            user_id=current_user.id
+        )
+    elif isinstance(comment_json, list):
+        comment = Comment(
+            comment=comment_json[0],
+            story_id=story_id,
+            user_id=current_user.id
+        )
+
+    storage.new(comment)
+    storage.save()
+
+    return jsonify(comment.to_dict()), 201
+
+
+@views.route(
     '/stories/<string:story_id>/comments',
     methods=['GET'],
     strict_slashes=False
@@ -156,6 +238,43 @@ def get_comments_for_story(story_id=None):
     return jsonify([
         comment.to_dict() for comment in comments
     ])
+
+
+@views.route(
+    '/stories/<string:story_id>/bookmark/',
+    methods=['GET'],
+    strict_slashes=False
+)
+@login_required
+def bookmark_or_unbookmark_story(story_id=None):
+    """ Bookmark a story
+
+        Attributes:
+            - story_id: id of the story
+
+    """
+
+    story = storage.get(Story, story_id)
+    if story is None:
+        abort(404)
+
+    for bookmark in story.bookmark:
+        # user has already bookmark the story
+        if bookmark.bookmarker.username == current_user.username:
+            # remove the bookmark
+            storage.delete(bookmark)
+            storage.save()
+            return jsonify({}), 201
+
+    # otherwise the user has not bookmark a story
+    # bookmark the story
+    bookmark = Bookmark(
+        story_id=story_id, user_id=current_user.id
+    )
+    storage.new(bookmark)
+    storage.save()
+
+    return jsonify({}), 201
 
 
 @views.route(

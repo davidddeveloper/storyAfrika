@@ -4,9 +4,11 @@
 """
 
 from flask import request, jsonify, abort, url_for
+from flask_login import current_user, login_required
 from web_flask.api.v1 import views
 from web_flask.api.v1.helper_func import create_uri, check_for_valid_json
 from models.topic import Topic
+from models.topic_follower import TopicFollower
 from models.engine import storage
 
 
@@ -183,3 +185,33 @@ def get_followers_for_topic(topic_id=None):
     return jsonify([
         follower.to_dict() for follower in followers
     ])
+
+
+@views.route(
+    '/topics/<string:topic_id>/follow/',
+    methods=['GET'],
+    strict_slashes=False
+)
+@login_required
+def follow_or_unfollow_topic(topic_id=None):
+    """ Follow or unfollow a topic """
+    topic = storage.get(Topic, topic_id)
+    if topic is None:
+        abort(404)
+
+    for topic_following in current_user.topic_following:
+        # login user is already following that topic
+        if topic_following.topic_id == topic_id:
+            # remove the user from following that topic
+            storage.delete(topic_following)
+            storage.save()
+            return jsonify({}), 201
+
+    # otherwise the login user is not following that topic
+    # make the user follow the topic
+    topic_follower = TopicFollower(
+        user_id=current_user.id,
+        topic_id=topic_id
+    )
+    storage.new(topic_follower)
+    storage.save()

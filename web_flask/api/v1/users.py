@@ -4,9 +4,11 @@
 """
 
 from flask import request, jsonify, abort, url_for
+from flask_login import current_user, login_required
 from web_flask.api.v1 import views
 from web_flask.api.v1.helper_func import create_uri, check_for_valid_json
 from models.user import User
+from models.follower import Follower
 from models.engine import storage
 
 
@@ -218,3 +220,33 @@ def get_user_following(user_id=None):
     return jsonify([
         following.to_dict() for following in followings
     ])
+
+
+@views.route(
+    '/users/<string:user_id>/follow',
+    methods=['GET'],
+    strict_slashes=False
+)
+@login_required
+def follow_or_unfollow_user(user_id=None):
+    """ Follow or unfollow a user """
+    user = storage.get(User, user_id)
+    if user is None:
+        abort(404)
+
+    for following in user.following:
+        # login user is already following user
+        if following.follower.username == current_user.username:
+            # remove the like
+            storage.delete(following)
+            storage.save()
+            return jsonify({}), 201
+
+    # otherwise the login user is not following user
+    # like the story
+    follower = Follower(
+        follower_id=current_user.id,
+        followed_id=user.id
+    )
+    storage.new(follower)
+    storage.save()

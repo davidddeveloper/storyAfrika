@@ -32,7 +32,7 @@
     },
     {
       "endpoint": "/api/v1/stories/<string:story_id>/like/",
-      "method": "POST",
+      "method": "GET",
       "description": "Like a story"
     },
     {
@@ -46,9 +46,14 @@
       "description": "Retrieve comments for a story"
     },
     {
-      "endpoint": "/api/v1/stories/<string:story_id>/bookmarks",
-      "method": "POST",
+      "endpoint": "/api/v1/stories/<string:story_id>/bookmark/",
+      "method": "GET",
       "description": "Bookmark a story"
+    },
+        {
+      "endpoint": "/api/v1/stories/<string:story_id>/bookmarks/",
+      "method": "GET",
+      "description": "Retrieve bookmarks for a story"
     },
     {
       "endpoint": "/api/v1/stories/<string:story_id>/bookmarks",
