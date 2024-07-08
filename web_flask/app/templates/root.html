@@ -8,8 +8,27 @@
 
 </head>
 <body>
+    <header>
+      <h1>toriafrika</h1>
+      {% if current_user.is_anonymous %}
+      <a href="{{ url_for('login') }}">Login</a>
+      {% else %}
+      <a href="{{ url_for('logout') }}">Logout</a>
+      <p>Welcome {{ current_user.username }}</p>
+      {% endif %}
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+      <ul>
+        {% for message in messages %}
+        <li>{{message}}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+        {% endwith %}
+    </header>
     {% block home %} {% endblock %}
     {% block story %} {% endblock %}
+    {% block miscellaneous %} {% endblock %}
     <script>
         tailwind.config = {
           theme: {
