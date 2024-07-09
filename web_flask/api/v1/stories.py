@@ -7,11 +7,12 @@ from flask import request, jsonify, abort, url_for
 from flask_login import current_user, login_required
 from web_flask.api.v1 import views
 from web_flask.api.v1.helper_func import create_uri, check_for_valid_json
+from web_flask.api.v1.helper_func import custom_login_required
 from models.story import Story
 from models.comment import Comment
 from models.like import Like
 from models.bookmark import Bookmark
-from models.engine import storage
+from web_flask.api.v1 import storage
 
 
 @views.route(
@@ -143,7 +144,7 @@ def delete_story(story_id=None):
     methods=['GET'],
     strict_slashes=False
 )
-@login_required
+@custom_login_required
 def like_or_unlike_story(story_id=None):
     """ Like a story
 
@@ -180,7 +181,7 @@ def like_or_unlike_story(story_id=None):
     methods=['POST'],
     strict_slashes=False
 )
-@login_required
+@custom_login_required
 def make_comment_on_story(story_id=None):
     """ Comment on a story
 
@@ -245,7 +246,7 @@ def get_comments_for_story(story_id=None):
     methods=['GET'],
     strict_slashes=False
 )
-@login_required
+@custom_login_required
 def bookmark_or_unbookmark_story(story_id=None):
     """ Bookmark a story
 

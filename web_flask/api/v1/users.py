@@ -7,9 +7,10 @@ from flask import request, jsonify, abort, url_for
 from flask_login import current_user, login_required
 from web_flask.api.v1 import views
 from web_flask.api.v1.helper_func import create_uri, check_for_valid_json
+from web_flask.api.v1.helper_func import custom_login_required
 from models.user import User
 from models.follower import Follower
-from models.engine import storage
+from web_flask.api.v1 import storage
 
 
 @views.route(
@@ -227,7 +228,7 @@ def get_user_following(user_id=None):
     methods=['GET'],
     strict_slashes=False
 )
-@login_required
+@custom_login_required
 def follow_or_unfollow_user(user_id=None):
     """ Follow or unfollow a user """
     user = storage.get(User, user_id)

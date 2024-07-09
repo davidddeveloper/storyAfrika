@@ -1,4 +1,5 @@
 from flask import Blueprint
+from models.engine import storage
 
 views = Blueprint('views', __name__, url_prefix='/api/v1')
 

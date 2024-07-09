@@ -11,7 +11,7 @@ from flask import render_template, redirect, url_for, request, flash
 from models.topic import Topic
 from models.story import Story
 from models.user import User
-from urllib.parse import urlsplit
+from urllib.parse import urlsplit, urlparse
 
 
 @app.route("/", strict_slashes=False)
@@ -55,7 +55,10 @@ def login():
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
 
-        if not next_page and urlsplit(next_page).netloc != '':
+        if not next_page and urlparse(next_page).netloc != ''\
+                and urlparse(next_page).hostname\
+                != urlparse(request.url).hostname:
+            # not a relative path and not from my domain
             return redirect(url_for('home'))
 
         return redirect(next_page)

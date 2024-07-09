@@ -1,4 +1,6 @@
-from flask import url_for, request
+from flask import url_for, request, redirect
+from flask_login import current_user
+from functools import wraps
 
 
 def create_uri(dictionary=None, view=None):
@@ -62,3 +64,18 @@ def check_for_valid_json(json_string, properties=[]):
                 raise ValueError()
     elif isinstance(json_string, list) and len(json_string) < 3:
         raise ValueError()
+
+
+def custom_login_required(f):
+    @wraps(f)  # keep metadata about the wrapped function
+    def wrapper(*args, **kwargs):
+        request_url = request.url
+        login_url = f'http://localhost:5000/login?next={request_url}'
+        if not current_user:
+            return redirect(login_url)
+        elif not current_user.is_authenticated:
+            return redirect(login_url)
+
+        return f(*args, **kwargs)
+
+    return wrapper

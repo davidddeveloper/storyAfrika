@@ -7,9 +7,10 @@ from flask import request, jsonify, abort, url_for
 from flask_login import current_user, login_required
 from web_flask.api.v1 import views
 from web_flask.api.v1.helper_func import create_uri, check_for_valid_json
+from web_flask.api.v1.helper_func import custom_login_required
 from models.topic import Topic
 from models.topic_follower import TopicFollower
-from models.engine import storage
+from web_flask.api.v1 import storage
 
 
 @views.route(
@@ -17,6 +18,7 @@ from models.engine import storage
     strict_slashes=False,
     methods=['GET', 'POST']
 )
+@custom_login_required
 def topics():
     """ Get all topics or creates a topic """
 
@@ -192,7 +194,7 @@ def get_followers_for_topic(topic_id=None):
     methods=['GET'],
     strict_slashes=False
 )
-@login_required
+@custom_login_required
 def follow_or_unfollow_topic(topic_id=None):
     """ Follow or unfollow a topic """
     topic = storage.get(Topic, topic_id)
@@ -215,3 +217,5 @@ def follow_or_unfollow_topic(topic_id=None):
     )
     storage.new(topic_follower)
     storage.save()
+
+    return jsonify({}), 201
