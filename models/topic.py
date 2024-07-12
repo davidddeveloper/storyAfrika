@@ -3,7 +3,6 @@
 
 """
 
-import uuid
 from models.imports import *
 from models.base_model import BaseModel, Base
 
@@ -28,7 +27,6 @@ class Topic(BaseModel, Base):
 
     if os.getenv('STORAGE') in ['db', 'DB']:
         __tablename__ = 'topics'
-        id = Column(String(60), primary_key=True, default=str(uuid.uuid4()))
         name = Column(String(80), nullable=False)
         description = Column(String(200), nullable=True)
         stories = relationship(

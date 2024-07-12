@@ -3,7 +3,6 @@
 
 """
 
-import uuid
 import os
 from models.imports import *
 from models.base_model import BaseModel, Base
@@ -21,7 +20,6 @@ class Bookmark(BaseModel, Base):
 
     if os.getenv('storage') in ['db', 'DB']:
         __tablename__ = 'bookmarks'
-        id = Column(String(60), primary_key=True, default=str(uuid.uuid4()))
         story_id = Column(String(60), ForeignKey('stories.id'), nullable=False)
         user_id = Column(String(60), ForeignKey('users.id'), nullable=False)
     else:

@@ -3,7 +3,6 @@
 
 """
 
-import uuid
 from models.imports import *
 from models.base_model import BaseModel, Base
 
@@ -20,7 +19,6 @@ class Like(BaseModel, Base):
 
     if os.getenv('STORAGE') in ['db', 'DB']:
         __tablename__ = 'likes'
-        id = Column(String(60), primary_key=True, default=str(uuid.uuid4()))
         story_id = Column(String(60), ForeignKey('stories.id'), nullable=False)
         user_id = Column(String(60), ForeignKey('users.id'), nullable=False)
     else:
