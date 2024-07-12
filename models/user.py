@@ -4,9 +4,11 @@
 """
 
 import sqlalchemy as sa
+import sqlalchemy.orm as so
 from sqlalchemy.orm import WriteOnlyMapped
 from models.imports import *
 from models.base_model import Base, BaseModel
+from models.story import Story
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
@@ -135,6 +137,30 @@ class User(BaseModel, Base):
             self.following.select().subquery())
 
         return storage._session.scalar(query)
+
+    @property
+    def following_stories(self):
+        """ gets the stories from all the users self is following
+            and own stories
+
+        """
+
+        from models.engine import storage
+        Writer = so.aliased(User)
+        Follower = so.aliased(User)
+
+        # join story with writer of the story and followers of that writer
+        return (
+            sa.select(Story)
+            .join(Story.writer.of_type(Writer))
+            .join(Writer.followers.of_type(Follower), isouter=True)
+            .where(sa.or_(
+                Follower.id == self.id,
+                Writer.id == self.id
+            ))
+            .group_by(Story)
+            .order_by(Story.created_at.desc())
+        )
 
     @property
     def is_active(self):

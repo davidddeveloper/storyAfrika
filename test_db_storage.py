@@ -93,8 +93,8 @@ like2 = Like(story_id=story2.id, user_id=user1.id)
 like3 = Like(story_id=story1.id, user_id=user2.id)
 like4 = Like(story_id=story2.id, user_id=user3.id)
 
-follower1 = Follower(user1.id, user4.id)
-follower2 = Follower(user4.id, user3.id)
+#follower1 = Follower(user1.id, user4.id)
+#follower2 = Follower(user4.id, user3.id)
 
 comment1 = Comment(
     comment="Amazing story! \
@@ -118,7 +118,7 @@ storage._session.add_all([user1, user2, user3, user4])
 storage._session.add_all([topic1, topic2, topic3])
 storage._session.add_all([story1, story2])
 storage._session.add_all([like1, like2, like3, like4])
-storage._session.add_all([follower1, follower2])
+#storage._session.add_all([follower1, follower2])
 storage._session.add_all([comment1, bookmark1, bookmark2])
 
 storage.save()
