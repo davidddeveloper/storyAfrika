@@ -3,6 +3,8 @@
 
 """
 
+import sqlalchemy as sa
+from sqlalchemy.orm import WriteOnlyMapped
 from models.imports import *
 from models.base_model import Base, BaseModel
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -20,7 +22,7 @@ class User(BaseModel, Base):
             - short_bio: who the user is
             - about: detail description of the user
     """
-
+    from models.follower import Follower
     if os.getenv('storage') in ['db', 'DB']:
         __tablename__ = 'users'
         username = Column(String(80), nullable=False)
@@ -32,16 +34,18 @@ class User(BaseModel, Base):
         comments = relationship('Comment', backref='commenter', lazy=True)
         likes = relationship('Like', backref='liker', lazy=True)
         bookmarks = relationship('Bookmark', backref='bookmarker', lazy=True)
-        followers = relationship(
-            'Follower',
-            foreign_keys='Follower.followed_id',
-            backref='followed',
+        followers:  WriteOnlyMapped['User'] = relationship(
+            secondary=Follower.__table__,
+            primaryjoin='followers.c.followed_id == User.id',
+            secondaryjoin='followers.c.follower_id == User.id',
+            back_populates='following',
             lazy=True
         )
-        following = relationship(
-            'Follower',
-            foreign_keys='Follower.follower_id',
-            backref='follower',
+        following: WriteOnlyMapped['User'] = relationship(
+            secondary=Follower.__table__,
+            primaryjoin='followers.c.follower_id == User.id',
+            secondaryjoin='followers.c.followed_id == User.id',
+            back_populates='followers',
             lazy=True
         )
         topic_following = relationship(
@@ -80,6 +84,57 @@ class User(BaseModel, Base):
     def check_password(self, password) -> bool:
         """ map a given password against a password hash """
         return check_password_hash(self.password, password)
+
+    def follow(self, user):
+         """
+            follow a user
+
+            - user: a user instance
+         """
+
+         if not self.is_following(user):
+             self.following.add(user)
+
+    def unfollow(self, user):
+        """
+            unfollow a user
+
+            - user: a user instance
+         """
+
+        if self.is_following(user):
+            self.following.remove(user)
+
+    def is_following(self, user):
+        """ checks if a user is following another user
+
+            - user: a user
+
+            Return: true if self is following user
+        """
+        from models.engine import storage
+
+        query = self.following.select().where(User.id == user.id)
+        return storage._session.scalar(query) is not None
+
+    @property
+    def followers_count(self):
+        """ count the number of followers self has """
+        from models.engine import storage
+
+        query = sa.select(sa.func.count()).select_from(
+            self.followers.select().subquery())
+        return storage._session.scalar(query)
+
+    @property
+    def following_count(self):
+        """ count the number of people self is following """
+        from models.engine import storage
+
+        query = sa.select(sa.func.count()).select_from(
+            self.following.select().subquery())
+
+        return storage._session.scalar(query)
 
     @property
     def is_active(self):

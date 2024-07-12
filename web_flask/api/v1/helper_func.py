@@ -1,4 +1,4 @@
-from flask import url_for, request, redirect
+from flask import url_for, request, redirect, flash
 from flask_login import current_user
 from functools import wraps
 
@@ -71,9 +71,12 @@ def custom_login_required(f):
     def wrapper(*args, **kwargs):
         request_url = request.url
         login_url = f'http://localhost:5000/login?next={request_url}'
+        message = 'Login required to view the request page'
         if not current_user:
+            flash(message)
             return redirect(login_url)
         elif not current_user.is_authenticated:
+            flash(message)
             return redirect(login_url)
 
         return f(*args, **kwargs)

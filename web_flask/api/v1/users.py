@@ -225,7 +225,7 @@ def get_user_following(user_id=None):
 
 @views.route(
     '/users/<string:user_id>/follow',
-    methods=['GET'],
+    methods=['POST'],
     strict_slashes=False
 )
 @custom_login_required
@@ -235,19 +235,11 @@ def follow_or_unfollow_user(user_id=None):
     if user is None:
         abort(404)
 
-    for following in user.following:
-        # login user is already following user
-        if following.follower.username == current_user.username:
-            # remove the like
-            storage.delete(following)
-            storage.save()
-            return jsonify({}), 201
+    if current_user.is_following(user):
+        current_user.following.remove(user)
+    else:
+        current_user.following.add(user)
 
-    # otherwise the login user is not following user
-    # like the story
-    follower = Follower(
-        follower_id=current_user.id,
-        followed_id=user.id
-    )
-    storage.new(follower)
     storage.save()
+
+    return jsonify({}), 201
