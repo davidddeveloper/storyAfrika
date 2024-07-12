@@ -3,6 +3,7 @@
 
 """
 
+import uuid
 from models.imports import *
 from models.base_model import BaseModel, Base
 
@@ -17,6 +18,7 @@ class Follower(BaseModel, Base):
 
     if os.getenv('STORAGE') in ['db', 'DB']:
         __tablename__ = 'followers'
+        id = Column(String(60), primary_key=True, default=str(uuid.uuid4()))
         follower_id = Column(String(60), ForeignKey('users.id'), nullable=True)
         followed_id = Column(String(60), ForeignKey('users.id'), nullable=True)
     else:

@@ -3,6 +3,7 @@
 
 """
 
+import uuid
 import sqlalchemy as sa
 import sqlalchemy.orm as so
 from sqlalchemy.orm import WriteOnlyMapped
@@ -27,6 +28,7 @@ class User(BaseModel, Base):
     from models.follower import Follower
     if os.getenv('storage') in ['db', 'DB']:
         __tablename__ = 'users'
+        id = Column(String(60), primary_key=True, default=str(uuid.uuid4()))
         username = Column(String(80), nullable=False)
         email = Column(String(120), nullable=False)
         password = Column(String(200), nullable=False)

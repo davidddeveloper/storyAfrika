@@ -4,6 +4,8 @@
     story: represent a model for creating a story
 
 """
+
+import uuid
 from models.imports import *
 from models.base_model import BaseModel, Base
 
@@ -21,6 +23,7 @@ class Story(BaseModel, Base):
 
     if os.getenv('STORAGE') in ['db', 'DB']:
         __tablename__ = 'stories'
+        id = Column(String(60), primary_key=True, default=str(uuid.uuid4()))
         title = Column(String(200), nullable=False)
         text = Column(Text, nullable=False)
         user_id = Column('User', ForeignKey('users.id'), nullable=False)
