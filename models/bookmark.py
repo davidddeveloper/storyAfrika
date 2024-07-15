@@ -18,7 +18,7 @@ class Bookmark(BaseModel, Base):
 
     """
 
-    if os.getenv('storage') in ['db', 'DB']:
+    if os.getenv('STORAGE') in ['db', 'DB']:
         __tablename__ = 'bookmarks'
         story_id = Column(String(60), ForeignKey('stories.id'), nullable=False)
         user_id = Column(String(60), ForeignKey('users.id'), nullable=False)
