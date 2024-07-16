@@ -3,6 +3,7 @@
 
 """
 
+import json
 from flask import request, jsonify, abort, url_for
 from flask_login import current_user, login_required
 from web_flask.api.v1 import views
@@ -27,7 +28,7 @@ def stories():
         # checks for valid json
         try:
             story_json = request.get_json()
-            check_for_valid_json(story_json, ['title', 'text', 'story_id'])
+            check_for_valid_json(story_json, ['title', 'text', 'user_id'])
 
         except Exception:
             return jsonify({"Error": 'not a valid json'}), 400
@@ -57,6 +58,17 @@ def stories():
          for story in stories.values()]
     ), 200
 
+
+@views.route(
+        '/following_stories', methods=['GET'], strict_slashes=False
+)
+@custom_login_required
+def following_stories():
+    """ gets the stories from all the users self is following
+        and own stories
+
+    """
+    pass
 
 @views.route(
     '/stories/<int:n>/',
@@ -107,14 +119,17 @@ def get_story(story_id=None):
     if request.method == 'PUT':
         try:
             story_json = request.get_json()
-            check_for_valid_json(story_json, ['title', 'text', 'story_id'])
+            check_for_valid_json(story_json, ['title', 'text', 'user_id'])
+            story_json['text'] = f'{story_json['text']}'
+            print('----------------------------')
+            print(story_json)
 
         except Exception:
             return jsonify({"Error": 'not a valid json'}), 400
 
         else:
             for key, val in story_json.items():
-                if key not in ['id', 'created_at', 'updated_at']:
+                if key not in ['id', 'created_at', 'updated_at', '__class__']:
                     setattr(story, key, val)
 
             storage.save()

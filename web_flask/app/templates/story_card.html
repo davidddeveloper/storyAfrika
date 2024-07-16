@@ -1,0 +1,29 @@
+<article>
+    {% include 'profile_story_card.html' %}
+    <div class="flex justify-between gap-[25px]">
+        <div class="mt-3">
+            <h3 class="font-medium text-lg home-story-title" data-story_id="{{story.id}}"><a href="{{ url_for('story', story_id=story.id)}}">{{story.title}}</a></h3>
+            <p class="mt-[10px] w-[400px] overflow-x-hidden whitespace-nowrap overflow-ellipsis">{{story.text}}</p>
+        </div>
+        <div class="story-image self-center">
+            <img class='w-full h-full' src="https://unsplash.it/500" alt="" srcset="">
+        </div>
+    </div>
+    <div class="px-3 mt-[15px] flex items-center justify-between">
+        <div class="flex items-center">
+            <div class="flex items-center">
+                <p class="mt-3">{{story.likes | length}}</p>
+                <button><img class="block active:bg-lightblue" src="/static/icons/like.svg" alt=""></button>
+            </div>
+            <div class="inline-block ml-5">
+                <p class="text-xs">{{story.read_time}} min read</p>
+            </div>
+        </div>
+        <div class="bookmark">
+            <button>
+                <img src="/static/icons/bookmark.svg" alt="" srcset="">
+                <img src="/static/icons/bookmark_click.svg" alt="" srcset="">
+            </button>
+        </div>
+    </div>
+</article>

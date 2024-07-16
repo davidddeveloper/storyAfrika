@@ -1,5 +1,65 @@
 {% extends 'root.html' %}
 
 {% block  story %}
-
+    <header class="mt-[60px] container mx-auto flex justify-between items-center">
+        <h1 class="text-xl"><a href="{{ url_for('home')}}">storyafrika</a></h1>
+        <div class="rounded-full w-[60px] h-[60px] border">
+            <img class="rounded-full w-full h-full object-cover" src="https://picsum.photos/200/400" alt="" srcset="">
+        </div>
+    </header>
+    <main class="">
+        <h2 class="container mx-auto font-medium text-[45px] mt-[60px] mb-[20px]">{{story.title}}</h2>
+        <div class="profile mb-[30px] container mx-auto ">
+            <div class="flex items-center">
+                <img class="rounded-full h-[50px] w-[50px] object-cover" src="https://picsum.photos/200/700" alt="">
+                <div class="ml-[15px]">
+                    <div class="flex gap-[15px]">
+                        <h3>{{story.writer.username}}</h3>
+                        <button class="flex items-center"><img src="/static/icons/plus.svg" alt="">Follow</button>
+                    </div>
+                    <div class="mt-[5px] flex gap-[5px]">
+                        <p>{{story.read_time}} min read</p>
+                        <p>{{story.created_at}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="actions container mx-auto">
+            <hr class="bg-black border-2 border-black">
+            {% include 'actions.html' %}
+            <hr class="border-2 mt-2 mb-[30px] border-black">
+        </div>
+        <section class="content container mx-auto">
+            <div class="pl-[30px] pr-[30px] h-[320px] w-full mb-[50px]">
+                <img class="w-full h-full object-cover" src="https://unsplash.it/1000" alt="">
+            </div>
+            <div class="pl-[30px] pr-[30px] story-story-text text-lightgray" data-story_id="{{story.id}}">
+                <p class="text-xl">{{story.text}}</p>
+            </div>
+        </section>
+        <div class="mt-[80px] container mx-auto">
+            {% include 'actions.html' %}
+        </div>
+        <hr class="border-2 mt-[120px] mb-[30px] border-black">
+        <section class="container mx-auto">
+            <h3 class="mt-[50px] mb-[30px] text-[20px] font-medium">More from <span class="text-lightblue">{{story.writer.username}}</span></h3>
+            <div>
+                <div class="h-[200px] w-[300px]">
+                    {% for other_story in story.writer.stories %}
+                        {% if other_story != story %}
+                        <img class="h-full w-full object-cover" src="https://picsum.photos/300/200" alt="">
+                        <div class="mt-[20px] mb-[10px]">
+                            {% include 'profile_story_card.html' %}
+                            <p class="text-lg font-medium"><a href="{{ url_for('story', story_id=other_story.id) }}">{{other_story.title}}</a></p>
+                            <p class="mt-[10px] mb-[20px] w-full overflow-x-hidden whitespace-nowrap overflow-ellipsis">{{other_story.text}}</p>
+                            <p class="text-[10px]">{{other_story.read_time}} min read</p>
+                        </div>
+                        {% endif %}
+                    {% else %}
+                        <p>{{ story.writer }} has not made any other post</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    </main>
 {% endblock %}

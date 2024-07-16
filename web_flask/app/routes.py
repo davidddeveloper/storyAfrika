@@ -7,7 +7,7 @@ from web_flask.app import app, storage
 from web_flask.app.forms import LoginForm, UserRegistrationForm
 from flask_login import current_user, login_user
 from flask_login import logout_user, login_required
-from flask import render_template, redirect, url_for, request, flash
+from flask import render_template, redirect, url_for, request, flash, abort
 from models.topic import Topic
 from models.story import Story
 from models.user import User
@@ -21,10 +21,29 @@ def home():
     all = storage.all()
     topics = storage.all(Topic)
     stories = storage.all(Story)
+    following_stories = storage._session.scalars(current_user.following_stories).all()
 
     return render_template(
-        'home.html', all=all, topics=topics, stories=stories
+        'home.html', all=all, topics=topics, stories=stories, following_stories=following_stories
     )
+
+
+@app.route(
+        "/story/<string:story_id>/", strict_slashes=False, methods=['GET', 'POST']
+)
+def story(story_id=None):
+    story = storage.get(Story, story_id)
+    if story is None:
+        abort(404)
+
+    return render_template('story.html', story=story)
+
+
+@app.route(
+        "/story/write/", strict_slashes=False, methods=['GET', 'POST']
+)
+def write():
+    return render_template('write.html')
 
 
 @app.route(

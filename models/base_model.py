@@ -70,9 +70,12 @@ class BaseModel:
         """ Dictionary representation of the object """
 
         dictionary = self.__dict__.copy()
-        dictionary['updated_at'] = dictionary['updated_at'].isoformat()
-        dictionary['created_at'] = dictionary['created_at'].isoformat()
-        dictionary['__class__'] = self.__class__.__name__
+        try:
+            dictionary['updated_at'] = dictionary['updated_at'].isoformat()
+            dictionary['created_at'] = dictionary['created_at'].isoformat()
+            dictionary['__class__'] = self.__class__.__name__
+        except Exception:
+            pass
 
         try:
             del dictionary['_sa_instance_state']

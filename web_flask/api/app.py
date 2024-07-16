@@ -17,7 +17,7 @@ app.config['SESSION_COOKIE_NAME'] = 'session'
 app.config['SESSION_COOKIE_DOMAIN'] = 'localhost'
 app.config['SESSION_COOKIE_SAMESITE'] = 'None'
 app.config['SESSION_COOKIE_SECURE'] = True
-CORS(app, origins=['0.0.0.0'])
+CORS(app, origins=['0.0.0.0', '*'])
 
 app.register_blueprint(views)
 

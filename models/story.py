@@ -34,6 +34,13 @@ class Story(BaseModel, Base):
         text = ''
         user_id = ''
 
+    @property
+    def read_time(self):
+        num_of_words = len(self.text.split())
+        read_time_in_minutes = int(num_of_words / 225)
+
+        return read_time_in_minutes
+
     def __init__(self, title, text, user_id, **kwargs):
         super().__init__(**kwargs)
 

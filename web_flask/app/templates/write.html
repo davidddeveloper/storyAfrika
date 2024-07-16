@@ -1,0 +1,23 @@
+{% extends 'root.html' %}
+{% block write %}
+<head>
+    <link rel="stylesheet" href="/static/text-editor.css">
+    <script src="/static/js/text-editor.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+    <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.js" integrity="sha256-J8ay84czFazJ9wcTuSDLpPmwpMXOm573OUtZHPQqpEU=" crossorigin="anonymous" defer></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css">
+
+</head>
+<header class="mt-[60px] container mx-auto flex justify-between items-center">
+    <div class="flex gap-5">
+        <h1 class="text-xl"><a href="{{ url_for('home')}}">storyafrika</a></h1>
+        <button class="save-state">Publish</button>
+    </div>
+    <div class="rounded-full w-[60px] h-[60px] border">
+        <img class="rounded-full w-full h-full object-cover" src="https://picsum.photos/200/400" alt="" srcset="">
+    </div>
+</header>
+<main class="container mx-auto relative">
+    {% include 'text-editor.html' %}
+</main>
+{% endblock %}

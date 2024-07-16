@@ -1,0 +1,21 @@
+<!-- like btn comment btn bookmark btn -->
+<div class="mx-[30px] flex justify-between items-center">
+    <div class="flex gap-[15px]">
+        <div class="flex items-center">
+            <p class="mt-2">{{story.likes | length}}</p>
+            <button><img class="block active:bg-lightblue" src="/static/icons/like.svg" alt=""></button>
+        </div>
+        <div class="flex items-center">
+            <p class="mt-2">{{story.comments | length}}</p>
+            <button><img class="block active:bg-lightblue" src="/static/icons/comment.svg" alt=""></button>
+        </div>
+    </div>
+    <div class="flex gap-[15px]">
+        <div class="mt-[10px]">
+            <button><img class="block active:bg-lightblue" src="/static/icons/bookmark.svg" alt=""></button>
+        </div>
+        <div class="mt-[10px]">
+            <button><img class="block active:bg-lightblue" src="/static/icons/share.svg" alt=""></button>
+        </div>
+    </div>
+</div>

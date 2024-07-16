@@ -1,0 +1,10 @@
+<div class="mb-4">
+    {% include 'profile_story_card.html' %}
+    {% if story %}
+    <p class="mt-1 text-lightgray text-sm">{{story.title}}</p>
+    {% elif bookmark %}
+    <p class="mt-1 text-lightgray text-sm">{{bookmark.story.title}}</p>
+    {% elif like %}
+    <p class="mt-1 text-lightgray text-sm">{{like.story.title}}</p>
+    {% endif %}
+</div>

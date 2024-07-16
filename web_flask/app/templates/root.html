@@ -4,18 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Storyafrika | everything afrika</title>
-    <script src="https://cdn.tailwindcss.com" defer></script>
-
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/tailwind.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" defer integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+    <script src="/static/js/main.js" defer></script>
 </head>
-<body>
+<body data-current_user_id="{{current_user.id}}">
     <header>
-      <h1>toriafrika</h1>
-      {% if current_user.is_anonymous %}
-      <a href="{{ url_for('login') }}">Login</a>
-      {% else %}
-      <a href="{{ url_for('logout') }}">Logout</a>
-      <p>Welcome {{ current_user.username }}</p>
-      {% endif %}
       {% with messages = get_flashed_messages() %}
       {% if messages %}
       <ul>
@@ -28,17 +23,7 @@
     </header>
     {% block home %} {% endblock %}
     {% block story %} {% endblock %}
+    {% block write %} {% endblock %}
     {% block miscellaneous %} {% endblock %}
-    <script>
-        tailwind.config = {
-          theme: {
-            extend: {
-              colors: {
-                clifford: '#da373d',
-              }
-            }
-          }
-        }
-      </script>
 </body>
 </html>
