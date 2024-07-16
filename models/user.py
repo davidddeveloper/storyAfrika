@@ -25,7 +25,8 @@ class User(BaseModel, Base):
             - about: detail description of the user
     """
     from models.follower import Follower
-    if os.getenv('storage') in ['db', 'DB']:
+
+    if os.getenv('STORAGE') in ['db', 'DB']:
         __tablename__ = 'users'
         username = Column(String(80), nullable=False)
         email = Column(String(120), nullable=False)

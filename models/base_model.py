@@ -27,7 +27,7 @@ class BaseModel:
 
     """
 
-    if os.getenv('storage') in ['db', 'DB']:
+    if os.getenv('STORAGE') in ['db', 'DB']:
         id = Column(String(60), primary_key=True, default=str(uuid.uuid4()))
         created_at = Column(DateTime, default=datetime.datetime.now())
         updated_at = Column(DateTime, default=datetime.datetime.now())
