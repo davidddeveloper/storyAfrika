@@ -1,9 +1,15 @@
 {
   "dependencies": {
-    "tailwindcss": "^3.4.4"
+    "tailwindcss": "^3.4.5"
   },
   "scripts": {
     "build": "npx tailwindcss -i ./style.css -o tailwind.css",
     "watch": "npx tailwindcss -i ./style.css -o tailwind.css --watch"
-  }
+  },
+  "name": "static",
+  "version": "1.0.0",
+  "description": "storyafrika",
+  "main": "tailwind.config.js",
+  "author": "David",
+  "license": "ISC"
 }

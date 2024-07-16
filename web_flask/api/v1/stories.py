@@ -120,9 +120,6 @@ def get_story(story_id=None):
         try:
             story_json = request.get_json()
             check_for_valid_json(story_json, ['title', 'text', 'user_id'])
-            story_json['text'] = f'{story_json['text']}'
-            print('----------------------------')
-            print(story_json)
 
         except Exception:
             return jsonify({"Error": 'not a valid json'}), 400

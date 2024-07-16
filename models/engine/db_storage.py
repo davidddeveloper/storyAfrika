@@ -19,6 +19,7 @@ username = os.getenv('USER')
 password = os.getenv('PASSWORD')
 host = os.getenv('HOST')
 storage = os.getenv('STORAGE')
+db_name = os.getenv('DB_NAME')
 
 models_2_tables = {
     'bookmarks': Bookmark,
@@ -44,7 +45,7 @@ class DBStorage:
 
     def __init__(self):
         self.__engine = create_engine(
-            'mysql+mysqlconnector://root:root@localhost/storyafrika',
+            f'mysql+mysqlconnector://{username}:{password}@{host}/{db_name}',
             echo=True
         )
 

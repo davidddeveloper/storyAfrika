@@ -1,5 +1,5 @@
 /*
-! tailwindcss v3.4.4 | MIT License | https://tailwindcss.com
+! tailwindcss v3.4.5 | MIT License | https://tailwindcss.com
 */
 
 /*
@@ -604,8 +604,16 @@ video {
   position: sticky;
 }
 
+.left-0 {
+  left: 0px;
+}
+
 .right-0 {
   right: 0px;
+}
+
+.top-0 {
+  top: 0px;
 }
 
 .mx-\[30px\] {
@@ -621,6 +629,10 @@ video {
 .my-\[50px\] {
   margin-top: 50px;
   margin-bottom: 50px;
+}
+
+.mb-10 {
+  margin-bottom: 2.5rem;
 }
 
 .mb-4 {
@@ -719,8 +731,8 @@ video {
   margin-top: 85px;
 }
 
-.mt-\[12px\] {
-  margin-top: 12px;
+.mt-\[157px\] {
+  margin-top: 157px;
 }
 
 .block {
@@ -767,6 +779,14 @@ video {
   height: 100%;
 }
 
+.h-screen {
+  height: 100vh;
+}
+
+.h-\[\] {
+  height: ;
+}
+
 .w-\[10px\] {
   width: 10px;
 }
@@ -811,10 +831,6 @@ video {
   min-width: 300px;
 }
 
-.min-w-\[\] {
-  min-width: ;
-}
-
 .min-w-\[500px\] {
   min-width: 500px;
 }
@@ -825,6 +841,18 @@ video {
 
 .max-w-\[900px\] {
   max-width: 900px;
+}
+
+.flex-shrink {
+  flex-shrink: 1;
+}
+
+.flex-shrink-0 {
+  flex-shrink: 0;
+}
+
+.shrink-0 {
+  flex-shrink: 0;
 }
 
 .flex-col {
@@ -843,6 +871,10 @@ video {
   gap: 0.5rem;
 }
 
+.gap-5 {
+  gap: 1.25rem;
+}
+
 .gap-\[15px\] {
   gap: 15px;
 }
@@ -859,16 +891,20 @@ video {
   gap: 5px;
 }
 
-.gap-5 {
-  gap: 1.25rem;
-}
-
 .self-center {
   align-self: center;
 }
 
 .overflow-x-hidden {
   overflow-x: hidden;
+}
+
+.overflow-y-hidden {
+  overflow-y: hidden;
+}
+
+.overflow-y-scroll {
+  overflow-y: scroll;
 }
 
 .overflow-ellipsis {
@@ -883,12 +919,12 @@ video {
   border-radius: 9999px;
 }
 
-.border-2 {
-  border-width: 2px;
-}
-
 .border {
   border-width: 1px;
+}
+
+.border-2 {
+  border-width: 2px;
 }
 
 .border-l {
@@ -1013,6 +1049,21 @@ video {
 
 .ease-out {
   transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* Hide scrollbar for Chrome, Safari, and Opera */
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge, and Firefox */
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 .active\:bg-lightblue:active {

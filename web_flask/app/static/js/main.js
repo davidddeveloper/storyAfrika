@@ -1,30 +1,29 @@
 $(function(){
 
     // creating the carousel
-    let $prev_button = $('.slider-main-container #prev')
-    let $next_button = $('.slider-main-container #next')
-    let $carousel_items = $('.slider-main-container .carousel-items')
+    const slider = $('.slider');
+    const sliderItems = $('.slider-item');
+    const itemWidth = sliderItems.outerWidth(true); // includes margin
+    const totalItems = sliderItems.length;
+    let currentIndex = 0;
 
-    let counter = 100;
-    $next_button.on('click', function (e) {
-        if (counter <= $carousel_items.width())
-        {
-            if (counter == 0)
-            {
-                $carousel_items.css({'transform': `translate(-${100}px)`})
-                counter += 100;
-            }
-            else {
-                $carousel_items.css({'transform': `translate(-${counter}px)`})
-                counter += 100;
-            }
+    function updateSliderPosition() {
+        slider.css('transform', `translateX(${-currentIndex * itemWidth}px)`);
+    }
+
+    $('.next').on('click', function() {
+        if (currentIndex < totalItems - 1) {
+            currentIndex++;
+            updateSliderPosition();
         }
-    })
+    });
 
-    $prev_button.on('click', function (e) {
-        counter += Number($carousel_items.css('transform').split(',')[4])
-        $carousel_items.css({'transform': `translate(-${counter}px)`})
-    })
+    $('.prev').on('click', function() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            updateSliderPosition();
+        }
+    });
 
     // load the state of a story text
     let $story_text_container = $('.story-story-text')

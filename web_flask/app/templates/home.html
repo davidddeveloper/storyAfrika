@@ -2,24 +2,24 @@
 
 {% block home %}
 <div class="flex relative">
-    <div class='min-w-[500px] max-w-[900px] w-[768px] container mx-auto px-20 md:px-0 lg:px-20'>
-    <header class="container mx-auto flex justify-between items-center mt-[72px] sticky">
+    <div class='min-w-[500px] max-w-[900px] w-[768px] container left-0 shrink-1 absolute overflow-y-hidden mx-auto px-20 md:px-0 lg:px-20'>
+    <header class="container mx-auto flex justify-between items-center mt-[72px] shrink-1">
         <div class="flex gap-[25px] items-center">
-            <div class="slider-main-container flex gap-2 items-center">
-                <button id="prev"><img src="/static/icons/lt.svg" alt="" srcset=""></button>
-                <div class="slider-container w-[415px] overflow-x-hidden text-base">
-                    <ul class="carousel-items topics flex items-center gap-[25px] w-full transition-all ease-out">
+            <div class="slider-container flex gap-2 items-center">
+                <button class="prev"><img src="/static/icons/lt.svg" alt="" srcset=""></button>
+                <div class="slider-wrapper w-[415px] overflow-x-hidden text-base">
+                    <ul class="slider topics flex items-center gap-[25px] w-full transition-all ease-out">
                         {% for key,topic in topics.items() %}
-                            <li>{{topic.name}}</li>
+                            <li class="slider-item">{{topic.name}}</li>
                         {% endfor %}
-                            <li>random</li>
-                            <li>randomx1</li>
-                            <li>randomx2</li>
-                            <li>randomx3</li>
-                            <li>randomx4</li>
+                            <li class="slider-item">random</li>
+                            <li class="slider-item">randomx1</li>
+                            <li class="slider-item">randomx2</li>
+                            <li class="slider-item">randomx3</li>
+                            <li class="slider-item">randomx4</li>
                     </ul>
                 </div>
-                <button id="next"><img src="/static/icons/gt.svg" alt="" srcset=""></button>
+                <button class="next"><img src="/static/icons/gt.svg" alt="" srcset=""></button>
             </div>
             <div>
                 <button><img src="/static/icons/search.svg" alt=""></button>
@@ -31,21 +31,78 @@
         </div>
 
     </header>
-    <main class="container mx-auto mt-[85px] flex flex-col gap-[50px]">
+    <main class="container relative mx-auto mt-[85px] flex flex-col gap-[50px] shrink-1 h-screen overflow-y-scroll no-scrollbar">
         {% for story in following_stories %}
             {% include 'story_card.html' %}
             <hr>
         {% else %}
             <h1>Try following some people to see their post here</h1>
         {% endfor %}
+        <div class="random remove-later just-fortexting border-2 border-black mb-10 h-[200px] w-full shrink-0"></div>
+        <div class="random remove-later just-fortexting border-2 border-black mb-10 h-[200px] w-full shrink-0"></div>
+        <div class="random remove-later just-fortexting border-2 border-black mb-10 h-[200px] w-full shrink-0"></div>
+        <div class="random remove-later just-fortexting border-2 border-black mb-10 h-[200px] w-full shrink-0"></div>
+        <div class="random remove-later just-fortexting border-2 border-black mb-10 h-[200px] w-full shrink-0"></div>
     </main>
     </div>
-    <aside class="container mx-auto px-[60px] border-l-[1px] border-black py-[80px] min-w-[300px] w-[500px] max-w-[700px]">
+    <aside class="container fixed right-0 overflow-y-scroll no-scrollbar shrink-1 mx-auto h-screen px-[60px] border-l-[1px] border-black py-[80px] min-w-[300px] w-[500px] max-w-[700px]">
         <div class="flex justify-between">
             <h1>storyafrika</h1>
             <button><a href="{{ url_for('write')}}"><img src="/static/icons/write.svg" alt="" srcset=""></a></button>
         </div>
 
+        <div class="bookmark mt-[40px]">
+            <h3 class="mb-5 text-xs font-medium">From you bookmarks</h3>
+            <div>
+                {% for bookmark in current_user.bookmarks %}
+                    {% if loop.index <= 3 %}
+                    {% include 'bookmark_card.html' %}
+                    {% endif %}
+                
+                {% endfor %}
+            </div>
+            <a href="" class="block underline text-lightblue">See all bookmarks</a>
+        </div>
+        <hr class="divider my-[50px]">
+        <div class="bookmark mt-[40px]">
+            <h3 class="mb-5 text-xs font-medium">From you bookmarks</h3>
+            <div>
+                {% for bookmark in current_user.bookmarks %}
+                    {% if loop.index <= 3 %}
+                    {% include 'bookmark_card.html' %}
+                    {% endif %}
+                
+                {% endfor %}
+            </div>
+            <a href="" class="block underline text-lightblue">See all bookmarks</a>
+        </div>
+        <hr class="divider my-[50px]">
+        <div class="bookmark mt-[40px]">
+            <h3 class="mb-5 text-xs font-medium">From you bookmarks</h3>
+            <div>
+                {% for bookmark in current_user.bookmarks %}
+                    {% if loop.index <= 3 %}
+                    {% include 'bookmark_card.html' %}
+                    {% endif %}
+                
+                {% endfor %}
+            </div>
+            <a href="" class="block underline text-lightblue">See all bookmarks</a>
+        </div>
+        <hr class="divider my-[50px]">
+        <div class="bookmark mt-[40px]">
+            <h3 class="mb-5 text-xs font-medium">From you bookmarks</h3>
+            <div>
+                {% for bookmark in current_user.bookmarks %}
+                    {% if loop.index <= 3 %}
+                    {% include 'bookmark_card.html' %}
+                    {% endif %}
+                
+                {% endfor %}
+            </div>
+            <a href="" class="block underline text-lightblue">See all bookmarks</a>
+        </div>
+        <hr class="divider my-[50px]">
         <div class="bookmark mt-[40px]">
             <h3 class="mb-5 text-xs font-medium">From you bookmarks</h3>
             <div>
@@ -72,7 +129,7 @@
         </div>
         <div class="who-to-follow">
             <h3 class="mt-[30px] mb-5 text-xs font-medium">Who to follow?</h3>
-            <div class="slider">
+            <div class="">
                 <div class="flex items-center gap-[15px]">
                     <div class="h-[50px] w-[50px]">
                         <img class="h-full w-full rounded-full border-2" src="https://picsum.photos/200/300" alt="">

@@ -55,6 +55,12 @@ def login():
         return redirect(url_for('home'))
 
     form = LoginForm()
+    print('_________________^^__________', current_user)
+    if form.is_submitted:
+        print(form.username.data)
+        print(form.email.data)
+        print(form.password.data)
+    print(form.validate_on_submit())
     if form.validate_on_submit():
         user = storage._session.query(User).filter_by(
             username=form.username.data
@@ -81,6 +87,8 @@ def login():
             return redirect(url_for('home'))
 
         return redirect(next_page)
+    else:
+        print('>>>>>', form.errors)
 
     return render_template('login.html', form=form)
 
@@ -97,7 +105,9 @@ def register():
         return redirect(url_for('home'))
 
     form = UserRegistrationForm()
+    print('-------------------------------------------')
     if form.validate_on_submit():
+        print('What is wrong!==================================')
         user = User(
             username=form.username.data,
             email=form.email.data,
