@@ -7,11 +7,15 @@ from web_flask.app import app, storage
 from web_flask.app.forms import LoginForm, UserRegistrationForm
 from flask_login import current_user, login_user
 from flask_login import logout_user, login_required
-from flask import render_template, redirect, url_for, request, flash, abort
+from flask import render_template, redirect, url_for, request, flash, abort, send_from_directory
 from models.topic import Topic
 from models.story import Story
 from models.user import User
 from urllib.parse import urlsplit, urlparse
+from flask import session
+from werkzeug.utils import secure_filename
+import os
+import imghdr
 
 
 @app.route("/", strict_slashes=False)
@@ -60,6 +64,8 @@ def login():
         print(form.username.data)
         print(form.email.data)
         print(form.password.data)
+        #print('csrf token from form', form.csrf_token.data)
+        print('csrf token from session', dict(session))
     print(form.validate_on_submit())
     if form.validate_on_submit():
         user = storage._session.query(User).filter_by(
@@ -127,7 +133,31 @@ def register():
     return render_template('register.html', form=form)
 
 
-@app.route('/dummy')
+@app.route('/dummy', methods=['GET', 'POST'])
 @login_required
 def dummy_view():
-    return '<h1> What is wrong with you </h1>'
+    if request.method == 'POST':
+        for uploaded_file in request.files.getlist('file'):
+            filename = secure_filename(uploaded_file.filename)
+            if uploaded_file.filename != '':
+                file_ext = os.path.splitext(filename)[1]
+                if file_ext not in app.config['UPLOAD_EXTENSIONS'] or \
+                        file_ext != validate_image(uploaded_file.stream):
+                    abort(400)
+                uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], current_user.get_id(), filename))
+
+    return render_template('dummy.html')
+
+
+@app.route('/uploads/<filename>')
+def upload(filename):
+    return send_from_directory(os.path.join(
+        app.config['UPLOAD_PATH'], current_user.get_id()), filename)
+
+def validate_image(stream):
+    header = stream.read(512)
+    stream.seek(0) 
+    format = imghdr.what(None, header)
+    if not format:
+        return None
+    return '.' + (format if format != 'jpeg' else 'jpg')
