@@ -1,17 +1,32 @@
 $(function () {
     let $body = $('body')
     let $currentBlock = $('.block').first()
+    let $story = {}
+    $currentBlock.focus()
 
     // create a temporary story in database
     if (!localStorage.getItem('story_id')) {
         $.ajax({
             type: 'POST',
             url: 'http://127.0.0.1:4000/api/v1/stories/',
-            data: JSON.stringify({"title": " ", "text": '[{"content":"xyz"}]', "user_id": $body.data('current_user_id')}),
+            data: JSON.stringify({"title": " ", "text": '[{"content":"xyzzzzzz"}]', "user_id": $body.data('current_user_id')}),
             dataType: 'json',
             contentType: 'application/json',
             success: function (response) {
                 localStorage.setItem('story_id', response.id)
+                $story = response;
+            }
+        })
+    }
+
+    // function to delete a story
+    const delete_story = () => {
+        const story_id = localStorage.getItem('story_id')
+        $.ajax({
+            type: 'DELETE',
+            url: `http://127.0.0.1:4000/api/v1/stories/${story_id}/`,
+            success: function (response) {
+                console.log(response)
             }
         })
     }
@@ -19,7 +34,6 @@ $(function () {
     // save state of block
     const saveBlocks = () => {
         const blocks = [];
-        let $story = {}
         $('.block').each(function() {
           blocks.push({ content: $(this).html() });
         });
@@ -27,27 +41,22 @@ $(function () {
         //localStorage.setItem('blocks', JSON.stringify(blocks));
         let $story_id = localStorage.getItem('story_id')
         // get the story
-        $.get(`http://127.0.0.1:4000/api/v1/stories/${$story_id}/`, function (response, status) {
-            if (status == 'success') {
-                $story = response
-
-                // update the story
-                $story.text = JSON.stringify(blocks)
-                $.ajax({
-                    type: "PUT",
-                    url: `http://127.0.0.1:4000/api/v1/stories/${$story_id}`,
-                    data: JSON.stringify($story),
-                    dataType: "json",
-                    contentType: "application/json",
-                    success: function (response) {
-                        console.log('saved to db')
-                    }
-                });
+        console.log($story)
+        $story.title = $('#title').val()
+        $story.text = JSON.stringify(blocks)
+        $.ajax({
+            type: "PUT",
+            url: `http://127.0.0.1:4000/api/v1/stories/${$story_id}/`,
+            data: JSON.stringify($story),
+            dataType: "json",
+            contentType: "application/json",
+            success: function (response) {
+                console.log(response, 'saved to db')
             }
-        })
-    };
+        });
+    }
 
-    // Load blocks from local storage
+    // Load blocks from local storage - ! not using it at the moment
     const loadBlocks = () => {
         let $story_id = localStorage.getItem('story_id')
 
@@ -81,7 +90,6 @@ $(function () {
             let $newBlock = $('<div contenteditable=true class="block"><span class="handle">⇅</span></div>')
             $(this).after($newBlock)
             $newBlock.focus()
-            saveBlocks()
             $currentBlock = $newBlock
         }
 
@@ -178,11 +186,11 @@ $(function () {
     
     switch ($(this).data('format')) {
         case "h1":
-            constructBlock('h1', $currentBlock)
+            constructBlock('h1', $currentBlock, $css={'font-size': '24px'})
             break;
         
         case "h2":
-            constructBlock('h2', $currentBlock)
+            constructBlock('h2', $currentBlock, $css={'font-size': '18px'})
             break;
         
         case "text":
@@ -225,8 +233,7 @@ $(function () {
         $('#blocks-container').sortable({
             handle: '.handle',
             axis: 'y',
-            containment: '#blocks-container',
-            update: saveBlocks
+            containment: '#blocks-container'
         }
         // axis: 'y' only on x if not specified draggable everywhere
         );
@@ -239,8 +246,7 @@ $(function () {
     })
 
     $(document).on('mouseleave', '.block', function (event) {
-        let target = event.relatedTarget
-        let $handle = $(this).find('.handle').hide();
+        $(this).find('.handle').hide();
         /*if ($handle.is(":hover")) {
             // pass
         } else {
@@ -257,15 +263,10 @@ $(function () {
         $(this).show()
     })
 
-    // save state of block when save is clicked
-    $('.save-state').on('click', function () {
-        saveBlocks()
-    })
-
     // load blocks
-    if (localStorage.getItem('story_id')) {
+    /*if (localStorage.getItem('story_id')) {
         loadBlocks()
-    }
+    }*/
 
    // miscellaneous - hide all popups
    $("#toolbar").hide()
@@ -281,4 +282,48 @@ $(function () {
            $('.types').hide()
        }
    })
+
+   //preventing the user from leaving the page if they're still editing
+   let isSubmitting = false;
+
+    $(window).on('beforeunload', function(e) {
+        if (!isSubmitting) {
+            const message = 'Data you\'ve entered will be lost if you leave. Do you wish to leave?';
+            e.preventDefault();
+            e.returnValue = message; // For modern browsers
+
+            return message; // For older browsers
+        }
+    });
+
+    // before leaving
+    $(window).on('unload', function() {
+        if (!isSubmitting) {
+            delete_story()
+            localStorage.removeItem('story_id')
+            navigator.sendBeacon('/log-leave', 'User left the page');
+        }
+    });
+
+    // save state of block when save is clicked
+    $('.save-state').on('click', function () {
+        $('.bg-shadow').css({'display': 'block'}).show('fast')
+        $('.title-form').css({'display': 'flex'}).show('slow')
+        $('.title-form').find('story-title-input').focus()
+    })
+
+    $('.publish').on('click', function (e) {
+        let story_id = localStorage.getItem('story_id')
+        e.preventDefault()
+        saveBlocks()
+        localStorage.removeItem('story_id');
+        isSubmitting = true
+        window.location.replace(`http://127.0.0.1:5000/story/${story_id}`);
+
+    })
+
+    $('.continue-editing').on('click', function (e) {
+        $('.bg-shadow').hide('fast')
+        $('.title-form').hide('slow')
+    })
 })

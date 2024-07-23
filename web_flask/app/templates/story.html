@@ -1,15 +1,15 @@
 {% extends 'root.html' %}
 
 {% block  story %}
-    <header class="mt-[60px] container mx-auto flex justify-between items-center">
+    <header class="mt-[60px] container mx-auto flex justify-between items-center px-5 sm:px-2">
         <h1 class="text-xl"><a href="{{ url_for('home')}}">storyafrika</a></h1>
         <div class="rounded-full w-[60px] h-[60px] border">
             <img class="rounded-full w-full h-full object-cover" src="https://picsum.photos/200/400" alt="" srcset="">
         </div>
     </header>
     <main class="">
-        <h2 class="container mx-auto font-medium text-[45px] mt-[60px] mb-[20px]">{{story.title}}</h2>
-        <div class="profile mb-[30px] container mx-auto ">
+        <h2 class="container mx-auto font-medium text-[45px] mt-[60px] mb-[20px] px-5 sm:px-2">{{story.title}}</h2>
+        <div class="profile mb-[30px] container mx-auto px-5 sm:px-2 ">
             <div class="flex items-center">
                 <img class="rounded-full h-[50px] w-[50px] object-cover" src="https://picsum.photos/200/700" alt="">
                 <div class="ml-[15px]">
@@ -19,7 +19,7 @@
                     </div>
                     <div class="mt-[5px] flex gap-[5px]">
                         <p>{{story.read_time}} min read</p>
-                        <p>{{story.created_at}}</p>
+                        <p>{{ moment(story.created_at).fromNow()}}</p>
                     </div>
                 </div>
             </div>
@@ -41,9 +41,9 @@
             {% include 'actions.html' %}
         </div>
         <hr class="border-2 mt-[120px] mb-[30px] border-black">
-        <section class="container mx-auto">
+        <section class="container mx-auto px-5 sm:px-2">
             <h3 class="mt-[50px] mb-[30px] text-[20px] font-medium">More from <span class="text-lightblue">{{story.writer.username}}</span></h3>
-            <div>
+            <div class="flex justify-center sm:block">
                 <div class="h-[200px] w-[300px]">
                     {% for other_story in story.writer.stories %}
                         {% if other_story != story %}

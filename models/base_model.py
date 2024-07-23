@@ -83,6 +83,30 @@ class BaseModel:
             pass
 
         return dictionary
+    
+    def paginate(query, page, per_page):
+        """ handles pagination
+
+            - query: sqlalchemy query
+            - page: a page number
+            - per_page: number representing items per page
+
+        """
+        from models.engine import storage
+    
+        total_items = storage._session.query(func.count()).select_from(query.subquery()).scalar()
+        total_pages = (total_items // per_page) + (1 if total_items % per_page > 0 else 0)
+        # offset is very crucial as it specify the starting point of the query
+        paginated_query = query.offset((page - 1) * per_page).limit(per_page)
+        items = storage._session.execute(paginated_query).scalars().all()
+
+        return {
+            'total_items': total_items,
+            'total_pages': total_pages,
+            'page': page,
+            'per_page': per_page,
+            'items': items
+        }
 
     def __str__(self) -> str:
         return f"[{self.__class__.__name__}.{self.id}] {self.to_dict()}"

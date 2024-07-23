@@ -6,6 +6,7 @@
 import sqlalchemy as sa
 import sqlalchemy.orm as so
 from sqlalchemy.orm import WriteOnlyMapped
+
 from models.imports import *
 from models.base_model import Base, BaseModel
 from models.story import Story
@@ -79,6 +80,18 @@ class User(BaseModel, Base):
                 raise ValueError(f"{argument} must ba a string")
 
             setattr(self, argument, value)
+
+    def to_dict(self):
+        """ Dictionary representation of the object """
+
+        dictionary = super().to_dict()
+        try:
+            dictionary.pop('_sa_instance_state')
+            dictionary.pop('password')
+        except Exception:
+            pass
+
+        return dictionary
 
     def set_password(self, password):
         """ saves the password as hash """
@@ -162,6 +175,11 @@ class User(BaseModel, Base):
             .group_by(Story)
             .order_by(Story.created_at.desc())
         )
+
+    @property
+    def get_comments(self):
+        """ gets all the comments for that specific user """
+        pass
 
     @property
     def is_active(self):

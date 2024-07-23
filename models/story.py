@@ -4,6 +4,8 @@
     story: represent a model for creating a story
 
 """
+import sqlalchemy as sa
+import sqlalchemy.orm as so
 from models.imports import *
 from models.base_model import BaseModel, Base
 
@@ -33,6 +35,18 @@ class Story(BaseModel, Base):
         title = ''
         text = ''
         user_id = ''
+
+    def to_dict(self):
+        """ Dictionary representation of the object """
+
+        dictionary = super().to_dict()
+        dictionary['writer'] = self.writer.to_dict()
+        dictionary['comments_count'] = len(self.comments)
+        dictionary['likes_count'] = len(self.likes)
+        dictionary['bookmarks_count'] = len(self.bookmarks)
+        dictionary['read_time'] = self.read_time
+
+        return dictionary
 
     @property
     def read_time(self):

@@ -9,7 +9,7 @@ html {
     position: relative;
 }
 body {
-    background-color:;
+    background-color: rgb(243, 243, 243);
     padding: 20px;
     font-family: Playwrite DE Grund, Arial, Helvetica, sans-serif;
 }
@@ -22,6 +22,7 @@ body main {
 }
 
 main .block {
+    position:relative;
     color: gray;
     margin-bottom: 10px;
     border-radius: 5px;
@@ -29,6 +30,9 @@ main .block {
     border: 2px solid transparent;
 }
 
+.blocks-container {
+    margin-top: 15px;
+}
   
 .handle {
     content: '⇅';
@@ -38,7 +42,7 @@ main .block {
     transform: translateY(-50%);
     cursor: move;
     opacity: 0.5;
-    display: none;
+    display: block;
 }
 
 .save-state {
@@ -72,6 +76,7 @@ article#toolbar {
     height: 35px;
     border-radius: 5px;
     position: absolute;
+    display: hidden;
 }
 
 #toolbar button {
