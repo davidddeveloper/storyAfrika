@@ -1,6 +1,7 @@
 {% extends 'root.html' %}
 
 {% block home %}
+{% include 'profile_card.html' %}
 <div class="flex relative">
     <div class='min-w-[500px] max-w-[900px] w-[768px] container left-0 shrink-1 absolute overflow-y-hidden mx-auto px-20 md:px-0 lg:px-20'>
     <header class="container mx-auto flex justify-between items-center mt-[72px] shrink-1">
@@ -27,7 +28,7 @@
         </div>
 
         <div class="block">
-            <button class="border-2 rounded-full w-[60px] h-[60px]"><img class="w-full h-full rounded-full object-cover" src="https://picsum.photos/200/700" alt=""></button>
+            <button class="border-2 rounded-full w-[60px] h-[60px] home-profile-img"><img class="w-full h-full rounded-full object-cover" src="https://picsum.photos/200/700" alt=""></button>
         </div>
 
     </header>

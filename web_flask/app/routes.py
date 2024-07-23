@@ -4,7 +4,7 @@
 """
 
 from web_flask.app import app, storage
-from web_flask.app.forms import LoginForm, UserRegistrationForm
+from web_flask.app.forms import LoginForm, UserRegistrationForm, UserUpdateForm
 from flask_login import current_user, login_user
 from flask_login import logout_user, login_required
 from flask import render_template, redirect, url_for, request, flash, abort, send_from_directory
@@ -18,17 +18,54 @@ import os
 import imghdr
 
 
-@app.route("/", strict_slashes=False)
+
+base_dir = os.path.dirname(os.path.abspath(__file__))
+print(base_dir)
+
+@app.route("/", methods=['GET', 'POST'], strict_slashes=False)
 @login_required
 def home():
     """ Home View """
+    form = UserUpdateForm()
+
+    if request.method == 'POST':
+        if request.files:
+            try:
+                # save the file
+                path_2_file = current_user.image_upload(request.files['file'])
+            except Exception:
+                path_2_file = None
+
+            if path_2_file is not None:
+                current_user.avatar = path_2_file
+                storage.save()
+                return url_for('home')
+        
+        if form.validate_on_submit():
+            # change password
+            if current_user.check_password(form.current_password.data):
+                current_user.set_password(form.new_password.data)
+                flash("Password change!")
+
+            if form.username.data:  # update the username
+                current_user.username = form.username.data
+                flash("Username changed!")
+            
+            if form.email.data:  # update the email
+                current_user.email = form.email.data
+                flash("Email changed!")
+            
+            storage.save()
+        else:
+            print(form.errors)
+
     all = storage.all()
     topics = storage.all(Topic)
     stories = storage.all(Story)
     following_stories = storage._session.scalars(current_user.following_stories).all()
 
     return render_template(
-        'home.html', all=all, topics=topics, stories=stories, following_stories=following_stories
+        'home.html', all=all, topics=topics, stories=stories, following_stories=following_stories, form=form
     )
 
 
@@ -139,24 +176,32 @@ def dummy_view():
     if request.method == 'POST':
         for uploaded_file in request.files.getlist('file'):
             filename = secure_filename(uploaded_file.filename)
-            if uploaded_file.filename != '':
+            if filename:
                 file_ext = os.path.splitext(filename)[1]
                 if file_ext not in app.config['UPLOAD_EXTENSIONS'] or \
                         file_ext != validate_image(uploaded_file.stream):
                     abort(400)
-                uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], current_user.get_id(), filename))
+                upload_dir = os.path.join(app.config['UPLOAD_PATH'], current_user.get_id())
+                os.makedirs(upload_dir, exist_ok=True)
+                uploaded_file.save(os.path.join(upload_dir, filename))
 
-    return render_template('dummy.html')
+    try:
+        print(os.path.join(app.config['UPLOAD_PATH'], current_user.get_id()))
+        files = os.listdir(os.path.join(app.config['UPLOAD_PATH'], current_user.get_id()))
+        
+    except FileNotFoundError:
+        files = []
+    print(files)
+    return render_template('dummy.html', files=files)
 
-
-@app.route('/uploads/<filename>')
+@app.route('/uploads/<string:filename>')
 def upload(filename):
-    return send_from_directory(os.path.join(
-        app.config['UPLOAD_PATH'], current_user.get_id()), filename)
+    user_dir = os.path.join(app.config['UPLOAD_PATH'], current_user.get_id())
+    return send_from_directory(user_dir, filename)
 
 def validate_image(stream):
     header = stream.read(512)
-    stream.seek(0) 
+    stream.seek(0)
     format = imghdr.what(None, header)
     if not format:
         return None

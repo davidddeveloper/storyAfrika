@@ -11,4 +11,4 @@ class Config:
     # FOR FILE UPLOAD
     MAX_CONTENT_LENGTH = 1024 * 1024
     UPLOAD_EXTENSIONS = ['.jpg', '.png']
-    UPLOAD_PATH = 'static/uploads'
+    UPLOAD_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'uploads')
