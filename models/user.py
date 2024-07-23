@@ -10,10 +10,11 @@ from sqlalchemy.orm import WriteOnlyMapped
 from models.imports import *
 from models.base_model import Base, BaseModel
 from models.story import Story
+from models.image_upload import ImageUpload
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
-class User(BaseModel, Base):
+class User(BaseModel, ImageUpload, Base):
     """
         Represents a user
 
@@ -57,6 +58,7 @@ class User(BaseModel, Base):
             backref='users',
             lazy=True
         )
+        avatar = Column(String(100), nullable=True) # path to avatar
 
     else:
         _username = ''

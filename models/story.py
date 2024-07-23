@@ -8,9 +8,10 @@ import sqlalchemy as sa
 import sqlalchemy.orm as so
 from models.imports import *
 from models.base_model import BaseModel, Base
+from models.image_upload import ImageUpload
 
 
-class Story(BaseModel, Base):
+class Story(BaseModel, ImageUpload, Base):
     """ Represents a story
 
          Attributes:
@@ -30,6 +31,7 @@ class Story(BaseModel, Base):
         comments = relationship('Comment', backref='story', lazy=True)
         likes = relationship('Like', backref='story', lazy=True)
         bookmarks = relationship('Bookmark', backref='story', lazy=True)
+        image = Column(String(100), nullable=True) # path to image
 
     else:
         title = ''
