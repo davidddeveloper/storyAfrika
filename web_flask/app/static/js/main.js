@@ -96,10 +96,11 @@ $(function(){
                     <div class="flex items-center">
                         <p class="mt-3 like-count">${story.likes_count}</p>
                         ${
-                            story.liked == false ? <button class="like-btn liked-btn hidden"><img class="block active:bg-lightblue" src="/static/icons/liked.svg" alt=""/></button> : <button class="like-btn like-btn-trans"><img class="block active:bg-lightblue" src="/static/icons/like.svg" alt=""/></button>
-                        }
-                        
-                        <button class="like-btn liked-btn hidden"><img class="block active:bg-lightblue" src="/static/icons/liked.svg" alt=""></button>
+                            story.liked === false 
+                              ? '<button class="like-btn like-btn-trans"><img class="block active:bg-lightblue" src="/static/icons/like.svg" alt=""/></button>' 
+                              : '<button class="like-btn liked-btn hidden"><img class="block active:bg-lightblue" src="/static/icons/liked.svg" alt=""/></button>'
+                          }
+                          <button class="like-btn liked-btn hidden"><img class="block active:bg-lightblue" src="/static/icons/liked.svg" alt=""></button>
                         </div>
                     <div class="inline-block ml-5">
                         <p class="text-xs">${story.read_time} min read</p>
