@@ -74,7 +74,7 @@ $(function(){
         <article class="shrink-0 story-card fade-in" data-story_id="${story.id}">
             <div class="flex w-[300px] items-center">
             <div class="profile flex items-center">
-                <img class=" w-[40px] h-[40px] object-cover border-2 rounded-full" src="https://picsum.photos/200/400" alt="">
+                <img class=" w-[40px] h-[40px] object-cover border-2 rounded-full" src="/uploads/${story.writer.avatar}" alt="">
                 <h2 class="ml-5 text-sm">${story.writer.username}</h2>
             </div>
             <div class="w-[10px] h-4 border-lightgray border-l ml-[15px] mr-[15px]"></div>
@@ -248,6 +248,7 @@ $(function(){
                 success: function(response) {
                     //console.log('Success:', response);
                     $('#story-image').attr('src', `/uploads/${file.name}`)
+                    window.location.reload()
                 },
                 error: function(error) {
                     //console.error('Error:', error);
@@ -261,12 +262,12 @@ $(function(){
     // show profile card on profile-image click
     $('.home-profile-img').on('click', function () {
         $('.profile-card-shadow').show(200)
-        $('.profile-card').css({'display': 'flex', 'top': '30%'}).slideDown(200)
+        $('.profile-card').removeClass('-top-[100%] hidden').addClass('flex flex-col-reverse md:flex-row top-[10%] sm:top-[20%]')
     })
 
     $('.profile-card-shadow').on('click', function () {
         $('.profile-card-shadow').hide(200)
-        $('.profile-card').css({'display': 'hidden', 'top': '-50%'}).slideUp(200)
+        $('.profile-card').addClass('-top-[100%] hidden').removeClass('sm:top-[20%]').removeClass('top-[10%]')
     })
 
     console.log(get_current_user())

@@ -616,6 +616,10 @@ video {
   inset: 0px;
 }
 
+.-top-\[30\%\] {
+  top: -30%;
+}
+
 .left-0 {
   left: 0px;
 }
@@ -632,12 +636,48 @@ video {
   right: 0px;
 }
 
+.top-\[30\%\] {
+  top: 30%;
+}
+
 .top-\[45\%\] {
   top: 45%;
 }
 
 .top-\[50\%\] {
   top: 50%;
+}
+
+.-top-\[50\%\] {
+  top: -50%;
+}
+
+.-top-\[0\%\] {
+  top: -0%;
+}
+
+.top-\[70\%\] {
+  top: 70%;
+}
+
+.top-\[20\%\] {
+  top: 20%;
+}
+
+.-top-\[70\%\] {
+  top: -70%;
+}
+
+.-top-\[100\%\] {
+  top: -100%;
+}
+
+.-top-\[10\%\] {
+  top: -10%;
+}
+
+.top-\[10\%\] {
+  top: 10%;
 }
 
 .isolate {
@@ -908,6 +948,22 @@ video {
   width: 100vw;
 }
 
+.w-\[90\%\] {
+  width: 90%;
+}
+
+.w-\[\] {
+  width: ;
+}
+
+.w-\[80\%\] {
+  width: 80%;
+}
+
+.w-\[85\%\] {
+  width: 85%;
+}
+
 .min-w-\[200px\] {
   min-width: 200px;
 }
@@ -1118,6 +1174,10 @@ video {
   padding: 1.25rem;
 }
 
+.p-4 {
+  padding: 1rem;
+}
+
 .px-1 {
   padding-left: 0.25rem;
   padding-right: 0.25rem;
@@ -1163,6 +1223,16 @@ video {
   padding-bottom: 80px;
 }
 
+.py-4 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.py-5 {
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
+}
+
 .pl-1 {
   padding-left: 0.25rem;
 }
@@ -1177,6 +1247,14 @@ video {
 
 .pt-\[25px\] {
   padding-top: 25px;
+}
+
+.pt-5 {
+  padding-top: 1.25rem;
+}
+
+.pb-2 {
+  padding-bottom: 0.5rem;
 }
 
 .text-2xl {
@@ -1374,6 +1452,22 @@ video {
 }
 
 @media (min-width: 430px) {
+  .sm\:top-\[10\%\] {
+    top: 10%;
+  }
+
+  .sm\:top-\[20\%\] {
+    top: 20%;
+  }
+
+  .sm\:left-\[\] {
+    left: ;
+  }
+
+  .sm\:left-\[10\%\] {
+    left: 10%;
+  }
+
   .sm\:-mt-0 {
     margin-top: -0px;
   }
@@ -1398,6 +1492,14 @@ video {
     width: 250px;
   }
 
+  .sm\:w-\[90\%\] {
+    width: 90%;
+  }
+
+  .sm\:w-\[95\%\] {
+    width: 95%;
+  }
+
   .sm\:flex-row {
     flex-direction: row;
   }
@@ -1418,6 +1520,18 @@ video {
     gap: 0.5rem;
   }
 
+  .sm\:gap-20 {
+    gap: 5rem;
+  }
+
+  .sm\:gap-10 {
+    gap: 2.5rem;
+  }
+
+  .sm\:p-0 {
+    padding: 0px;
+  }
+
   .sm\:px-0 {
     padding-left: 0px;
     padding-right: 0px;
@@ -1426,6 +1540,11 @@ video {
   .sm\:px-2 {
     padding-left: 0.5rem;
     padding-right: 0.5rem;
+  }
+
+  .sm\:py-10 {
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
   }
 
   .sm\:pr-0 {
@@ -1444,6 +1563,10 @@ video {
 
   .md\:block {
     display: block;
+  }
+
+  .md\:flex {
+    display: flex;
   }
 
   .md\:w-\[250px\] {
@@ -1486,12 +1609,16 @@ video {
     max-width: 800px;
   }
 
-  .md\:flex-col {
-    flex-direction: column;
+  .md\:flex-row {
+    flex-direction: row;
   }
 
   .md\:flex-col-reverse {
     flex-direction: column-reverse;
+  }
+
+  .md\:gap-20 {
+    gap: 5rem;
   }
 
   .md\:border-r-\[1px\] {
