@@ -87,16 +87,28 @@
             <h3 class="mt-[30px] mb-5 text-xs font-medium">Who to follow?</h3>
             <div class="">
                 <div class="flex items-center gap-[15px]">
-                    <div class="h-[50px] w-[50px] shrink-0">
-                        <img class="h-full w-full rounded-full border-2" src="https://picsum.photos/200/300" alt="">
-                    </div>
-                    <div>
-                        <div class="flex gap-2 items-center">
-                            <h3 class="">{{current_user.username}}</h3>
-                            <button class="flex items-center"><img src="/static/icons/plus.svg" alt="">follow</button>
+                    {% for the_user in users %}
+                    {% if loop.index <= 1 %}
+                    {% if the_user != current_user %}
+                        {% if the_user.avatar %}
+                        <div class="h-[50px] w-[50px] shrink-0">
+                            <img class="h-full w-full rounded-full border-2" src="{{ url_for('upload', filename=the_user.avatar) }}" alt="">
                         </div>
-                        <p class="text-xs text-lightgray">{{current_user.short_bio}}</p>
-                    </div>
+                        {% else %}
+                        <div class="h-[50px] w-[50px] shrink-0">
+                            <img class="h-full w-full rounded-full border-2" src="https://picsum.photos/200/300" alt="">
+                        </div>
+                        {% endif %}
+                        <div>
+                            <div class="flex gap-2 items-center">
+                                <h3 class="">{{the_user.username}}</h3>
+                                <button class="flex items-center"><img src="/static/icons/plus.svg" alt="">follow</button>
+                            </div>
+                            <p class="text-xs text-lightgray">{{the_user.short_bio}}</p>
+                        </div>
+                    {% endif %}
+                    {% endif %}
+                    {% endfor %}
                     
                 </div>
 

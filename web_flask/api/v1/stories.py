@@ -90,8 +90,6 @@ def following_stories(user_id=None):
 
         stories.append(story_dictionary)
     
-    print(stories)
-    
     return jsonify(
         {
             'total_items': pagination['total_items'],

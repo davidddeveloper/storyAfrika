@@ -8,7 +8,7 @@ class Config:
     #SESSION_COOKIE_DOMAIN = 'localhost'
     #SESSION_COOKIE_SAMESITE = 'None'
     #SESSION_COOKIE_SECURE = True
-    # WTF_CSRF_ENABLED = False
+    WTF_CSRF_ENABLED = False
     # I'm going to go with redis in production on ubuntu server
     # SESSION_TYPE = 'redis'
     # SESSION_PERMANENT = False

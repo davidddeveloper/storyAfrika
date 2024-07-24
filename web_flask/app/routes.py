@@ -60,13 +60,14 @@ def home():
         else:
             print(form.errors)
 
-    all = storage.all()
+    # all = storage.all()
     topics = storage.all(Topic)
+    users = storage.all(User)
     stories = storage.all(Story)
     following_stories = storage._session.scalars(current_user.following_stories).all()
 
     return render_template(
-        'home.html', all=all, topics=topics, stories=stories, following_stories=following_stories, form=form
+        'home.html', users=users, topics=topics, stories=stories, following_stories=following_stories, form=form
     )
 
 
