@@ -7,10 +7,12 @@ from web_flask.app import app, storage
 from web_flask.app.forms import LoginForm, UserRegistrationForm, UserUpdateForm
 from flask_login import current_user, login_user
 from flask_login import logout_user, login_required
-from flask import render_template, redirect, url_for, request, flash, abort, send_from_directory
+from flask import render_template, redirect, url_for, request, flash, \
+    abort, send_from_directory, jsonify
 from models.topic import Topic
 from models.story import Story
 from models.user import User
+from models.like import Like
 from urllib.parse import urlsplit, urlparse
 from flask import session
 from werkzeug.utils import secure_filename
@@ -39,7 +41,6 @@ def home():
             if path_2_file is not None:
                 current_user.avatar = path_2_file
                 storage.save()
-                return url_for('home')
         
         if form.validate_on_submit():
             # change password
@@ -84,6 +85,24 @@ def story(story_id=None):
         "/story/write/", strict_slashes=False, methods=['GET', 'POST']
 )
 def write():
+    if request.method == 'POST':
+        story = storage.get(Story, request.form.get('story_id'))
+        if request.files:
+            try:
+                # save the file
+                path_2_file = story.image_upload(request.files['file'])
+            except Exception:
+                path_2_file = None
+
+            if path_2_file is not None:
+                story.image = path_2_file
+                storage.save()
+                print(story.image)
+            else:
+                flash("Please try an image with a different format.")
+                return url_for('write')
+            return url_for('write', story=story)
+
     return render_template('write.html')
 
 
@@ -101,7 +120,7 @@ def login():
         print(form.username.data)
         print(form.email.data)
         print(form.password.data)
-        #print('csrf token from form', form.csrf_token.data)
+        print('csrf token from form', form.csrf_token.data)
         print('csrf token from session', dict(session))
     print(form.validate_on_submit())
     if form.validate_on_submit():
@@ -170,6 +189,43 @@ def register():
     return render_template('register.html', form=form)
 
 
+@app.route(
+    '/stories/<string:story_id>/like/',
+    methods=['GET'],
+    strict_slashes=False
+)
+@login_required
+def like_or_unlike_story(story_id=None):
+    """ Like a story
+
+        Attributes:
+            - story_id: id of the story
+
+    """
+
+    story = storage.get(Story, story_id)
+    if story is None:
+        abort(404)
+
+    for like in story.likes:
+        # user has already like the story
+        if like.liker.username == current_user.username:
+            # remove the like
+            storage.delete(like)
+            storage.save()
+            return jsonify({'status': 'unliked', 'likes_count': story.to_dict().get('likes_count')}), 201
+
+    # otherwise the user has not like a story
+    # like the story
+    like = Like(
+        story_id=story_id, user_id=current_user.id
+    )
+    storage.new(like)
+    storage.save()
+
+    return jsonify({'status': 'liked', 'likes_count': story.to_dict().get('likes_count')}), 201
+
+
 @app.route('/dummy', methods=['GET', 'POST'])
 @login_required
 def dummy_view():
@@ -184,6 +240,7 @@ def dummy_view():
                 upload_dir = os.path.join(app.config['UPLOAD_PATH'], current_user.get_id())
                 os.makedirs(upload_dir, exist_ok=True)
                 uploaded_file.save(os.path.join(upload_dir, filename))
+        print('OK!')
 
     try:
         print(os.path.join(app.config['UPLOAD_PATH'], current_user.get_id()))

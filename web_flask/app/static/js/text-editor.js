@@ -35,6 +35,10 @@ $(function () {
     const saveBlocks = () => {
         const blocks = [];
         $('.block').each(function() {
+            console.log((this).innerText)
+          if ($(this).val() == '' || $(this).val() == undefined) {
+            blocks.push({ content: '<br />'})
+          }
           blocks.push({ content: $(this).html() });
         });
 
@@ -297,19 +301,25 @@ $(function () {
     });
 
     // before leaving
-    $(window).on('unload', function() {
+    /*$(window).on('unload', function() {
         if (!isSubmitting) {
             delete_story()
-            localStorage.removeItem('story_id')
             navigator.sendBeacon('/log-leave', 'User left the page');
         }
-    });
+    });*/
+
 
     // save state of block when save is clicked
     $('.save-state').on('click', function () {
         $('.bg-shadow').css({'display': 'block'}).show('fast')
         $('.title-form').css({'display': 'flex'}).show('slow')
         $('.title-form').find('story-title-input').focus()
+    })
+
+    // enable and disable the button to let user submit a title for a story
+    $('.story-title-input').on('input', function () {
+        if ($(this).val().length > 8) $('.publish').removeAttr('disabled').removeClass('opacity-55')
+        else $('.publish').addClass('opacity-55').attr('disabled')
     })
 
     $('.publish').on('click', function (e) {

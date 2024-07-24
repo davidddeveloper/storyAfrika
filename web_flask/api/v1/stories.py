@@ -10,6 +10,7 @@ from web_flask.api.v1 import views
 from web_flask.api.v1.helper_func import create_uri, check_for_valid_json
 from web_flask.api.v1.helper_func import custom_login_required
 from models.story import Story
+from models.user import User
 from models.comment import Comment
 from models.like import Like
 from models.bookmark import Bookmark
@@ -60,15 +61,47 @@ def stories():
 
 
 @views.route(
-        '/following_stories', methods=['GET'], strict_slashes=False
+        'users/<string:user_id>/following_stories/',
+        methods=['GET'],
+        strict_slashes=False
 )
-@custom_login_required
-def following_stories():
+def following_stories(user_id=None):
     """ gets the stories from all the users self is following
         and own stories
 
     """
-    pass
+    user = storage.get(User, user_id)
+    if user is None:
+        abort(404)
+
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
+    
+    # query = storage._session.query(Story).where(Story.user_id == user.id)
+    query = user.following_stories
+    
+    pagination = Story.paginate(query, page, per_page)
+
+    stories = []
+    for story in pagination['items']:
+        is_liked = user.liked_story(story.id)
+        story_dictionary = story.to_dict()
+        story_dictionary['liked'] = is_liked
+
+        stories.append(story_dictionary)
+    
+    print(stories)
+    
+    return jsonify(
+        {
+            'total_items': pagination['total_items'],
+            'total_pages': pagination['total_pages'],
+            'page': pagination['page'],
+            'per_page': pagination['per_page'],
+            'stories': stories
+        }
+    ), 200
+
 
 @views.route(
     '/stories/<int:n>/',
@@ -122,11 +155,13 @@ def get_story(story_id=None):
             check_for_valid_json(story_json, ['title', 'text', 'user_id'])
 
         except Exception:
+            print('----03')
             return jsonify({"Error": 'not a valid json'}), 400
 
         else:
             for key, val in story_json.items():
-                if key not in ['id', 'created_at', 'updated_at', '__class__']:
+                print('----04', key)
+                if key in ['text', 'title']:
                     setattr(story, key, val)
 
             storage.save()
@@ -156,7 +191,6 @@ def delete_story(story_id=None):
     methods=['GET'],
     strict_slashes=False
 )
-@custom_login_required
 def like_or_unlike_story(story_id=None):
     """ Like a story
 
@@ -175,7 +209,7 @@ def like_or_unlike_story(story_id=None):
             # remove the like
             storage.delete(like)
             storage.save()
-            return jsonify({}), 201
+            return jsonify({'status': 'unliked'}), 201
 
     # otherwise the user has not like a story
     # like the story
@@ -185,7 +219,7 @@ def like_or_unlike_story(story_id=None):
     storage.new(like)
     storage.save()
 
-    return jsonify({}), 201
+    return jsonify({'status': 'liked'}), 201
 
 
 @views.route(
@@ -193,7 +227,6 @@ def like_or_unlike_story(story_id=None):
     methods=['POST'],
     strict_slashes=False
 )
-@custom_login_required
 def make_comment_on_story(story_id=None):
     """ Comment on a story
 
@@ -258,7 +291,6 @@ def get_comments_for_story(story_id=None):
     methods=['GET'],
     strict_slashes=False
 )
-@custom_login_required
 def bookmark_or_unbookmark_story(story_id=None):
     """ Bookmark a story
 
@@ -312,3 +344,44 @@ def get_bookmarks_for_story(story_id=None):
     return jsonify([
         bookmark.to_dict() for bookmark in bookmarks
     ])
+
+
+@views.route(
+    '/stories/<string:story_id>/likes',
+    methods=['GET'],
+    strict_slashes=False
+)
+def get_likes_for_story(story_id=None):
+    """ all bookmarks made on a particular story
+
+        Attributes:
+            - story_id: the uuid of the story
+
+    """
+    story = storage.get(Story, story_id)
+
+    if story is None:
+        abort(404)
+
+    likes = story.likes
+
+    return jsonify([
+        like.to_dict() for like in likes
+    ])
+
+
+@views.route(
+    'liked/<string:story_id>/by/<string:user_id>/',
+    methods=['GET'],
+    strict_slashes=False
+)
+def check_like(story_id, user_id):
+    """ check if a user has liked a story """
+    story = storage.get(Story, story_id)
+    user = storage.get(User, user_id)
+
+    if story or user is None:
+        abort(404)
+
+    return user.liked_story(story.id)
+

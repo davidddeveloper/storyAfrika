@@ -103,6 +103,20 @@ class User(BaseModel, ImageUpload, Base):
         """ map a given password against a password hash """
         return check_password_hash(self.password, password)
 
+    def liked_story(self, story_id):
+        from models.engine import storage
+        from models.like import Like
+
+        story_likes = sa.select(Story).join(Like).where(sa.and_(
+            Story.id == 'xyz',
+            User.id == self.id
+        ))
+
+        if storage._session.query(story_likes.subquery()).all() != []:
+            return True
+        else:
+            return False
+
     def follow(self, user):
          """
             follow a user

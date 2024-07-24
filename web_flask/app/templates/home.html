@@ -1,6 +1,7 @@
 {% extends 'root.html' %}
 
 {% block home %}
+{% include 'profile_card.html' %}
 <div class="flex relative overflow-hidden">
     <div class='px-3 sm:px-0 md:min-w-[300px] md:max-w-[800px] md:w-[568px] lg:min-w-[400px] lg:max-w-[900px] lg:w-[768px] container left-0 shrink-1 overflow-y-hidden mx-auto md:border-r-[1px] md:border-r-black md:px-10 lg:px-20 xl:w-[768px]'>
     <header class="container px-2 mx-auto flex flex-col-reverse sm:px-0 sm:flex sm:flex-row sm:justify-between sm:items-center mt-[72px] shrink-1">
@@ -31,7 +32,11 @@
             <h1 class="block sm:hidden text-2xl font-medium shrink-0">storyafrika</h1>
             <div class="flex items-center justify-center sm:pr-0 lg:pr-2">
                 <button class="hidden mr-5"><img src="/static/icons/search.svg" alt=""></button>
-                <button class="border-2 rounded-full w-[60px] h-[60px] shrink-0"><img class="w-full h-full rounded-full object-cover" src="https://picsum.photos/200/700" alt=""></button>
+                {% if current_user.avatar %}
+                <button class="home-profile-img border-2 rounded-full w-[60px] h-[60px] shrink-0"><img class="w-full h-full rounded-full object-cover" src="{{ url_for('upload', filename=current_user.avatar) }}" alt=""></button>
+                {% else %}
+                <button class="home-profile-img border-2 rounded-full w-[60px] h-[60px] shrink-0"><img class="w-full h-full rounded-full object-cover" src="/static/images/default-profile-image.png" alt=""></button>
+                {% endif %}
             </div>
         </div>
 

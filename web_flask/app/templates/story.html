@@ -31,7 +31,11 @@
         </div>
         <section class="content container mx-auto">
             <div class="pl-[30px] pr-[30px] h-[320px] w-full mb-[50px]">
-                <img class="w-full h-full object-cover" src="https://unsplash.it/1000" alt="">
+                {% if story.image %}
+                <img class='w-full h-full object-scale-down' src="{{ url_for('upload', filename=story.image )}}" alt="" srcset="">
+            {% else %}
+                <img class='w-full h-full object-scale-down' src="https://unsplash.it/500" alt="" srcset="">
+            {% endif %}
             </div>
             <div class="pl-[30px] pr-[30px] story-story-text text-lightgray" data-story_id="{{story.id}}">
                 <p class="text-xl">{{story.text}}</p>

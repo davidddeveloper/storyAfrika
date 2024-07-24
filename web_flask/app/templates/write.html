@@ -8,13 +8,26 @@
     <link rel="stylesheet" href="/static/jquery-ui.css">
 
 </head>
-<header class="mt-[60px] container mx-auto flex justify-between items-center">
+<header class="mt-[60px] container mx-auto relative flex justify-between items-center">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+      <ul class="ml-5 float right absolute">
+        {% for message in messages %}
+        <li class="bg-lightblue p-1 mt-2 rounded-sm text-white">{{message}}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    {% endwith %}
     <div class="flex gap-5">
         <h1 class="text-xl"><a href="{{ url_for('home')}}">storyafrika</a></h1>
         <button class="save-state">Publish</button>
     </div>
     <div class="rounded-full w-[60px] h-[60px] border">
-        <img class="rounded-full w-full h-full object-cover" src="https://picsum.photos/200/400" alt="" srcset="">
+        {% if current_user.avatar %}
+        <img class="rounded-full w-full h-full object-cover" src="{{ url_for('upload', filename=current_user.avatar) }}" alt="" srcset="">
+        {% else %}
+        <img class="rounded-full w-full h-full object-cover" src="/static/images/default-profile-image.png" alt="" srcset="">
+        {% endif %}
     </div>
 </header>
 <main class="container mx-auto relative">
@@ -28,7 +41,7 @@
             <input id="title" type="text" class="border story-title-input pl-1 py-1 border-lightblue focus:outline-lightblue" autofocus>
             <div class="self-end flex items-center gap-3">
                 <p class="text-sm continue-editing hover:cursor-pointer">continue editing</p>
-                <button class="publish self-end bg-lightblue py-[5px] px-[10px] rounded-md text-white" type="submit" value="Publish">Publish</button>
+                <button class="publish opacity-55 self-end bg-lightblue py-[5px] px-[10px] rounded-md text-white" type="submit" value="Publish" disabled>Publish</button>
             </div>
         </form>
     </div>

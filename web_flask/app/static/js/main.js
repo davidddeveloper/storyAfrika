@@ -1,5 +1,17 @@
 $(function(){
+    const get_current_user = () => {
+        let $current_user_id = $('body').data('current_user_id')
+        let $current_user = null
+        $.get(`http://127.0.0.1:4000/api/v1/users/${$current_user_id}/`, function (response, status) {
+                if (status == 'success') {
+                    $current_user = response
+                    console.log($current_user)
+                }
+            }
+        );
 
+        return $current_user
+    }
     // creating the carousel
     const slider = $('.slider');
     const sliderItems = $('.slider-item');
@@ -76,15 +88,19 @@ $(function(){
                     <p class="shrink-0 mt-[10px] w-full max-w-[400px] overflow-x-hidden whitespace-nowrap overflow-ellipsis sm:w-[250px] md:w-[400px]">${loadTextFormat(story.text)}</p>
                 </div>
                 <div class="story-image self-center w-1/4">
-                    <img class='w-full h-3/4 object-cover' src="https://unsplash.it/500" alt="" srcset="">
+                    <img class='w-full h-3/4 object-cover' src="/uploads/${story.image}" alt="" srcset="">
                 </div>
             </div>
             <div class="px-3 mt-[15px] flex items-center justify-between">
                 <div class="flex items-center">
                     <div class="flex items-center">
-                        <p class="mt-3">${story.likes_count}</p>
-                        <button class="like-btn"><img class="block active:bg-lightblue" src="/static/icons/like.svg" alt=""></button>
-                    </div>
+                        <p class="mt-3 like-count">${story.likes_count}</p>
+                        ${
+                            story.liked == false ? <button class="like-btn liked-btn hidden"><img class="block active:bg-lightblue" src="/static/icons/liked.svg" alt=""/></button> : <button class="like-btn like-btn-trans"><img class="block active:bg-lightblue" src="/static/icons/like.svg" alt=""/></button>
+                        }
+                        
+                        <button class="like-btn liked-btn hidden"><img class="block active:bg-lightblue" src="/static/icons/liked.svg" alt=""></button>
+                        </div>
                     <div class="inline-block ml-5">
                         <p class="text-xs">${story.read_time} min read</p>
                     </div>
@@ -122,7 +138,6 @@ $(function(){
         let $url = `http://127.0.0.1:4000/api/v1/users/${$current_user_id}/following_stories?page=${page}&per_page=${perPage}`
         $.get($url, function ($response, $status, $error) {
             if ($status == 'success') {
-                console.log($response)
                 $response.stories.forEach($story_data => {
                     $stories_container.append($story($story_data))
                 })
@@ -145,13 +160,27 @@ $(function(){
 
     function handleScroll() {
         if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-            console.log("Yeah!")
+            //if (localStorage.getItem('story_id')) delete_story()
             fetchStories();
         }
     }
 
     $('.stories-container').scroll(handleScroll);
     fetchStories();
+
+    // delete temporary story
+    // function to delete a story
+    const delete_story = () => {
+        const story_id = localStorage.getItem('story_id')
+        $.ajax({
+            type: 'DELETE',
+            url: `http://127.0.0.1:4000/api/v1/stories/${story_id}/`,
+            success: function (response) {
+                console.log(response)
+                localStorage.removeItem('story_id')
+            }
+        })
+    }
 
     const story_and_user_id = ($story) => {
         let current_user_id = $('body').data('current_user_id')
@@ -161,24 +190,41 @@ $(function(){
     }
     // interactions - like bookmark
     $('body').on('click', '.like-btn', (e) => {
+        let $target = $(e.target)
         let $story = $(e.target.closest('.story-card'))
         let [$current_user_id, $story_id] = story_and_user_id($story)
 
         // like the story
-        $.get(`http://127.0.0.1:4000/api/v1/stories/${$story_id}/like/`, function (response, status) {
+        $.get(`http://127.0.0.1:5000/stories/${$story_id}/like/`, function (response, status) {
             if (status == 'success') {
-                console.log(response)
+                // update like count and btn
+                $target = $target.closest('button')
+                let $like_count = $story.find('.like-count')
+                console.log(response.likes_count)
+                $like_count.text(response.likes_count)  // update like count
+
+                // update btn
+                if ($target.hasClass('liked-btn')) {
+                    $target.hide()
+                    $story.find('.like-btn-trans').show()
+                } else if ($target.hasClass('like-btn-trans')) {
+                    $target.hide()
+                    $story.find('.liked-btn').show()
+                }
+
+
             }
         })
-    //login user profile card functionality
+    })
+    //login user profile card functionality - change avatar/image
     let $profile_image_container = $('.change-img-button-container');
     $profile_image_container.on('mouseenter', () => {
-        $(this).find('.profile-image-btn-change').show(300)
+        $(this).find('.image-btn-change').show(300)
     }).on('mouseleave', () => {
-        $(this).find('.profile-image-btn-change').hide(300)
+        $(this).find('.image-btn-change').hide(300)
     })
 
-    let $change_profile_image_btn = $('.profile-image-btn-change')
+    let $change_profile_image_btn = $('.image-btn-change')
     $change_profile_image_btn.on('click', () => {
         $(this).find('#file-input-field').click()
 
@@ -189,6 +235,7 @@ $(function(){
         if (file) {
             let form_data = new FormData()
             form_data.append('file', file)
+            if (localStorage.getItem('story_id')) form_data.append('story_id', localStorage.getItem('story_id'))
             //form_data.append('csrf_token', $('#csrfToken').val())
 
             $.ajax({
@@ -198,10 +245,12 @@ $(function(){
                 contentType: false,
                 processData: false,
                 success: function(response) {
-                    console.log('Success:', response);
+                    //console.log('Success:', response);
+                    $('#story-image').attr('src', `/uploads/${file.name}`)
                 },
                 error: function(error) {
-                    console.error('Error:', error);
+                    //console.error('Error:', error);
+                    window.location.reload()
                 }
             })
         }
@@ -218,4 +267,6 @@ $(function(){
         $('.profile-card-shadow').hide(200)
         $('.profile-card').css({'display': 'hidden', 'top': '-50%'}).slideUp(200)
     })
+
+    console.log(get_current_user())
 })

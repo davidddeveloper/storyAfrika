@@ -25,6 +25,9 @@ user1 = User(
 with two decades of experience'
 )
 
+user1.set_password(user1.password)
+user1.image = 'https://picsum/700/200'
+
 user2 = User(
     username='paul',
     email='paul@gmail.com',
@@ -34,6 +37,10 @@ user2 = User(
     about='I like to share the struggles \
 I"m personally face in the business industry'
 )
+
+user2.set_password(user2.password)
+user2.image = 'https://picsum/500/200'
+
 
 user3 = User(
     username='alusine',
@@ -45,6 +52,9 @@ user3 = User(
 Education have transform the lives of my student'
 )
 
+user3.set_password(user3.password)
+user3.image = 'https://picsum/300/500'
+
 user4 = User(
     username='alikodangote',
     email='alikodangote@gmail.com',
@@ -52,6 +62,10 @@ user4 = User(
     fullname='Aliko Dangote',
     short_bio='Enterpreneur | Successful Business man'
 )
+
+user4.set_password(user4.password)
+user4.image = 'https://picsum/500/400'
+
 
 topic1 = Topic(
     name='Education',

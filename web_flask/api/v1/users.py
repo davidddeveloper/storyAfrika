@@ -198,7 +198,7 @@ def get_user_followers(user_id=None):
     if user is None:
         abort(404)
 
-    followers = user.followers
+    followers = storage._session.scalars(user.followers.select()).all()
 
     return jsonify([
         follower.to_dict() for follower in followers

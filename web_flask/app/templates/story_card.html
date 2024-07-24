@@ -6,7 +6,11 @@
             <p class="mt-[10px] w-[400px] overflow-x-hidden whitespace-nowrap overflow-ellipsis">{{story.text}}</p>
         </div>
         <div class="story-image self-center">
-            <img class='w-full h-full' src="https://unsplash.it/500" alt="" srcset="">
+            {% if story.image %}
+                <img class='w-full h-full' src="{{ url_for('upload', filename=story.image )}}" alt="" srcset="">
+            {% else %}
+                <img class='w-full h-full' src="https://unsplash.it/500" alt="" srcset="">
+            {% endif %}
         </div>
     </div>
     <div class="px-3 mt-[15px] flex items-center justify-between">

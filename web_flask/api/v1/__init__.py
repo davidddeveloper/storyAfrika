@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, redirect
 from models.engine import storage
 
 views = Blueprint('views', __name__, url_prefix='/api/v1')

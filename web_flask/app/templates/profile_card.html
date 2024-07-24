@@ -29,7 +29,11 @@
         {{ form.submit(class="text-white px-2 py-1 rounded-sm bg-lightblue") }}</br></br>
     </form method="post" action="">
     <div class="self-start">
-        <button class="change-img-button-container border-2 rounded-full w-[130px] h-[130px] relative overflow-hidden"><img class="w-full h-full rounded-full object-cover" src={{ url_for('upload', filename=current_user.avatar) }} alt=""> <div class="profile-image-btn-change hidden text-xs absolute inset-0 p-1 h-[25px] top-[45%] left-[20%] bg-white text-lightgray z-10 cursor-pointer">Change image</div></button>
+        {% if current_user.avatar %}
+        <button class="change-img-button-container border-2 rounded-full w-[130px] h-[130px] relative overflow-hidden"><img class="w-full h-full rounded-full object-cover" src="{{ url_for('upload', filename=current_user.avatar) }}" alt=""> <div class="image-btn-change hidden text-xs absolute inset-0 p-1 h-[25px] top-[45%] left-[20%] bg-white text-lightgray z-10 cursor-pointer">Change image</div></button>
+        {% else %}
+        <button class="change-img-button-container border-2 rounded-full w-[130px] h-[130px] relative overflow-hidden"><img class="w-full h-full rounded-full object-cover" src="/static/images/default-profile-image.png" alt=""> <div class="image-btn-change hidden text-xs absolute inset-0 p-1 h-[25px] top-[45%] left-[20%] bg-white text-lightgray z-10 cursor-pointer">Change image</div></button>
+        {% endif %}
         <input id="file-input-field" class="hidden" type="file" accept="image/*">
     </div>
 </div>
