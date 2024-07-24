@@ -121,7 +121,7 @@ def login():
         print(form.username.data)
         print(form.email.data)
         print(form.password.data)
-        print('csrf token from form', form.csrf_token.data)
+        #print('csrf token from form', form.csrf_token.data)
         print('csrf token from session', dict(session))
     print(form.validate_on_submit())
     if form.validate_on_submit():
