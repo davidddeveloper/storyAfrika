@@ -21,12 +21,12 @@ cookiecutter==2.5.0
 decorator==4.4.2
 dill==0.3.7
 distro==1.9.0
-Django==5.0
+
 django-browser-reload==1.12.1
 django-ckeditor==6.7.1
 django-js-asset==2.2.0
 django-rest-framework==0.1.0
-django-tailwind==3.8.0
+
 djangorestframework==3.14.0
 dnspython==2.6.1
 email_validator==2.2.0
@@ -39,7 +39,7 @@ frozenlist==1.4.1
 google-ai-generativelanguage==0.4.0
 google-api-core==2.18.0
 google-auth==2.29.0
-google-generativeai==0.4.1
+
 googleapis-common-protos==1.63.0
 gpt4all==2.1.0
 greenlet==3.0.3
@@ -126,44 +126,3 @@ wheel==0.43.0
 wikipedia==1.4.0
 WTForms==3.1.2
 yarl==1.9.4
-
-
-
-['__annotations__', '__bool__', '__class__', '__class_getitem__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq_
-_', '__format__', '__ge__', '__getattribute__', '__getstate__', '__gt__', '__hash__', '__init__', '__init_subclass__', '_
-_invert__', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__orig_bases__', '__parameters__', '__reduce__', '__r
-educe_ex__', '__repr__', '__setattr__', '__sizeof__', '__slots__', '__str__', '__subclasshook__', '__visit_name__', '__we
-akref__', '_add_context_option', '_all_selected_columns', '_annotate', '_annotations', '_annotations_cache_key', '_assert
-_no_memoizations', '_attributes', '_auto_correlate', '_cache_key_traversal', '_clone', '_clone_annotations_traverse_inter
-nals', '_cloned_set', '_compile_options', '_compile_state_factory', '_compile_state_plugin', '_compile_w_cache', '_compil
-er', '_compiler_dispatch', '_constructor', '_copy_internals', '_correlate', '_correlate_except', '_create_raw_select', '_
-de_clone', '_deannotate', '_distinct', '_distinct_on', '_effective_plugin_target', '_ensure_disambiguated_names', '_execu
-table_traverse_internals', '_execute_on_connection', '_execute_on_scalar', '_execution_options', '_fetch_clause', '_fetch
-_clause_options', '_filter_by_zero', '_for_update_arg', '_from_obj', '_from_objects', '_gen_annotations_cache_key', '_gen
-_cache_key', '_gen_static_annotations_cache_key', '_generate', '_generate_cache_attrs', '_generate_cache_key', '_generate
-_cache_key_for_object', '_generate_columns_plus_names', '_generate_compiler_dispatch', '_generate_fromclause_column_proxi
-es', '_generated_cache_key_traversal', '_get_embedded_bindparams', '_group_by_clause', '_group_by_clauses', '_has_ctes_tr
-averse_internals', '_has_hints_traverse_internals', '_has_prefixes_traverse_internals', '_has_row_limiting_clause', '_has
-_suffixes_traverse_internals', '_having_criteria', '_hierarchy_supports_caching', '_hints', '_implicit_subquery', '_indep
-endent_ctes', '_independent_ctes_opts', '_is_bind_parameter', '_is_clause_list', '_is_clone_of', '_is_column_element', '_
-is_default_generator', '_is_from_clause', '_is_from_container', '_is_has_cache_key', '_is_immutable', '_is_keyed_column_e
-lement', '_is_lambda_element', '_is_lateral', '_is_returns_rows', '_is_select_base', '_is_select_container', '_is_select_
-statement', '_is_singleton_constant', '_is_star', '_is_table', '_is_text_clause', '_is_textual', '_iterate_from_elements'
-, '_label_style', '_limit', '_limit_clause', '_memoized_keys', '_memoized_select_entities', '_needs_parens_for_grouping',
- '_negate', '_negate_in_binary', '_offset', '_offset_clause', '_offset_or_limit_clause', '_offset_or_limit_clause_asint',
- '_order_by_clause', '_order_by_clauses', '_order_by_label_element', '_original_compiler_dispatch', '_prefixes', '_propag
-ate_attrs', '_raw_columns', '_refresh_for_new_column', '_replace_params', '_reset_memoizations', '_role_name', '_scalar_t
-ype', '_set_compile_options', '_set_entities', '_set_memoized_attribute', '_set_propagate_attrs', '_setup_joins', '_simpl
-e_int_clause', '_statement_hints', '_suffixes', '_traverse_internals', '_ungroup', '_update_compile_options', '_where_cri
-teria', '_whereclause', '_with_annotations', '_with_binary_element_type', '_with_context_options', '_with_hint', '_with_o
-ptions', 'add_columns', 'add_cte', 'alias', 'allows_lambda', 'as_scalar', 'c', 'column', 'column_descriptions', 'columns'
-, 'columns_clause_froms', 'compare', 'compile', 'correlate', 'correlate_except', 'corresponding_column', 'cte', 'descript
-ion', 'distinct', 'entity_namespace', 'except_', 'except_all', 'execution_options', 'exists', 'exported_columns', 'fetch'
-, 'filter', 'filter_by', 'from_statement', 'froms', 'get_children', 'get_execution_options', 'get_final_froms', 'get_labe
-l_style', 'group_by', 'having', 'inherit_cache', 'inner_columns', 'intersect', 'intersect_all', 'is_clause_element', 'is_
-delete', 'is_derived_from', 'is_dml', 'is_insert', 'is_select', 'is_selectable', 'is_text', 'is_update', 'join', 'join_fr
-om', 'label', 'lateral', 'limit', 'memoized_attribute', 'memoized_instancemethod', 'offset', 'options', 'order_by', 'oute
-rjoin', 'outerjoin_from', 'params', 'prefix_with', 'reduce_columns', 'replace_selectable', 'scalar_subquery', 'select', '
-select_from', 'selectable', 'selected_columns', 'self_group', 'set_label_style', 'slice', 'stringify_dialect', 'subquery'
-, 'suffix_with', 'supports_execution', 'union', 'union_all', 'unique_params', 'uses_inspection', 'where', 'whereclause',
-'with_for_update', 'with_hint', 'with_only_columns', 'with_statement_hint']

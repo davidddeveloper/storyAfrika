@@ -22,6 +22,7 @@ from web_flask.api.v1 import storage
     strict_slashes=False,
     methods=['GET', 'POST']
 )
+@login_required
 def stories():
     """ Get all stories or creates a story """
 
@@ -65,6 +66,7 @@ def stories():
         methods=['GET'],
         strict_slashes=False
 )
+@login_required
 def following_stories(user_id=None):
     """ gets the stories from all the users self is following
         and own stories
@@ -106,6 +108,7 @@ def following_stories(user_id=None):
     strict_slashes=False,
     methods=['GET', 'POST']
 )
+@login_required
 def limit_stories(n=None):
     """ Limits the number of stories to get
 
@@ -141,6 +144,7 @@ def limit_stories(n=None):
     methods=['GET', 'PUT'],
     strict_slashes=False
 )
+@login_required
 def get_story(story_id=None):
     """ Gets a specific story or update an existing one """
     story = storage.get(Story, story_id)
@@ -172,6 +176,7 @@ def get_story(story_id=None):
     methods=['DELETE'],
     strict_slashes=False
 )
+@login_required
 def delete_story(story_id=None):
     """ Deletes a story """
     story = storage.get(Story, story_id)
@@ -189,6 +194,7 @@ def delete_story(story_id=None):
     methods=['GET'],
     strict_slashes=False
 )
+@login_required
 def like_or_unlike_story(story_id=None):
     """ Like a story
 
@@ -225,6 +231,7 @@ def like_or_unlike_story(story_id=None):
     methods=['POST'],
     strict_slashes=False
 )
+@login_required
 def make_comment_on_story(story_id=None):
     """ Comment on a story
 
@@ -265,6 +272,7 @@ def make_comment_on_story(story_id=None):
     methods=['GET'],
     strict_slashes=False
 )
+@login_required
 def get_comments_for_story(story_id=None):
     """ all comments made on a particular story
 
@@ -289,6 +297,7 @@ def get_comments_for_story(story_id=None):
     methods=['GET'],
     strict_slashes=False
 )
+@login_required
 def bookmark_or_unbookmark_story(story_id=None):
     """ Bookmark a story
 
@@ -325,6 +334,7 @@ def bookmark_or_unbookmark_story(story_id=None):
     methods=['GET'],
     strict_slashes=False
 )
+@login_required
 def get_bookmarks_for_story(story_id=None):
     """ all bookmarks made on a particular story
 
@@ -349,6 +359,7 @@ def get_bookmarks_for_story(story_id=None):
     methods=['GET'],
     strict_slashes=False
 )
+@login_required
 def get_likes_for_story(story_id=None):
     """ all bookmarks made on a particular story
 
@@ -373,6 +384,7 @@ def get_likes_for_story(story_id=None):
     methods=['GET'],
     strict_slashes=False
 )
+@login_required
 def check_like(story_id, user_id):
     """ check if a user has liked a story """
     story = storage.get(Story, story_id)
