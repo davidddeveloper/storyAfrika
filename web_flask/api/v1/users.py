@@ -18,6 +18,7 @@ from web_flask.api.v1 import storage
     strict_slashes=False,
     methods=['GET', 'POST']
 )
+@login_required
 def users():
     """ Get all users or creates a user """
 
@@ -60,6 +61,7 @@ def users():
     strict_slashes=False,
     methods=['GET', 'POST']
 )
+@login_required
 def limit_users(n=None):
     """ Limits the number of users to get
 
@@ -95,6 +97,7 @@ def limit_users(n=None):
     methods=['GET', 'PUT'],
     strict_slashes=False
 )
+@login_required
 def get_user(user_id=None):
     """ Gets a specific user or update an existing one """
     user = storage.get(User, user_id)
@@ -124,6 +127,7 @@ def get_user(user_id=None):
     methods=['GET'],
     strict_slashes=False
 )
+@login_required
 def get_story_of_user(user_id=None):
     user = storage.get(User, user_id)
 
@@ -138,6 +142,7 @@ def get_story_of_user(user_id=None):
     methods=['GET'],
     strict_slashes=False
 )
+@login_required
 def limit_story_of_user(user_id=None, n=None):
     """ Limits the number of stories to get for a particular user
 
@@ -175,6 +180,7 @@ def limit_story_of_user(user_id=None, n=None):
     methods=['DELETE'],
     strict_slashes=False
 )
+@login_required
 def delete_user(user_id=None):
     """ Deletes a user """
     user = storage.get(User, user_id)
@@ -192,6 +198,7 @@ def delete_user(user_id=None):
     methods=['GET'],
     strict_slashes=False
 )
+@login_required
 def get_user_followers(user_id=None):
     user = storage.get(User, user_id)
 
@@ -210,6 +217,7 @@ def get_user_followers(user_id=None):
     methods=['GET'],
     strict_slashes=False
 )
+@login_required
 def get_user_following(user_id=None):
     user = storage.get(User, user_id)
 
@@ -228,7 +236,7 @@ def get_user_following(user_id=None):
     methods=['POST'],
     strict_slashes=False
 )
-@custom_login_required
+@login_required
 def follow_or_unfollow_user(user_id=None):
     """ Follow or unfollow a user """
     user = storage.get(User, user_id)
