@@ -9,7 +9,7 @@
 
 </head>
 <header class="mt-[60px] container mx-auto relative flex justify-between items-center">
-    {% with messages = get_flashed_messages() %}
+    {#{% with messages = get_flashed_messages() %}
       {% if messages %}
       <ul class="ml-5 float right absolute">
         {% for message in messages %}
@@ -17,7 +17,7 @@
         {% endfor %}
       </ul>
       {% endif %}
-    {% endwith %}
+    {% endwith %}#}
     <div class="flex gap-5">
         <h1 class="text-xl"><a href="{{ url_for('home')}}">storyafrika</a></h1>
         <button class="save-state">Publish</button>

@@ -3,6 +3,7 @@
         <div class="image-btn-change hidden text-xs absolute p-1 bg-white text-lightgray z-20 cursor-pointer">Choose image</div>
         <img id="story-image" class="w-full h-full object-cover" src="https://picsum.photos/700/200" alt="">
         <input id="file-input-field" class="hidden" type="file" accept="image/*">
+        <input id="csrfToken" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
     </div>
     <div contenteditable=true autocapitalize="on" class="block"><span class="handle">⇅</span>The quick brown fox jumped over the lazy dog</div>
     <div contenteditable=true class="block"><span class="handle">⇅</span></div>

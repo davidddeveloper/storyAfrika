@@ -237,7 +237,7 @@ $(function(){
             let form_data = new FormData()
             form_data.append('file', file)
             if (localStorage.getItem('story_id')) form_data.append('story_id', localStorage.getItem('story_id'))
-            //form_data.append('csrf_token', $('#csrfToken').val())
+            form_data.append('csrf_token', $('#csrfToken').val())
 
             $.ajax({
                 url: '',
@@ -248,7 +248,7 @@ $(function(){
                 success: function(response) {
                     //console.log('Success:', response);
                     $('#story-image').attr('src', `/uploads/${file.name}`)
-                    window.location.reload()
+                    if (response != '/story/write/') window.location.reload()
                 },
                 error: function(error) {
                     //console.error('Error:', error);
