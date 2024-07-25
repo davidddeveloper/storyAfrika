@@ -17,7 +17,6 @@ import redis
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY') or 'SOME RANDOM VALUE'
-CSRFProtect(app)
 #app.config['SESSION_COOKIE_NAME'] = 'mysession'
 #app.config['SESSION_COOKIE_DOMAIN'] = 'localhost'
 #app.config['SESSION_COOKIE_SAMESITE'] = 'None'
@@ -28,13 +27,14 @@ app.config['SESSION_TYPE'] = 'redis'
 app.config['SESSION_PERMANENT'] = False
 app.config['SESSION_USE_SIGNER'] = True
 app.config['SESSION_REDIS'] = redis.from_url('redis://localhost:6379')
-Session(app)
 
 app.register_blueprint(views)
 
 login = LoginManager(app)
 login.login_view = 'login'
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app, resources={r"/*": {"origins": "https://stories.storyafrika.live"}})
+
+Session(app)
 
 
 @login.user_loader

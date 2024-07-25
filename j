@@ -5,7 +5,7 @@ import redis
 class Config:
     SECRET_KEY = os.getenv('SECRET_KEY') or 'SOME RANDOM VALUE'
     #SESSION_COOKIE_NAME = 'mysession'
-    SESSION_COOKIE_DOMAIN = 'stories.storyafrika.live'
+    #SESSION_COOKIE_DOMAIN = 'stories.storyafrika.live'
     #SESSION_COOKIE_HTTPONLY = True
     #SESSION_COOKIE_SAMESITE = 'Lax'
     #SESSION_COOKIE_SECURE = True

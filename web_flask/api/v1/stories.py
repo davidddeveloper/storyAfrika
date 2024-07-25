@@ -27,6 +27,7 @@ def stories():
     """ Get all stories or creates a story """
 
     if request.method == 'POST':
+        print(request.get_json())
         # checks for valid json
         try:
             story_json = request.get_json()
@@ -91,6 +92,8 @@ def following_stories(user_id=None):
         story_dictionary['liked'] = is_liked
 
         stories.append(story_dictionary)
+
+    print(stories)
     
     return jsonify(
         {
