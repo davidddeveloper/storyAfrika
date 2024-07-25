@@ -246,12 +246,12 @@ $(function(){
                 contentType: false,
                 processData: false,
                 success: function(response) {
-                    //console.log('Success:', response);
+                    console.log('Success:', response);
                     $('#story-image').attr('src', `/uploads/${file.name.replaceAll(" ", "_")}`)
                     if (!response.includes('/story/write/')) window.location.reload()
                 },
                 error: function(error) {
-                    //console.error('Error:', error);
+                    console.error('Error:', error);
                     //window.location.reload()
                 }
             })
