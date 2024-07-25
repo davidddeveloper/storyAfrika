@@ -87,19 +87,25 @@ def story(story_id=None):
 )
 def write():
     if request.method == 'POST':
+        print('001')
         story = storage.get(Story, request.form.get('story_id'))
+        print('002')
         if request.files:
             try:
                 # save the file
+                print('003')
                 path_2_file = story.image_upload(request.files['file'])
+                print('004')
             except Exception:
                 path_2_file = None
-
+            print('005')
             if path_2_file is not None:
+                print('006')
                 story.image = path_2_file
                 storage.save()
                 print(story.image)
             else:
+                print('007')
                 flash("Please try an image with a different format.")
                 return url_for('write')
             return url_for('write', story=story)

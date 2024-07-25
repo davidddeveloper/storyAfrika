@@ -17,6 +17,7 @@ import redis
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY') or 'SOME RANDOM VALUE'
+#CSRFProtect(app)
 #app.config['SESSION_COOKIE_NAME'] = 'mysession'
 #app.config['SESSION_COOKIE_DOMAIN'] = 'localhost'
 #app.config['SESSION_COOKIE_SAMESITE'] = 'None'

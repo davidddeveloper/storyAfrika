@@ -47,7 +47,7 @@ $(function(){
             JSON.parse(response.text).forEach(block => {
                 content = content + block.content;
             })
-            let $jcontent = $(`<div>${content}</div>`.replace("⇅", "").replace("⇅", "").replace("⇅⇅", "")).text();
+            let $jcontent = $(`<div>${content}</div>`.replaceAll("⇅", "")).text();
             $story_text_container.html(`${$jcontent}`)
         }
     })
@@ -161,7 +161,7 @@ $(function(){
 
     function handleScroll() {
         if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-            //if (localStorage.getItem('story_id')) delete_story()
+            if (localStorage.getItem('story_id')) delete_story()
             fetchStories();
         }
     }
@@ -247,12 +247,12 @@ $(function(){
                 processData: false,
                 success: function(response) {
                     //console.log('Success:', response);
-                    $('#story-image').attr('src', `/uploads/${file.name}`)
-                    if (response != '/story/write/') window.location.reload()
+                    $('#story-image').attr('src', `/uploads/${file.name.replaceAll(" ", "_")}`)
+                    if (!response.includes('/story/write/')) window.location.reload()
                 },
                 error: function(error) {
                     //console.error('Error:', error);
-                    window.location.reload()
+                    //window.location.reload()
                 }
             })
         }

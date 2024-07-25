@@ -328,7 +328,7 @@ $(function () {
         saveBlocks()
         localStorage.removeItem('story_id');
         isSubmitting = true
-        window.location.replace(`http://127.0.0.1:5000/story/${story_id}`);
+        window.location.replace(`/story/${story_id}`);
 
     })
 
