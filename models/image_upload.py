@@ -8,7 +8,7 @@ from werkzeug.utils import secure_filename
 import os
 import imghdr
 
-UPLOAD_EXTENSIONS = ['.jpg', '.png', '.jpeg', '.gif', '.svg', '.webp']
+UPLOAD_EXTENSIONS = ['.jpg', '.png', '.jpeg', '.gif', '.svg', '.webp', 'heif']
 UPLOAD_PATH = os.path.join(os.path.dirname(__file__), '..', 'uploads')
 
 

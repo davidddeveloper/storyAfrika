@@ -46,6 +46,9 @@ class DBStorage:
     def __init__(self):
         self.__engine = create_engine(
             f'mysql+mysqlconnector://{username}:{password}@{host}/{db_name}',
+            pool_size=20,
+            max_overflow=0,
+            pool_recycle=1800,
             echo=True
         )
 
