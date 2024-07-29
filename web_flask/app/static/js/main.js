@@ -2,7 +2,7 @@ $(function(){
     const get_current_user = () => {
         let $current_user_id = $('body').data('current_user_id')
         let $current_user = null
-        $.get(`/api/v1/users/${$current_user_id}/`, function (response, status) {
+        $.get(`http://127.0.0.1:4000/api/v1/users/${$current_user_id}/`, function (response, status) {
                 if (status == 'success') {
                     $current_user = response
                     console.log($current_user)
@@ -17,31 +17,111 @@ $(function(){
     const sliderItems = $('.slider-item');
     const itemWidth = sliderItems.outerWidth(true); // includes margin
     const totalItems = sliderItems.length;
-    let currentIndex = 0;
+    let startX = 0;
+    let isDragging = false;
 
-    function updateSliderPosition() {
-        slider.css('transform', `translateX(${-currentIndex * itemWidth}px)`);
+    function updateSliderPosition($current_slider) {
+        $current_slider.css('transform', `translateX(${-$current_slider.data('current_index') * itemWidth}px)`); 
     }
 
-    $('.next').on('click', function() {
-        if (currentIndex < totalItems - 1) {
-            currentIndex++;
-            updateSliderPosition();
+    function currentIndex ($current_slider) {
+        return Number($($current_slider).data('current_index'))
+    }
+
+    function incrementCurrentIndex ($current_slider) {
+        $($current_slider).data('current_index', $($current_slider).data('current_index') + 1);
+    }
+
+    function decrementCurrentIndex ($current_slider) {
+        $($current_slider).data('current_index', $($current_slider).data('current_index') - 1);
+    }
+
+    $('.next').on('click', function(e) {
+        let $current_slider = $(this).parent().find('.slider')
+        if (currentIndex($current_slider) < totalItems - 1) {
+            incrementCurrentIndex($current_slider)
+            updateSliderPosition($current_slider)
         }
     });
 
-    $('.prev').on('click', function() {
-        if (currentIndex > 0) {
-            currentIndex--;
-            updateSliderPosition();
+    $('.prev').on('click', function(e) {
+        let $current_slider = $(this).parent().find('.slider')
+        if (currentIndex($current_slider) > 0) {
+            decrementCurrentIndex($current_slider)
+            updateSliderPosition($current_slider)
         }
     });
+
+    slider.on('touchstart', function (e) { 
+        startX = e.originalEvent.touches[0].pageX // horizantal position of first touch in touches array of touch objects
+        isDragging = true
+    })
+
+    slider.on('touchmove', function (e) {
+        if (isDragging) {
+            const currentX = e.originalEvent.touches[0].pageX
+            const diff = startX - currentX
+
+            if (diff > 50) { //swips left
+                if (currentIndex($(this)) < totalItems - 1) {
+                    incrementCurrentIndex($(this)) // increment current index
+                    updateSliderPosition($(this))
+                }
+                isDragging = false
+            } else if (diff < -50) { // swips right
+                if (currentIndex($(this)) > 0) {
+                    decrementCurrentIndex($(this)) // decrement current index
+                    updateSliderPosition($(this))
+                }
+                isDragging = false
+            }
+        }
+    })
+
+    slider.on('touchend', function() {
+        isDragging = false;
+    });
+
+    slider.on('mousedown', function(e) {
+        startX = e.pageX
+        isDragging = true
+    })
+
+    slider.on('mousemove', function(e) {
+        if (isDragging) {
+            const currentX = e.pageX
+            const diff = startX - currentX
+            slider.css({'user-select': 'none'})
+
+            if (diff > 50) { // drag left
+                if (currentIndex($(this)) < totalItems - 1) {
+                    incrementCurrentIndex($(this))
+                    updateSliderPosition($(this))
+                }
+                isDragging = false
+            } else if (diff < -50) { // drag right
+                if (currentIndex($(this)) > 0) {
+                    decrementCurrentIndex($(this))
+                    updateSliderPosition($(this))
+                }
+                isDragging = false
+            }
+        }
+    })
+
+    slider.on('mouseup', function () {
+        isDragging = false; slider.removeClass('dragging')
+    })
+
+    slider.on('mouseleave', function () {
+        isDragging = false; slider.removeClass('dragging')
+    })
 
     // load the state of a story text
     let $story_text_container = $('.story-story-text')
     const $story_id = $story_text_container.data('story_id')
     
-    $.get(`/api/v1/stories/${$story_id}`, function (response, status) {
+    $.get(`http://127.0.0.1:4000/api/v1/stories/${$story_id}`, function (response, status) {
         if (status == 'success') {
             let content = ''
             JSON.parse(response.text).forEach(block => {
@@ -79,7 +159,9 @@ $(function(){
             </div>
             <div class="w-[10px] h-4 border-lightgray border-l ml-[15px] mr-[15px]"></div>
             <div class="time text-xs">
-                ${moment(story.created_at).fromNow()}
+                ${
+                    moment !== undefined ? moment(story.created_at).fromNow() : story.created_at
+                }
             </div>
             </div>
             <div class="flex justify-between gap-[25px]">
@@ -98,25 +180,24 @@ $(function(){
                         ${
                             story.liked === false 
                               ? '<button class="like-btn like-btn-trans"><img class="block active:bg-lightblue" src="/static/icons/like.svg" alt=""/></button>' 
-                              : '<button class="like-btn liked-btn hidden"><img class="block active:bg-lightblue" src="/static/icons/liked.svg" alt=""/></button>'
+                              : '<button class="like-btn liked-btn"><img class="block active:bg-lightblue" src="/static/icons/liked.svg" alt=""/></button>'
                           }
-                          <button class="like-btn liked-btn hidden"><img class="block active:bg-lightblue" src="/static/icons/liked.svg" alt=""></button>
+                          
                         </div>
                     <div class="inline-block ml-5">
                         <p class="text-xs">${story.read_time} min read</p>
                     </div>
                 </div>
                 <div class="bookmark">
-                    <button class="like-bookmark">
-                        <img src="/static/icons/bookmark.svg" alt="" srcset="">
-                        <img src="/static/icons/bookmark_click.svg" alt="" srcset="">
+                    <button class="bookmark-btn">
+                        <img class='bookmark-img' src="/static/icons/bookmark.svg" alt="" srcset="">
                     </button>
                 </div>
             </div>
         </article>
     `)}
 
-    /*$.get(`/api/v1/users/${$current_user_id}/following_stories/`, function ($response, $status) {
+    /*$.get(`http://127.0.0.1:4000/api/v1/users/${$current_user_id}/following_stories/`, function ($response, $status) {
         if ($status == 'success') {
             $response.forEach(story_data => {
                 $stories_container.append($story(story_data))
@@ -129,14 +210,14 @@ $(function(){
 
     // load data when the user scrolls to the bottom
     let page = 1;
-    const perPage = 10;
+    const perPage = 2;
     let loading = false;
 
     function fetchStories() {
         if (loading) return
         loading = true
 
-        let $url = `/api/v1/users/${$current_user_id}/following_stories?page=${page}&per_page=${perPage}`
+        let $url = `http://127.0.0.1:4000/api/v1/users/${$current_user_id}/following_stories?page=${page}&per_page=${perPage}`
         $.get($url, function ($response, $status, $error) {
             if ($status == 'success') {
                 $response.stories.forEach($story_data => {
@@ -162,12 +243,12 @@ $(function(){
     function handleScroll() {
         if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
             if (localStorage.getItem('story_id')) delete_story()
-            fetchStories();
+            if (window.location.pathname === '/') fetchStories();  // only on home
         }
     }
 
     $('.stories-container').scroll(handleScroll);
-    fetchStories();
+    if (window.location.pathname === '/') fetchStories();  // only on home
 
     // delete temporary story
     // function to delete a story
@@ -175,12 +256,17 @@ $(function(){
         const story_id = localStorage.getItem('story_id')
         $.ajax({
             type: 'DELETE',
-            url: `/api/v1/stories/${story_id}/`,
+            url: `http://127.0.0.1:4000/api/v1/stories/${story_id}/`,
             success: function (response) {
-                console.log(response)
                 localStorage.removeItem('story_id')
             }
         })
+    }
+
+    const replaceButton = ($target, $value) => {
+        if (window.location.pathname.includes('/story') === true) {
+            $target.replaceWith($value)
+        }
     }
 
     const story_and_user_id = ($story) => {
@@ -189,6 +275,7 @@ $(function(){
 
         return [current_user_id, story_id]
     }
+
     // interactions - like bookmark
     $('body').on('click', '.like-btn', (e) => {
         let $target = $(e.target)
@@ -199,24 +286,63 @@ $(function(){
         $.get(`/stories/${$story_id}/like/`, function (response, status) {
             if (status == 'success') {
                 // update like count and btn
-                $target = $target.closest('button')
                 let $like_count = $story.find('.like-count')
-                console.log(response.likes_count)
+                let likedBtn = '<button class="like-btn liked-btn"><img class="block active:bg-lightblue" src="/static/icons/liked.svg" alt=""></button>'
+                let likeBtn = '<button class="like-btn like-btn-trans"><img class="block active:bg-lightblue" src="/static/icons/like.svg" alt=""/></button>'
+
+                $target = $target.closest('button')
                 $like_count.text(response.likes_count)  // update like count
 
                 // update btn
-                if ($target.hasClass('liked-btn')) {
-                    $target.hide()
-                    $story.find('.like-btn-trans').show()
-                } else if ($target.hasClass('like-btn-trans')) {
-                    $target.hide()
-                    $story.find('.liked-btn').show()
+                if ($target.hasClass('like-btn-trans')) {
+                    $target.replaceWith('<button class="like-btn liked-btn"><img class="block active:bg-lightblue" src="/static/icons/liked.svg" alt=""></button>')
+                    replaceButton($('.like-btn'), likedBtn)
+                } else {
+                    $target.replaceWith('<button class="like-btn like-btn-trans"><img class="block active:bg-lightblue" src="/static/icons/like.svg" alt=""/></button>')
+                    replaceButton($('.like-btn'), likeBtn)
                 }
 
 
             }
         })
     })
+
+    //follow user or unfollow user
+    $('.follow').on('click', function () {
+        let $target = $(this)
+        let user_id = $target.closest('.follow-card').data('user_id')
+        $.get(`/users/${user_id}/follow/`, function (response, status) {
+            if (status == 'success') {
+                if ($target.hasClass('unfollow')) $target.html('<img src="/static/icons/plus.svg" alt="">Follow').removeClass('unfollow')
+                else $target.html('<img src="/static/icons/correct.svg" alt="">Following').addClass('unfollow')
+            }
+        })
+    })
+
+    // bookmark a story
+
+    $('body').on('click', '.bookmark-btn', function () {
+        let $target = $(this)
+        let story_id = $target.closest('.story-card').data('story_id')
+        $.get(`/stories/${story_id}/bookmark/`, function (response, status) {
+            if (status == 'success') {
+                let bookmarkBtn = `<button class="bookmark-btn"><img class='bookmark-img' src="/static/icons/bookmark.svg" alt="" srcset=""></button>`
+                let bookmarkedBtn = `<button class="bookmark-btn unbookmark-btn"><img class='bookmark-img' src="/static/icons/bookmarked.svg" alt="" srcset=""></button>`
+
+                console.log($target)
+                if ($target.hasClass('unbookmark-btn')) {
+                    $target.html(`<img class='bookmark-img' src="/static/icons/bookmark.svg" alt="" srcset="">`).removeClass('unbookmark-btn')
+                    replaceButton($('.bookmark-btn'), bookmarkBtn)
+                }
+                else {
+                    $target.html(`<img class='bookmark-img' src="/static/icons/bookmarked.svg" alt="" srcset="">`).addClass('unbookmark-btn')
+                    replaceButton($('.bookmark-btn'), bookmarkedBtn)
+                }
+            }
+        })
+    })
+
+
     //login user profile card functionality - change avatar/image
     let $profile_image_container = $('.change-img-button-container');
     $profile_image_container.on('mouseenter', () => {
@@ -246,8 +372,16 @@ $(function(){
                 contentType: false,
                 processData: false,
                 success: function(response) {
-                    console.log('Success:', response);
-                    $('#story-image').attr('src', `/uploads/${file.name.replaceAll(" ", "_")}`)
+                    if (window.location.pathname == '/story/write/' ||
+                        window.location.pathname == '/story/write'
+                    ) {
+                        $('#story-image').attr('src', `/uploads/${file.name.replaceAll(" ", "_")}`)
+
+                    } else if (window.location.pathname == '/') {
+                        $('.profile-image').attr('src', `/uploads/${file.name.replaceAll(" ", "_")}`)
+                        //$('.home-profile-img').attr('src', `/uploads/${file.name.replaceAll(" ", "_")}`)
+
+                    }
                     if (!response.includes('/story/write/')) window.location.reload()
                 },
                 error: function(error) {

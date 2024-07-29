@@ -13,6 +13,7 @@ from models.topic import Topic
 from models.story import Story
 from models.user import User
 from models.like import Like
+from models.bookmark import Bookmark
 from urllib.parse import urlsplit, urlparse
 from flask import session
 from werkzeug.utils import secure_filename
@@ -49,12 +50,14 @@ def home():
                 flash("Password change!")
 
             if form.username.data:  # update the username
-                current_user.username = form.username.data
-                flash("Username changed!")
+                if current_user.username != form.username.data:
+                    current_user.username = form.username.data
+                    flash("Username changed!")
             
             if form.email.data:  # update the email
-                current_user.email = form.email.data
-                flash("Email changed!")
+                if current_user.email != form.email.data:
+                    current_user.email = form.email.data
+                    flash("Email changed!")
             
             storage.save()
         else:
@@ -231,6 +234,71 @@ def like_or_unlike_story(story_id=None):
     storage.save()
 
     return jsonify({'status': 'liked', 'likes_count': story.to_dict().get('likes_count')}), 201
+
+
+@app.route(
+    '/users/<string:user_id>/follow/',
+    methods=['GET'],
+    strict_slashes=False
+)
+@login_required
+def follow_or_unfollow(user_id=None):
+    """ Follow a story
+
+        Attributes:
+            - user_id: id of the user
+
+    """
+
+    user = storage.get(User, user_id)
+    if user is None:
+        abort(404)
+
+    if current_user.is_following(user):
+        current_user.following.remove(user)
+    else:
+        current_user.following.add(user)
+
+    storage.save()
+
+    return jsonify({}), 201
+
+
+@app.route(
+    '/stories/<string:story_id>/bookmark/',
+    methods=['GET'],
+    strict_slashes=False
+)
+@login_required
+def bookmark_or_unbookmark_story(story_id=None):
+    """ Bookmark a story
+
+        Attributes:
+            - story_id: id of the story
+
+    """
+
+    story = storage.get(Story, story_id)
+    if story is None:
+        abort(404)
+
+    for bookmark in story.bookmarks:
+        # user has already bookmark the story
+        if bookmark.bookmarker.username == current_user.username:
+            # remove the bookmark
+            storage.delete(bookmark)
+            storage.save()
+            return jsonify({}), 201
+
+    # otherwise the user has not bookmark a story
+    # bookmark the story
+    bookmark = Bookmark(
+        story_id=story_id, user_id=current_user.id
+    )
+    storage.new(bookmark)
+    storage.save()
+
+    return jsonify({}), 201
 
 
 @app.route('/dummy', methods=['GET', 'POST'])

@@ -91,8 +91,17 @@ def following_stories(user_id=None):
         story_dictionary['liked'] = is_liked
 
         stories.append(story_dictionary)
-
-    print(stories)
+    print('=========================', stories)
+    if stories == []:
+        _stories = [ story.to_dict() for story in storage.all(Story).values() ]
+        stories = []
+        for story in _stories:
+            try:
+                is_liked = user.liked_story(story['id'])
+                story['liked'] = is_liked
+                stories.append(story)
+            except Exception:
+                pass
     
     return jsonify(
         {

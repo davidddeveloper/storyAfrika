@@ -9,7 +9,7 @@
             <div class="slider-container flex items-center justify-between shrink-0 px-1 sm:gap-2">
                 <button class="prev"><img src="/static/icons/lt.svg" alt="" srcset=""></button>
                 <div class="slider-wrapper w-[200px] overflow-x-hidden text-base sm:w-[250px] md:w-[250px] lg:w-[370px]">
-                    <ul class="slider topics flex items-center gap-[25px] w-screen transition-all ease-out">
+                    <ul class="slider topics flex items-center gap-[25px] w-screen transition-all ease-out" data-current_index=0>
                         {% for key,topic in topics.items() %}
                             <li class="slider-item">{{topic.name}}</li>
                         {% endfor %}
@@ -33,9 +33,9 @@
             <div class="flex items-center justify-center sm:pr-0 lg:pr-2">
                 <button class="hidden mr-5"><img src="/static/icons/search.svg" alt=""></button>
                 {% if current_user.avatar %}
-                <button class="home-profile-img border-2 rounded-full w-[60px] h-[60px] shrink-0"><img class="w-full h-full rounded-full object-cover" src="{{ url_for('upload', filename=current_user.avatar) }}" alt=""></button>
+                <button class="home-profile-img border-2 rounded-full w-[60px] h-[60px] shrink-0"><img class="profile-image w-full h-full rounded-full object-cover" src="{{ url_for('upload', filename=current_user.avatar) }}" alt=""></button>
                 {% else %}
-                <button class="home-profile-img border-2 rounded-full w-[60px] h-[60px] shrink-0"><img class="w-full h-full rounded-full object-cover" src="/static/images/default-profile-image.png" alt=""></button>
+                <button class="home-profile-img border-2 rounded-full w-[60px] h-[60px] shrink-0"><img class="profile-image w-full h-full rounded-full object-cover" src="/static/images/default-profile-image.png" alt=""></button>
                 {% endif %}
             </div>
         </div>
@@ -69,7 +69,7 @@
                 
                 {% endfor %}
             </div>
-            <a href="" class="block underline text-lightblue">See all bookmarks</a>
+            <a href="" class="block underline text-lightblue text-sm">See all bookmarks</a>
         </div>
         <hr class="divider my-[50px]">
         <div class="likes">
@@ -85,35 +85,38 @@
         </div>
         <div class="who-to-follow">
             <h3 class="mt-[30px] mb-5 text-xs font-medium">Who to follow?</h3>
-            <div class="">
-                <div class="flex items-center gap-[15px]">
-                    {% for the_user in users %}
-                    {% if loop.index <= 1 %}
-                    {% if the_user != current_user %}
-                        {% if the_user.avatar %}
-                        <div class="h-[50px] w-[50px] shrink-0">
-                            <img class="h-full w-full rounded-full border-2" src="{{ url_for('upload', filename=the_user.avatar) }}" alt="">
-                        </div>
-                        {% else %}
-                        <div class="h-[50px] w-[50px] shrink-0">
-                            <img class="h-full w-full rounded-full border-2" src="https://picsum.photos/200/300" alt="">
-                        </div>
-                        {% endif %}
-                        <div>
-                            <div class="flex gap-2 items-center">
-                                <h3 class="">{{the_user.username}}</h3>
-                                <button class="flex items-center"><img src="/static/icons/plus.svg" alt="">follow</button>
+            <div class="slider-wrapper overflow-x-hidden">
+                <div class="slider follow-slider flex items-center justify-between w-full gap-10 transition-transform ease-out" data-current_index=0>
+                {% for the_user in users.values() %}
+                {% if the_user != current_user %}
+                {% if not current_user.is_following(the_user) %}
+                {% if loop.index <= 6 %}
+                    <div class="follow-card slider-item flex flex-shrink-0 items-center gap-[15px]" data-user_id="{{the_user.id}}">
+                            {% if the_user.avatar %}
+                            <div class="h-[50px] w-[50px] flex-shrink-0">
+                                <img class="h-full w-full rounded-full border-2" src="{{ url_for('upload', filename=the_user.avatar) }}" alt="">
                             </div>
-                            <p class="text-xs text-lightgray">{{the_user.short_bio}}</p>
-                        </div>
-                    {% endif %}
-                    {% endif %}
-                    {% endfor %}
-                    
+                            {% else %}
+                            <div class="h-[50px] w-[50px] flex-shrink-0">
+                                <img class="h-full w-full rounded-full border-2" src="https://picsum.photos/200/300" alt="">
+                            </div>
+                            {% endif %}
+                            <div>
+                                <div class="flex gap-2 items-center">
+                                    <h3 class="">{{the_user.username}}</h3>
+                                    <button class="flex items-center follow text-sm text-lightblue"><img src="/static/icons/plus.svg" alt="">Follow</button>
+                                </div>
+                                <p class="text-xs text-lightgray">{{the_user.short_bio}}</p>
+                            </div>
+                        {% endif %}
+                        {% endif %}
+                        {% endif %}
+                        {% endfor %}
+                        
+                    </div>
                 </div>
-
             </div>
-            <a href="" class="block underline text-lightblue">More suggestions</a>
+            <a href="" class="block underline text-lightblue text-sm">More suggestions</a>
         </div>
     </aside>
 </div>

@@ -1,0 +1,62 @@
+<section class="comments-view is-hidden fixed z-50 bg-offwhite transition-all ease-out -bottom-[100%] w-full h-full overflow-y-scroll px-5 pb-[35%] drop-shadow-lg sm:rounded-2xl sm:px-16 sm:pb-[22%] sm:w-[80%] sm:left-[10%] sm:right-[10%] md:rounded-none md:pb-0 md:left-auto md:drop-shadow-lg md:top-0 md:overflow-x-hidden md:-right-[100%] md:w-[400px] lg:w-[500px] md:px-[60px] md:border-2 md:h-screen md:overflow-y-scroll no-scrollbar">
+    <h3 class="mt-[100px] text-base font-bold">{{comment | length}} people has commented on this story</h3>
+
+    <form action="" method="post" class="mt-10 container mx-auto">
+        <textarea name="comment-text" id="comment-textarea" class="comment-textarea resize-y col-auto bg-transparent w-full pb-[10px] pl-[24px] border-0 text-[16px] text-lightgray border-b-2 border-lightblue focus:transition-all focus:border-0 max-h-[200px] focus:outline-0 focus:border-b-2 focus:border-lightblue no-scrollbar" placeholder="share your thoughts too..." rows="1"></textarea>
+        {#<input id="csrfToken" name="csrf_token" type="hidden" value="{{ csrf_token() }}">#}
+        <button class="p-1 text-lightblue share-comment opacity-0 transition-opacity" type="submit" disabled>Submit</button>
+    </form>
+
+    <section class="comment-section">
+        <div class="my-[30px] flex justify-between">
+            <h3 class="text-base text-lightblue">Comments</h3>
+            <select class="sort-by bg-black text-white rounded-sm px-1">
+                <option value="sort-by" class="text-lightblue">sort-by</option>
+                <option value="newest" class="text-lightblue">Newest</option>
+                <option value="relevants" class="text-lightblue" selected>Relevants</option>
+            </select>
+        </div>
+        <article class="comments-container flex flex-col gap-5">
+            <!-- comments cards -->
+            {% for comment in story.comments %}
+                {% if loop.index % 2 == 0 %} <!-- even -->
+                    {% include 'comment-card.html' %}
+                {% elif loop.index % 2 == 1 %}
+                    {% include 'comment-card.html'%}
+                    {% set odd = yes %}
+                {% endif %}
+            {% endfor %}
+
+            <article class="comment-card bg-mediumpurple rounded-lg p-4 text-white">
+                <div class="profile container mx-auto px-5 sm:px-2">
+                    <div class="flex items-center">
+                        {% if current_user.avatar %}
+                        <img class="rounded-full h-[40px] w-[40px] object-cover" src="{{ url_for('upload', filename=current_user.avatar) }}" alt="">
+                        {% else %}
+                        <img class="rounded-full h-[40px] w-[40px] object-cover" src="https://picsum.photos/200/700" alt="">
+                        {% endif %}
+                        <div class="ml-[15px]">
+                            <div class="flex gap-[5px] follow-card" data-user_id={{current_user.id}}>
+                                <h3 class="">{{story.writer.username}}</h3>
+                                <button class="follow flex items-center text-lightblue"><img src="/static/icons/plus.svg" alt="">Follow</button>
+                            </div>
+                            <div class="mt-[2px] flex gap-[5px] items-center">
+                                <p class="text-xs">posted {{ moment(story.created_at).fromNow()}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative isolate comment-text-container">
+                    <p class="comment-text text-sm mt-[10px] ml-[50px] h-10 overflow-hidden">I knew your dad very well, we grew up together we went to school together, we played soccer together and one thing I can sayabout him was that he hate bullies. He was a little older than me, but I always felt safe around</p>
+                    <span class="span block text-white absolute bottom-0 right-0 z-10 px-1 rounded-md bg-lightblue cursor-pointer view-more">view more</span>
+                </div>
+                <div class="flex items-center ml-[50px]">
+                    <p class="mt-3 text-sm">{{story.likes | length}}</p>
+                    <button><img class="block active:bg-lightblue" src="/static/icons/like.svg" alt=""></button>
+                </div>
+            </article>
+        </article>
+        <a href="" class="block container mx-auto text-sm text-lightblue my-[30px] cursor-pointer">Load more comments</a>
+    </section>
+
+</section>

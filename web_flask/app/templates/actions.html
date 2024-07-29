@@ -2,20 +2,30 @@
 <div class="mx-[30px] flex justify-between items-center">
     <div class="flex gap-[15px]">
         <div class="flex items-center">
-            <p class="mt-2">{{story.likes | length}}</p>
-            <button><img class="block active:bg-lightblue" src="/static/icons/like.svg" alt=""></button>
+            <p class="mt-2 text-sm text-lightgray like-count">{{story.likes | length}}</p>
+            {% if current_user.is_authenticated %}
+                {% if current_user.liked_story(story.id) %}
+                <button class="like-btn liked-btn"><img class="block active:bg-lightblue" src="/static/icons/liked.svg" alt=""/></button>
+                {% else %}
+                <button class="like-btn like-btn-trans"><img class="block active:bg-lightblue" src="/static/icons/like.svg" alt=""/></button>
+                {% endif %}
+            {% else %}
+            <button class="not authenticated like-btn-trans"><img class="block active:bg-lightblue" src="/static/icons/like.svg" alt=""/></button>
+            {% endif %}
         </div>
         <div class="flex items-center">
-            <p class="mt-2">{{story.comments | length}}</p>
-            <button><img class="block active:bg-lightblue" src="/static/icons/comment.svg" alt=""></button>
+            <p class="mt-2 text-sm text-lightgray">{{story.comments | length}}</p>
+            <button class="show-comment-view"><img class="block active:bg-lightblue" src="/static/icons/comment.svg" alt=""></button>
         </div>
     </div>
     <div class="flex gap-[15px]">
         <div class="mt-[10px]">
-            <button><img class="block active:bg-lightblue" src="/static/icons/bookmark.svg" alt=""></button>
+            {#{% if current_user.is_authenticated %}
+            {% if current_user.liked_story(story.id) %}#}
+            <button class="bookmark-btn"><img class="block active:bg-lightblue" src="/static/icons/bookmark.svg" alt=""></button>
         </div>
         <div class="mt-[10px]">
-            <button><img class="block active:bg-lightblue" src="/static/icons/share.svg" alt=""></button>
+            <button class="share-btn"><img class="block active:bg-lightblue" src="/static/icons/share.svg" alt=""></button>
         </div>
     </div>
 </div>

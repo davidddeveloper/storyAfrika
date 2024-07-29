@@ -10,7 +10,8 @@ from models.story import Story
 from models.topic_follower import TopicFollower
 from models.topic import Topic
 from models.user import User
-
+from models.comment_like import CommentLike
+from models.comment_unlike import CommentUnLike
 
 storage = DBStorage()
 storage.reload()
@@ -67,6 +68,28 @@ user4.set_password(user4.password)
 user4.image = 'https://picsum/500/400'
 
 
+user5 = User(
+    username='ben',
+    email='bene@gmail.com',
+    password='ben@1234',
+    fullname='ben dover',
+    short_bio='I like to comment'
+)
+
+user5.set_password(user4.password)
+user5.image = 'https://picsum/500/400'
+
+user6 = User(
+    username='musa',
+    email='musa@gmail.com',
+    password='musa@1234',
+    fullname='musa',
+    short_bio='I like to like comment'
+)
+
+user6.set_password(user4.password)
+user6.image = 'https://picsum/500/400'
+
 topic1 = Topic(
     name='Education',
     description='Education is transformative'
@@ -118,6 +141,23 @@ Which is in contrast to what people are saying. Continue doing what you do.",
     user_id=user3.id
 )
 
+comment2 = Comment(
+    comment="Your Dad is indeed a hero. Inspiring story!",
+    story_id=story1.id,
+    user_id=user2.id
+)
+
+comment3 = Comment(
+    comment="I knew your dad very well, we grew up we went to school together, we played soccer together and one thing I can say about him was that he hate bullies. Hewas a little older than me, but I always felt safe around him.",
+    story_id=story1.id,
+    user_id=user2.id
+)
+
+cml1 = CommentLike(comment_id=comment1.id, user_id=user1.id)
+cml2 = CommentLike(comment_id=comment1.id, user_id=user6.id)
+cml3 = CommentUnLike(comment_id=comment1.id, user_id=user5.id)
+cml3 = CommentLike(comment_id=comment3.id, user_id=user5.id)
+
 bookmark1 = Bookmark(
     story_id=story1.id,
     user_id=user2.id
@@ -133,6 +173,6 @@ storage._session.add_all([topic1, topic2, topic3])
 storage._session.add_all([story1, story2])
 storage._session.add_all([like1, like2, like3, like4])
 #storage._session.add_all([follower1, follower2])
-storage._session.add_all([comment1, bookmark1, bookmark2])
+storage._session.add_all([comment1, comment2, bookmark1, bookmark2])
 
 storage.save()

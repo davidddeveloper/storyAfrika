@@ -27,6 +27,6 @@
         {% endfor %}</br></br>
 
         {{ form.submit(class="text-white px-2 py-1 rounded-sm bg-lightblue") }}</br></br>
-        <span>Already have an account? <a href="{{ url_for('login') }}" class="text-lightblue">Login here</a></span>
+        <span class="relative block text-white before:block before:top-[20px] before:p-[1px] before:inset-0 before:w-[80%] before:rounded-sm before:bg-lightblue md:text-lightgray">Already have an account? <a href="{{ url_for('login') }}" class="text-lightblue">Login here</a></span>
     </form>
 </div>

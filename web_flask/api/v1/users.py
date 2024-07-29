@@ -233,7 +233,7 @@ def get_user_following(user_id=None):
 
 @views.route(
     '/users/<string:user_id>/follow',
-    methods=['POST'],
+    methods=['GET'],
     strict_slashes=False
 )
 #login_required

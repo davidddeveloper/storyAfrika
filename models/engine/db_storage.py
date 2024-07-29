@@ -14,6 +14,8 @@ from models.story import Story
 from models.topic_follower import TopicFollower
 from models.topic import Topic
 from models.user import User
+from models.comment_like import CommentLike
+from models.comment_unlike import CommentUnLike
 
 username = os.getenv('USER')
 password = os.getenv('PASSWORD')
@@ -46,8 +48,9 @@ class DBStorage:
     def __init__(self):
         self.__engine = create_engine(
             f'mysql+mysqlconnector://{username}:{password}@{host}/{db_name}',
-            pool_size=20,
-            max_overflow=0,
+            pool_size=50,
+            max_overflow=20,
+            pool_timeout=30,
             pool_recycle=1800,
             echo=True
         )

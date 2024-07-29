@@ -11,7 +11,10 @@ import uuid
 import datetime
 from models.imports import *
 
-Base = declarative_base()
+if os.getenv('STORAGE') in ['db', 'DB']:
+    Base = declarative_base()
+else:
+    Base = object
 
 
 class BaseModel:
@@ -24,7 +27,7 @@ class BaseModel:
 
     """
 
-    if os.getenv('storage') in ['db', 'DB']:
+    if os.getenv('STORAGE') in ['db', 'DB']:
         id = Column(String(60), primary_key=True, default=str(uuid.uuid4()))
         created_at = Column(DateTime, default=datetime.datetime.now())
         updated_at = Column(DateTime, default=datetime.datetime.now())
@@ -36,7 +39,7 @@ class BaseModel:
                 if key != '__class__':
                     setattr(self, key, val)
 
-            if 'id' in kwargs and kwargs.get('id') is str:
+            if 'id' in kwargs and isinstance(kwargs.get('id'), str):
                 self.id = kwargs.get('id')
             else:
                 self.id = str(uuid.uuid4())
@@ -67,11 +70,43 @@ class BaseModel:
         """ Dictionary representation of the object """
 
         dictionary = self.__dict__.copy()
-        dictionary['updated_at'] = dictionary['updated_at'].isoformat()
-        dictionary['created_at'] = dictionary['created_at'].isoformat()
-        dictionary['__class__'] = self.__class__.__name__
+        try:
+            dictionary['updated_at'] = dictionary['updated_at'].isoformat()
+            dictionary['created_at'] = dictionary['created_at'].isoformat()
+            dictionary['__class__'] = self.__class__.__name__
+        except Exception:
+            pass
+
+        try:
+            del dictionary['_sa_instance_state']
+        except Exception:
+            pass
 
         return dictionary
+    
+    def paginate(query, page, per_page):
+        """ handles pagination
+
+            - query: sqlalchemy query
+            - page: a page number
+            - per_page: number representing items per page
+
+        """
+        from models.engine import storage
+    
+        total_items = storage._session.query(func.count()).select_from(query.subquery()).scalar()
+        total_pages = (total_items // per_page) + (1 if total_items % per_page > 0 else 0)
+        # offset is very crucial as it specify the starting point of the query
+        paginated_query = query.offset((page - 1) * per_page).limit(per_page)
+        items = storage._session.execute(paginated_query).scalars().all()
+
+        return {
+            'total_items': total_items,
+            'total_pages': total_pages,
+            'page': page,
+            'per_page': per_page,
+            'items': items
+        }
 
     def __str__(self) -> str:
         return f"[{self.__class__.__name__}.{self.id}] {self.to_dict()}"
@@ -83,6 +118,12 @@ class BaseModel:
         storage.new(self)
         self.updated_at = datetime.datetime.now()
         storage.save()
+
+    def delete(self):
+        """ Deletes an object """
+        from models.engine import storage
+
+        storage.delete(self)
 """
     bookmark: represent the number of bookmarks for a story
 
@@ -103,7 +144,7 @@ class Bookmark(BaseModel, Base):
 
     """
 
-    if os.getenv('storage') in ['db', 'DB']:
+    if os.getenv('STORAGE') in ['db', 'DB']:
         __tablename__ = 'bookmarks'
         story_id = Column(String(60), ForeignKey('stories.id'), nullable=False)
         user_id = Column(String(60), ForeignKey('users.id'), nullable=False)
@@ -124,9 +165,13 @@ class Bookmark(BaseModel, Base):
 
 """
 
+import sqlalchemy as sa
+
 import os
 from models.imports import *
 from models.base_model import BaseModel, Base
+from models.comment_like import CommentLike
+from models.comment_unlike import CommentUnLike
 
 
 class Comment(BaseModel, Base):
@@ -144,6 +189,8 @@ class Comment(BaseModel, Base):
         comment = Column(Text, nullable=False)
         story_id = Column('Story', ForeignKey('stories.id'), nullable=False)
         user_id = Column('User', ForeignKey('users.id'), nullable=False)
+        likes = relationship('CommentLike', backref='comment', lazy=True)
+        unlikes = relationship('CommentUnLike', backref='comment', lazy=True)
 
     else:
         comment = ''
@@ -162,7 +209,203 @@ class Comment(BaseModel, Base):
                 raise ValueError(f"{argument} must ba a string")
 
             setattr(self, argument, value)
+    
+    @classmethod
+    def relevant(cls):
+        """ compute relevant comments base on number of likes """
+
+        return (
+            sa.select(cls).order_by((cls.likes_count - cls.unlikes_count).desc())
+        )
+    
+    @classmethod
+    def newest(cls):
+        """ order comments based on newest first """
+
+        return (
+            sa.select(cls).order_by(cls.created_at.desc())
+        )
+
+    def like(self, user_id):
+        """ like a comment 
+        
+            Attribute:
+                - user_id: the id of the user that wants to like a comment
+
+        """
+
+        from models.engine import storage
+        comment_like = CommentLike(comment_id=self.id, user_id=user_id)
+
+        if self.is_liked_by(user_id):  # user already liked the story
+            return True
+        
+        if not self.is_liked_by(user_id) and not self.is_unliked_by(user_id):
+            # not liked or unliked the story yet
+            comment_like.save()
+
+        elif self.is_unliked_by(user_id):  # used to unliked the comment
+            # get the unlike
+            comment_unlike = storage._session.query(CommentUnLike).where(sa.and_(
+                CommentUnLike.user_id == user_id,  # get only the comments that the user has liked
+                CommentUnLike.comment_id == self.id
+            ))
+            comment_unlike.delete()
+            # create the new like
+            comment_like.save()
+            storage.save()
+
+        storage.close()
+        return 'success'
+
+    def unlike(self, user_id):
+        """ like a comment 
+        
+            Attribute:
+                - user_id: the id of the user that wants to like a comment
+
+        """
+        from models.engine import storage
+
+        comment_unlike = CommentUnLike(comment_id=self.id, user_id=user_id)
+
+        if self.is_unliked_by(user_id):  # user is has already unliked the story
+            return True
+
+        if not self.is_liked_by(user_id) and not self.is_unliked_by(user_id):
+            comment_unlike.save()
+        elif self.is_liked_by(user_id):
+            comment_like = storage._session.query(CommentLike).where(sa.and_(
+                CommentLike.user_id == user_id,  # get only the comments that the user has liked
+                CommentLike.comment_id == self.id
+            ))
+            comment_like.delete()
+            comment_like.save()
+
+            comment_unlike.save()
+            storage.save()
+
+        storage.close()
+        return 'success'
+    
+    def is_liked_by(self, user_id):
+        """ check if a user is liking a comment 
+        
+            Attributes:
+                - user_id: the id of the user
+
+        """
+        from models.engine import storage
+
+        # comment_like = sa.select(Comment).join(CommentLike).where(sa.and_(  # combine comment and commentlike
+        #    CommentLike.user_id == user_id,  # get only the comments that the user has liked
+        #    self.id == CommentLike.comment_id
+        #))
+        comment_like = sa.select(CommentLike).where(sa.and_(
+            CommentLike.user_id == user_id,  # get only the comments that the user has liked
+            CommentLike.comment_id == self.id
+        ))
+
+        result = storage._session.execute(comment_like).scalar_one_or_none()
+        storage.close()
+        return result is not None
+
+    def is_unliked_by(self, user_id):
+        """ check if a user is unliking a comment 
+        
+            Attributes:
+                - user_id: the id of the user
+
+        """
+        from models.engine import storage
+        from models.comment_unlike import CommentUnLike
+
+        # comment_like = sa.select(Comment).join(CommentLike).where(sa.and_(  # combine comment and commentlike
+        #    CommentLike.user_id == user_id,  # get only the comments that the user has liked
+        #    self.id == CommentLike.comment_id
+        #))
+        comment_unlike = storage._session.query(CommentUnLike).where(sa.and_(
+            CommentUnLike.user_id == user_id,  # get only the comments that the user has liked
+            CommentUnLike.comment_id == self.id
+        ))
+
+        result = storage._session.execute(comment_unlike).scalar_one_or_none()
+        storage.close()
+        return result is not None
+        
+    @property
+    def likes_count(self):
+        """ count the number of likes made on this comment """
+        return len(self.likes)
+    
+    @property
+    def unlikes_count(self):
+        """ count the number of unlikes made on this comment """
+        return len(self.unlikes)"""
+    comment_like: represent the number of likes for a comment
+
 """
+
+from models.imports import *
+from models.base_model import BaseModel, Base
+
+
+class CommentLike(BaseModel, Base):
+    """ Represent a like
+
+        - Attributes:
+            - comment_id: the comment that was liked
+            - user_id: the user that liked the comment
+
+    """
+
+    if os.getenv('STORAGE') in ['db', 'DB']:
+        __tablename__ = 'comment_likes'
+        comment_id = Column(String(60), ForeignKey('comments.id'), nullable=False)
+        user_id = Column(String(60), ForeignKey('users.id'), nullable=False)
+    else:
+        comment_id = ''
+        user_id = ''
+
+    def __init__(self, comment_id, user_id):
+        super().__init__()
+        if isinstance(comment_id, str) and isinstance(user_id, str):
+            self.comment_id = comment_id
+            self.user_id = user_id
+        else:
+            raise ValueError("arguments must be a string")"""
+    comment_unlike: represent the number of unlikes for a comment
+
+"""
+
+from models.imports import *
+from models.base_model import BaseModel, Base
+
+
+class CommentUnLike(BaseModel, Base):
+    """ Represent a like
+
+        - Attributes:
+            - comment_id: the comment that was unliked
+            - user_id: the user that unliked the comment
+
+    """
+
+    if os.getenv('STORAGE') in ['db', 'DB']:
+        __tablename__ = 'comment_unlikes'
+        comment_id = Column(String(60), ForeignKey('comments.id'), nullable=False)
+        user_id = Column(String(60), ForeignKey('users.id'), nullable=False)
+    else:
+        comment_id = ''
+        user_id = ''
+
+    def __init__(self, comment_id, user_id):
+        super().__init__()
+        if isinstance(comment_id, str) and isinstance(user_id, str):
+            self.comment_id = comment_id
+            self.user_id = user_id
+        else:
+            raise ValueError("arguments must be a string")"""
     follower: represents a followers
 
 """
@@ -194,10 +437,52 @@ class Follower(BaseModel, Base):
             self.followed_id = followed_id
         else:
             raise ValueError("arguments must be a string")
+#!/usr/bin/python3
+""" This module represents methods and classes for image upload
+
+"""
+from flask_login import current_user
+from flask import abort, send_from_directory
+from werkzeug.utils import secure_filename
+import os
+import imghdr
+
+UPLOAD_EXTENSIONS = ['.jpg', '.png', '.jpeg', '.gif', '.svg', '.webp', 'heif', 'jfif']
+UPLOAD_PATH = os.path.join(os.path.dirname(__file__), '..', 'uploads')
+
+
+
+class ImageUpload:
+    """ Represents images """
+
+    def validate_image(stream):
+        header = stream.read(512)
+        stream.seek(0)
+        format = imghdr.what(None, header)
+        if not format:
+            return None
+        return '.' + (format if format != 'jpeg' else 'jpg')
+
+    def image_upload(self, file):
+        filename = secure_filename(file.filename)
+        if filename:
+            file_ext = os.path.splitext(filename)[1]
+            if file_ext not in UPLOAD_EXTENSIONS:
+                raise ValueError("File extension not acceptable")
+            if file_ext != ImageUpload.validate_image(file.stream):
+                raise ValueError("Invalid image format")
+            
+            upload_dir = os.path.join(UPLOAD_PATH, current_user.get_id())
+            os.makedirs(upload_dir, exist_ok=True)
+            file.save(os.path.join(upload_dir, filename))
+        
+            return filename
+        return None
 import os
 from sqlalchemy.orm import sessionmaker, scoped_session, Session
-from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy import create_engine, func
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
 from sqlalchemy import Column, String, Integer, ForeignKey, DateTime, Text
 from sqlalchemy import Table
 """
@@ -240,11 +525,14 @@ class Like(BaseModel, Base):
     story: represent a model for creating a story
 
 """
+import sqlalchemy as sa
+import sqlalchemy.orm as so
 from models.imports import *
 from models.base_model import BaseModel, Base
+from models.image_upload import ImageUpload
 
 
-class Story(BaseModel, Base):
+class Story(BaseModel, ImageUpload, Base):
     """ Represents a story
 
          Attributes:
@@ -264,11 +552,41 @@ class Story(BaseModel, Base):
         comments = relationship('Comment', backref='story', lazy=True)
         likes = relationship('Like', backref='story', lazy=True)
         bookmarks = relationship('Bookmark', backref='story', lazy=True)
+        image = Column(String(100), nullable=True) # path to image
 
     else:
         title = ''
         text = ''
         user_id = ''
+
+    def to_dict(self):
+        """ Dictionary representation of the object """
+
+        dictionary = super().to_dict()
+        dictionary['writer'] = self.writer.to_dict()
+        dictionary['comments_count'] = len(self.comments)
+        dictionary['likes_count'] = len(self.likes)
+        dictionary['bookmarks_count'] = len(self.bookmarks)
+        dictionary['read_time'] = self.read_time
+
+        return dictionary
+
+    @property
+    def read_time(self):
+        num_of_words = len(self.text.split())
+        read_time_in_minutes = int(num_of_words / 225)
+
+        return read_time_in_minutes
+
+    @property
+    def plain_text(self):
+        import re, json
+
+        if self.text and re.search(r'^\[', self.text):
+            return json.dumps([content['content'].replace('⇅', '') for content in json.loads(re.sub('<[^>]+>', '', self.text)) 
+                if content['content'] != '⇅']).replace('"', '').replace('[', '').replace(']','').replace("'", '')
+
+        return self.text
 
     def __init__(self, title, text, user_id, **kwargs):
         super().__init__(**kwargs)
@@ -291,12 +609,17 @@ class Story(BaseModel, Base):
 from models.imports import *
 from models.base_model import BaseModel, Base
 
-story_topic_association = Table(
-    'story_topic_association',
-    Base.metadata,
-    Column('story_id', String(60), ForeignKey('stories.id'), primary_key=True),
-    Column('topic_id', String(60), ForeignKey('topics.id'), primary_key=True)
-)
+if os.getenv('STORAGE') in ['db', 'DB']:
+    story_topic_association = Table(
+        'story_topic_association',
+        Base.metadata,
+        Column(
+            'story_id', String(60), ForeignKey('stories.id'), primary_key=True
+        ),
+        Column(
+            'topic_id', String(60), ForeignKey('topics.id'), primary_key=True
+        )
+    )
 
 
 class Topic(BaseModel, Base):
@@ -368,11 +691,18 @@ class TopicFollower(BaseModel, Base):
 
 """
 
+import sqlalchemy as sa
+import sqlalchemy.orm as so
+from sqlalchemy.orm import WriteOnlyMapped
+
 from models.imports import *
 from models.base_model import Base, BaseModel
+from models.story import Story
+from models.image_upload import ImageUpload
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
-class User(BaseModel, Base):
+class User(BaseModel, ImageUpload, Base):
     """
         Represents a user
 
@@ -384,28 +714,36 @@ class User(BaseModel, Base):
             - short_bio: who the user is
             - about: detail description of the user
     """
+    from models.follower import Follower
 
-    if os.getenv('storage') in ['db', 'DB']:
+    if os.getenv('STORAGE') in ['db', 'DB']:
         __tablename__ = 'users'
         username = Column(String(80), nullable=False)
         email = Column(String(120), nullable=False)
         password = Column(String(200), nullable=False)
         short_bio = Column(String(160), nullable=True)
         about = Column(Text, nullable=True)
+        first_name = Column(String(50), nullable=True)
+        last_name = Column(String(50), nullable=True)
+        full_name = Column(String(50), nullable=True, default=(first_name + ' ' + last_name))
         stories = relationship('Story', backref='writer', lazy=True)
         comments = relationship('Comment', backref='commenter', lazy=True)
         likes = relationship('Like', backref='liker', lazy=True)
         bookmarks = relationship('Bookmark', backref='bookmarker', lazy=True)
-        followers = relationship(
-            'Follower',
-            foreign_keys='Follower.followed_id',
-            backref='followed',
+        comment_likes = relationship('CommentLike', backref='liker', lazy=True)
+        comment_unlikes = relationship('CommentUnLike', backref='unliker', lazy=True)
+        followers:  WriteOnlyMapped['User'] = relationship(
+            secondary=Follower.__table__,
+            primaryjoin='followers.c.followed_id == User.id',
+            secondaryjoin='followers.c.follower_id == User.id',
+            back_populates='following',
             lazy=True
         )
-        following = relationship(
-            'Follower',
-            foreign_keys='Follower.follower_id',
-            backref='follower',
+        following: WriteOnlyMapped['User'] = relationship(
+            secondary=Follower.__table__,
+            primaryjoin='followers.c.follower_id == User.id',
+            secondaryjoin='followers.c.followed_id == User.id',
+            back_populates='followers',
             lazy=True
         )
         topic_following = relationship(
@@ -413,6 +751,7 @@ class User(BaseModel, Base):
             backref='users',
             lazy=True
         )
+        avatar = Column(String(100), nullable=True) # path to avatar
 
     else:
         _username = ''
@@ -436,3 +775,141 @@ class User(BaseModel, Base):
                 raise ValueError(f"{argument} must ba a string")
 
             setattr(self, argument, value)
+
+    def to_dict(self):
+        """ Dictionary representation of the object """
+
+        dictionary = super().to_dict()
+        try:
+            dictionary.pop('_sa_instance_state')
+            dictionary.pop('password')
+        except Exception:
+            pass
+
+        return dictionary
+
+    def set_password(self, password):
+        """ saves the password as hash """
+        self.password = generate_password_hash(password)
+
+    def check_password(self, password) -> bool:
+        """ map a given password against a password hash """
+        return check_password_hash(self.password, password)
+
+    def liked_story(self, story_id):
+        from models.engine import storage
+        from models.like import Like
+
+        story_likes = sa.select(Story).join(Like).where(sa.and_(
+            Story.id == story_id,
+            User.id == self.id
+        ))
+
+        if storage._session.query(story_likes.subquery()).all() != []:
+            return True
+        else:
+            return False
+    
+    def liked_comment(self, comment_id):
+        """ check if a comment is liked """
+        pass
+
+    def follow(self, user):
+         """
+            follow a user
+
+            - user: a user instance
+         """
+
+         if not self.is_following(user):
+             self.following.add(user)
+
+    def unfollow(self, user):
+        """
+            unfollow a user
+
+            - user: a user instance
+         """
+
+        if self.is_following(user):
+            self.following.remove(user)
+
+    def is_following(self, user):
+        """ checks if a user is following another user
+
+            - user: a user
+
+            Return: true if self is following user
+        """
+        from models.engine import storage
+
+        query = self.following.select().where(User.id == user.id)
+        return storage._session.scalar(query) is not None
+
+    @property
+    def followers_count(self):
+        """ count the number of followers self has """
+        from models.engine import storage
+
+        query = sa.select(sa.func.count()).select_from(
+            self.followers.select().subquery())
+        return storage._session.scalar(query)
+
+    @property
+    def following_count(self):
+        """ count the number of people self is following """
+        from models.engine import storage
+
+        query = sa.select(sa.func.count()).select_from(
+            self.following.select().subquery())
+
+        return storage._session.scalar(query)
+
+    @property
+    def following_stories(self):
+        """ gets the stories from all the users self is following
+            and own stories
+
+        """
+
+        from models.engine import storage
+        Writer = so.aliased(User)
+        Follower = so.aliased(User)
+
+        # join story with writer of the story and followers of that writer
+        return (
+            sa.select(Story)
+            .join(Story.writer.of_type(Writer))
+            .join(Writer.followers.of_type(Follower), isouter=True)
+            .where(sa.or_(
+                Follower.id == self.id,
+                Writer.id == self.id
+            ))
+            .group_by(Story)
+            .order_by(Story.created_at.desc())
+        )
+
+    @property
+    def get_comments(self):
+        """ gets all the comments for that specific user """
+        pass
+
+    @property
+    def is_active(self):
+        return True
+
+    @property
+    def is_authenticated(self):
+        return self.is_active
+
+    @property
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        try:
+            return str(self.id)
+        except AttributeError:
+            raise NotImplementedError(
+                "No `id` attribute - override `get_id`"
+            ) from None

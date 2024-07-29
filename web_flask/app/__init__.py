@@ -13,7 +13,7 @@ app.config.from_object(Config)
 login = LoginManager(app)
 login.login_view = 'login'
 moment = Moment(app)
-CSRFProtect(app)
-Session(app)
+#CSRFProtect(app)
+#Session(app)
 
 from web_flask.app import routes

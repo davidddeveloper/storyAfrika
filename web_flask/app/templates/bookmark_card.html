@@ -1,10 +1,10 @@
 <div class="mb-4">
     {% include 'profile_story_card.html' %}
     {% if story %}
-    <p class="mt-1 text-lightgray text-sm">{{story.title}}</p>
+    <p class="mt-1 text-lightgray text-sm"><a href="{{ url_for('story', story_id=story.id )}}">{{story.title}}</a></p>
     {% elif bookmark %}
-    <p class="mt-1 text-lightgray text-sm">{{bookmark.story.title}}</p>
+    <p class="mt-1 text-lightgray text-sm"><a href="{{ url_for('story', story_id=bookmark.story.id )}}">{{bookmark.story.title}}</a></p>
     {% elif like %}
-    <p class="mt-1 text-lightgray text-sm">{{like.story.title}}</p>
+    <p class="mt-1 text-lightgray text-sm"><a href="{{ url_for('story', story_id=like.story.id )}}">{{like.story.title}}</a></p>
     {% endif %}
 </div>

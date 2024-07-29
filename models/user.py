@@ -35,10 +35,15 @@ class User(BaseModel, ImageUpload, Base):
         password = Column(String(200), nullable=False)
         short_bio = Column(String(160), nullable=True)
         about = Column(Text, nullable=True)
+        first_name = Column(String(50), nullable=True)
+        last_name = Column(String(50), nullable=True)
+        full_name = Column(String(50), nullable=True, default=(first_name + ' ' + last_name))
         stories = relationship('Story', backref='writer', lazy=True)
         comments = relationship('Comment', backref='commenter', lazy=True)
         likes = relationship('Like', backref='liker', lazy=True)
         bookmarks = relationship('Bookmark', backref='bookmarker', lazy=True)
+        comment_likes = relationship('CommentLike', backref='liker', lazy=True)
+        comment_unlikes = relationship('CommentUnLike', backref='unliker', lazy=True)
         followers:  WriteOnlyMapped['User'] = relationship(
             secondary=Follower.__table__,
             primaryjoin='followers.c.followed_id == User.id',
@@ -108,7 +113,7 @@ class User(BaseModel, ImageUpload, Base):
         from models.like import Like
 
         story_likes = sa.select(Story).join(Like).where(sa.and_(
-            Story.id == 'xyz',
+            Story.id == story_id,
             User.id == self.id
         ))
 
@@ -116,6 +121,10 @@ class User(BaseModel, ImageUpload, Base):
             return True
         else:
             return False
+    
+    def liked_comment(self, comment_id):
+        """ check if a comment is liked """
+        pass
 
     def follow(self, user):
          """

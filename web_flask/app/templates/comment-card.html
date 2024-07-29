@@ -1,0 +1,28 @@
+<article class="comment-card rounded-lg p-4 {% if odd == yes %} bg-mediumpurple text-white {% else %} bg-white text-lightgray {% endif %}">
+    <div class="profile container mx-auto px-5 sm:px-2 ">
+        <div class="flex items-center">
+            {% if comment.commenter.avatar %}
+            <img class="rounded-full h-[40px] w-[40px] object-cover" src="{{ url_for('upload', filename=current_user.avatar) }}" alt="">
+            {% else %}
+            <img class="rounded-full h-[40px] w-[40px] object-cover" src="https://picsum.photos/200/700" alt="">
+            {% endif %}
+            <div class="ml-[15px]">
+                <div class="flex gap-[5px] follow-card" data-user_id={{current_user.id}}>
+                    <h3 class="">{{comment.commenter.username}}</h3>
+                    <button class="follow flex items-center text-lightblue"><img src="/static/icons/plus.svg" alt="">Follow</button>
+                </div>
+                <div class="mt-[2px] flex gap-[5px] items-center">
+                    <p class="text-xs">posted {{ moment(comment.created_at).fromNow()}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="relative isolate comment-text-container">
+        <p class="comment-text text-sm mt-[10px] ml-[50px] h-10 overflow-hidden">{{comment.comment}}</p>
+        <span class="span block text-white text-sm absolute bottom-0 right-0 z-10 px-1 rounded-md bg-lightblue cursor-pointer view-more">view more</span>
+    </div>
+    <div class="flex items-center ml-[50px]">
+        <p class="mt-3 text-sm">{{comment.likes | length}}</p>
+        <button><img class="block active:bg-lightblue" src="/static/icons/like.svg" alt=""></button>
+    </div>
+</article>

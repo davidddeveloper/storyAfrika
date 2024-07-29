@@ -57,6 +57,16 @@ class Story(BaseModel, ImageUpload, Base):
 
         return read_time_in_minutes
 
+    @property
+    def plain_text(self):
+        import re, json
+
+        if self.text and re.search(r'^\[', self.text):
+            return json.dumps([content['content'].replace('⇅', '') for content in json.loads(re.sub('<[^>]+>', '', self.text)) 
+                if content['content'] != '⇅']).replace('"', '').replace('[', '').replace(']','').replace("'", '')
+
+        return self.text
+
     def __init__(self, title, text, user_id, **kwargs):
         super().__init__(**kwargs)
 

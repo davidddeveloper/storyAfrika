@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="/static/tailwind.css">
     <script src="/static/js/jquery.min.js" defer></script>
     <script src="/static/js/main.js" defer></script>
+
+    <script src="/static/js/comment-view.js" defer></script>
 </head>
 <body data-current_user_id="{{current_user.id}}" class="relative">
     <header>
@@ -27,6 +29,6 @@
     {% block miscellaneous %} {% endblock %}
     {{ moment.include_moment() }}
 
-    
+
 </body>
 </html>

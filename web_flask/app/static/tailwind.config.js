@@ -8,7 +8,9 @@ module.exports = {
         lightblue: '#2699eb',
         black: '#000',
         white: '#fff',
-        offset: 'D9D9D9'
+        offwhite: '#f5f5f5',
+        mediumpurple: '#16101C',
+        offset: '#D9D9D9'
       },
       screens: {
         'sm': '430px',

@@ -8,7 +8,7 @@ $(function () {
     if (!localStorage.getItem('story_id')) {
         $.ajax({
             type: 'POST',
-            url: '/api/v1/stories/',
+            url: 'http://127.0.0.1:4000/api/v1/stories/',
             data: JSON.stringify({"title": " ", "text": '[{"content":"xyzzzzzz"}]', "user_id": $body.data('current_user_id')}),
             dataType: 'json',
             contentType: 'application/json',
@@ -50,7 +50,7 @@ $(function () {
         $story.text = JSON.stringify(blocks)
         $.ajax({
             type: "PUT",
-            url: `/api/v1/stories/${$story_id}/`,
+            url: `http://127.0.0.1:4000/api/v1/stories/${$story_id}/`,
             data: JSON.stringify($story),
             dataType: "json",
             contentType: "application/json",
@@ -65,7 +65,7 @@ $(function () {
         let $story_id = localStorage.getItem('story_id')
 
         // get the story state
-        $.get(`/api/v1/stories/${$story_id}/`, function (response, status) {
+        $.get(`http://127.0.0.1:4000/api/v1/stories/${$story_id}/`, function (response, status) {
             if (status == 'success') {
                 console.log(response)
                 const blocks = JSON.parse(response.text) || [];

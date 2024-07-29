@@ -2,7 +2,7 @@
 
 {% block  story %}
     <header class="mt-[60px] container mx-auto flex justify-between items-center px-5 sm:px-2">
-        <h1 class="text-xl"><a href="{{ url_for('home')}}">storyafrika</a></h1>
+        <h1 class="text-xl"><a href="{{ url_for('home') }}">storyafrika</a></h1>
         {% if current_user.avatar %}
         <div class="rounded-full w-[60px] h-[60px] border">
             <img class="rounded-full w-full h-full object-cover" src="{{ url_for('upload', filename=current_user.avatar) }}" alt="" srcset="">
@@ -13,7 +13,7 @@
         </div>
         {% endif %}
     </header>
-    <main class="">
+    <main class="story-card" data-story_id={{story.id}}>
         <h2 class="container mx-auto font-medium text-[45px] mt-[60px] mb-[20px] px-5 sm:px-2">{{story.title}}</h2>
         <div class="profile mb-[30px] container mx-auto px-5 sm:px-2 ">
             <div class="flex items-center">
@@ -23,12 +23,13 @@
                 <img class="rounded-full h-[50px] w-[50px] object-cover" src="https://picsum.photos/200/700" alt="">
                 {% endif %}
                 <div class="ml-[15px]">
-                    <div class="flex gap-[15px]">
+                    <div class="flex gap-[15px] follow-card" data-user_id={{current_user.id}}>
                         <h3>{{story.writer.username}}</h3>
-                        <button class="flex items-center"><img src="/static/icons/plus.svg" alt="">Follow</button>
+                        <button class="follow flex items-center text-lightblue"><img src="/static/icons/plus.svg" alt="">Follow</button>
                     </div>
-                    <div class="mt-[5px] flex gap-[5px]">
+                    <div class="mt-[5px] flex gap-[5px] items-center">
                         <p>{{story.read_time}} min read</p>
+                        <p class="w-2 h-2 bg-black rounded-full mx-2"></p>
                         <p>{{ moment(story.created_at).fromNow()}}</p>
                     </div>
                 </div>
@@ -57,27 +58,30 @@
         <hr class="border-2 mt-[120px] mb-[30px] border-black">
         <section class="container mx-auto px-5 sm:px-2">
             <h3 class="mt-[50px] mb-[30px] text-[20px] font-medium">More from <span class="text-lightblue">{{story.writer.username}}</span></h3>
-            <div class="flex justify-center sm:block">
+            <div class="flex justify-start gap-5 flex-wrap">
+                {% for other_story in story.writer.stories %}
+                {% if other_story != story %}
+                {% if loop.index <= 3 %}
                 <div class="h-[200px] w-[300px]">
-                    {% for other_story in story.writer.stories %}
-                        {% if other_story != story %}
-                        {% if current_user.avatar %}
-                        <img class="h-full w-full object-cover" src="{{ url_for('upload', filename=current_user.avatar) }}" alt="">
-                        {% else %}
-                        <img class="h-full w-full object-cover" src="https://picsum.photos/300/200" alt="">
-                        {% endif %}
-                        <div class="mt-[20px] mb-[10px]">
-                            {% include 'profile_story_card.html' %}
-                            <p class="text-lg font-medium"><a href="{{ url_for('story', story_id=other_story.id) }}">{{other_story.title}}</a></p>
-                            <p class="mt-[10px] mb-[20px] w-full overflow-x-hidden whitespace-nowrap overflow-ellipsis">{{other_story.text}}</p>
-                            <p class="text-[10px]">{{other_story.read_time}} min read</p>
-                        </div>
-                        {% endif %}
+                    {% if other_story.image %}
+                    <img class="h-full w-full object-cover" src="{{ url_for('upload', filename=other_story.image) }}" alt="">
                     {% else %}
-                        <p>{{ story.writer }} has not made any other post</p>
-                    {% endfor %}
+                    <img class="h-full w-full object-cover" src="https://unsplash.it/500" alt="">
+                    {% endif %}
+                    <div class="mt-[20px] mb-[10px]">
+                        {% include 'profile_story_card.html' %}
+                        <p class="text-lg font-medium"><a href="{{ url_for('story', story_id=other_story.id) }}">{{other_story.title}}</a></p>
+                        <p class="mt-[10px] mb-[20px] w-full overflow-x-hidden whitespace-nowrap overflow-ellipsis">{{other_story.plain_text}}</p>
+                        <p class="text-[10px]">{{other_story.read_time}} min read</p>
+                    </div>
                 </div>
+                {% endif %}
+                {% endif %}
+                {% else %}
+                        <p>{{ story.writer }} has not made any other post</p>
+                {% endfor %}
             </div>
         </section>
     </main>
+    {% include 'comments-view.html' %}
 {% endblock %}
