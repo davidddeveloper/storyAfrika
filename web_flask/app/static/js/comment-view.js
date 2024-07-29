@@ -9,6 +9,7 @@ $(function () {
     $('body').on('click', '.show-comment-view', () => {
         if (commentView.hasClass('is-hidden')) {
             commentView.removeClass('md:-right-[100%] is-hidden -bottom-[100%]').addClass('-bottom-[20%] md:right-0')
+            $('textarea').focus()
 
         } else {
             commentView.removeClass('md:right-0').addClass('md:-right-[100%] is-hidden')

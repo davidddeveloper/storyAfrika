@@ -1,4 +1,4 @@
-<article class="comment-card rounded-lg p-4 {% if odd == yes %} bg-mediumpurple text-white {% else %} bg-white text-lightgray {% endif %}">
+<article class="comment-card rounded-lg p-4 {{ 'bg-mediumpurple text-white' if odd else 'bg-white text-lightgray' }}">
     <div class="profile container mx-auto px-5 sm:px-2 ">
         <div class="flex items-center">
             {% if comment.commenter.avatar %}

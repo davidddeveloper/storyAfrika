@@ -67,6 +67,24 @@ class Story(BaseModel, ImageUpload, Base):
 
         return self.text
 
+    @property
+    def newest_comments(self):
+        """ order comments based on newest first """
+        from models.comment import Comment
+
+        return (
+            Comment.newest().where(Comment.story_id == self.id)
+        )
+
+    @property
+    def relevant(self):
+        """ compute relevant comments base on number of likes """
+        from models.comment import Comment
+
+        sa.select(Comment).join(Story).order_by(self.)
+        pass
+
+
     def __init__(self, title, text, user_id, **kwargs):
         super().__init__(**kwargs)
 

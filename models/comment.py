@@ -52,9 +52,24 @@ class Comment(BaseModel, Base):
     @classmethod
     def relevant(cls):
         """ compute relevant comments base on number of likes """
+        from models.engine import storage
+        from models.story import Story
+        comments = storage._session.execute(sa.select(Comment).join(Story).scalars().all())
+        #return (
+        #    sa.select(cls)
+        #    .join(Story)
+        #    .add_columns(
+        #    ).order_by(
+        #        (cls.likes_count() - cls.unlikes_count()).desc()
+        #    )
+        #)
 
         return (
-            sa.select(cls).order_by((cls.likes_count - cls.unlikes_count).desc())
+            sorted(
+                comments,
+                key=lambda comment: comment.likes_count - comment.unlikes_count,
+                reverse=True
+            )
         )
     
     @classmethod
