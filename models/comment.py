@@ -36,6 +36,16 @@ class Comment(BaseModel, Base):
         story_id = ''
         user_id = ''
 
+    def to_dict(self):
+        """ Dictionary representation of the object """
+
+        dictionary = super().to_dict()
+
+        dictionary['likes_count'] = len(self.likes)
+        dictionary['unlikes_count'] = len(self.unlikes)
+
+        return dictionary
+
     def __init__(self, comment, story_id, user_id, **kwargs):
         super().__init__(**kwargs)
         arguments = {
@@ -190,9 +200,22 @@ class Comment(BaseModel, Base):
     @property
     def likes_count(self):
         """ count the number of likes made on this comment """
-        return len(self.likes)
+        return (
+            sa.select(sa.func.count())
+            .select_from(sa.select(CommentLike)
+                         .join(Comment, isouter=True)
+                         .where(CommentLike.comment_id == self.id)
+                        )
+        )
+    #sa.select(sa.func.count()).select_from(CommentLike)
     
     @property
     def unlikes_count(self):
         """ count the number of unlikes made on this comment """
-        return len(self.unlikes)
+        return (
+            sa.select(sa.func.count())
+            .select_from(sa.select(CommentUnLike)
+                         .join(Comment, isouter=True)
+                         .where(CommentLike.comment_id == self.id)
+                        )
+        )
