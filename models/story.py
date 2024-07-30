@@ -77,12 +77,30 @@ class Story(BaseModel, ImageUpload, Base):
         )
 
     @property
-    def relevant(self):
+    def relevant_comments(self):
         """ compute relevant comments base on number of likes """
         from models.comment import Comment
+        from models.comment_like import CommentLike
+        from models.comment_unlike import CommentUnLike
 
-        sa.select(Comment).join(Story).order_by(self.)
-        pass
+        likes_count = (
+            sa.select(sa.func.count(CommentLike.id))
+            .where(CommentLike.comment_id == Comment.id)
+            .scalar_subquery()
+        )
+
+        unlikes_count = (
+            sa.select(sa.func.count(CommentUnLike.id))
+            .where(CommentUnLike.comment_id == Comment.id)
+            .scalar_subquery()
+        )
+
+        return (
+            sa.select(Comment)
+            .join(Story)
+            .where(Comment.story_id == self.id)
+            .order_by(sa.desc(likes_count - unlikes_count))
+        )
 
 
     def __init__(self, title, text, user_id, **kwargs):
