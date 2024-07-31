@@ -101,7 +101,7 @@ $(function () {
 
         $.ajax({
             type: "POST",
-            url: `http://127.0.0.1:4000/api/v1/stories/${$story_id}/${$current_user_id}/comments/`,
+            url: `/api/v1/stories/${$story_id}/${$current_user_id}/comments/`,
             data: comment_json,
             dataType: 'json',
             contentType: 'application/json',
@@ -149,7 +149,7 @@ $(function () {
     </article>
     `)}
 
-    $.get(`http://127.0.0.1:4000/api/v1/stories/${$story_id}/${$current_user_id}/comments/`, function (response, status) {
+    $.get(`/api/v1/stories/${$story_id}/${$current_user_id}/comments/`, function (response, status) {
         if (status == 'success') {
             console.log(response)
             response.forEach((comment, idx) => {
@@ -173,7 +173,7 @@ $(function () {
 
         if (value == 'relevants') {
             
-            $.get(`http://127.0.0.1:4000/api/v1/stories/${$story_id}/${$current_user_id}/comments/relevant/`, function (response, status) {
+            $.get(`/api/v1/stories/${$story_id}/${$current_user_id}/comments/relevant/`, function (response, status) {
                 if (status == 'success') {
                     console.log(response)
                     $comment_container.empty()
@@ -189,7 +189,7 @@ $(function () {
 
         if (value == 'newests') {
             
-            $.get(`http://127.0.0.1:4000/api/v1/stories/${$story_id}/${$current_user_id}/comments/newest/`, function (response, status) {
+            $.get(`/api/v1/stories/${$story_id}/${$current_user_id}/comments/newest/`, function (response, status) {
                 if (status == 'success') {
                     $response = {}
                     $comment_container.empty()

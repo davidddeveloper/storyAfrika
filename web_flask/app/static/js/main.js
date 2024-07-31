@@ -2,7 +2,7 @@ $(function(){
     const get_current_user = () => {
         let $current_user_id = $('body').data('current_user_id')
         let $current_user = null
-        $.get(`http://127.0.0.1:4000/api/v1/users/${$current_user_id}/`, function (response, status) {
+        $.get(`/api/v1/users/${$current_user_id}/`, function (response, status) {
                 if (status == 'success') {
                     $current_user = response
                     console.log($current_user)
@@ -121,13 +121,13 @@ $(function(){
     let $story_text_container = $('.story-story-text')
     const $story_id = $story_text_container.data('story_id')
     
-    $.get(`http://127.0.0.1:4000/api/v1/stories/${$story_id}`, function (response, status) {
+    $.get(`/api/v1/stories/${$story_id}`, function (response, status) {
         if (status == 'success') {
             let content = ''
             JSON.parse(response.text).forEach(block => {
                 content = content + block.content;
             })
-            let $jcontent = $(`<div>${content}</div>`.replaceAll("⇅", "")).text();
+            let $jcontent = $(`<div>${content}</div>`.replaceAll("⇅", "")).html();
             $story_text_container.html(`${$jcontent}`)
         }
     })
@@ -199,7 +199,7 @@ $(function(){
         </article>
     `)}
 
-    /*$.get(`http://127.0.0.1:4000/api/v1/users/${$current_user_id}/following_stories/`, function ($response, $status) {
+    /*$.get(`/api/v1/users/${$current_user_id}/following_stories/`, function ($response, $status) {
         if ($status == 'success') {
             $response.forEach(story_data => {
                 $stories_container.append($story(story_data))
@@ -219,7 +219,7 @@ $(function(){
         if (loading) return
         loading = true
 
-        let $url = `http://127.0.0.1:4000/api/v1/users/${$current_user_id}/following_stories?page=${page}&per_page=${perPage}`
+        let $url = `/api/v1/users/${$current_user_id}/following_stories?page=${page}&per_page=${perPage}`
         $.get($url, function ($response, $status, $error) {
             if ($status == 'success') {
                 console.log($response)
@@ -259,7 +259,7 @@ $(function(){
         const story_id = localStorage.getItem('story_id')
         $.ajax({
             type: 'DELETE',
-            url: `http://127.0.0.1:4000/api/v1/stories/${story_id}/`,
+            url: `/api/v1/stories/${story_id}/`,
             success: function (response) {
                 localStorage.removeItem('story_id')
             }
