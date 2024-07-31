@@ -360,7 +360,8 @@ def dummy_view():
 
 @app.route('/uploads/<string:filename>')
 def upload(filename):
-    user_dir = os.path.join(app.config['UPLOAD_PATH'], current_user.get_id())
+    # user_dir = os.path.join(app.config['UPLOAD_PATH'], current_user.get_id())
+    user_dir = os.path.join(app.config['UPLOAD_PATH'])
     return send_from_directory(user_dir, filename)
 
 def validate_image(stream):

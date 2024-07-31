@@ -33,7 +33,8 @@ class ImageUpload:
             if file_ext != ImageUpload.validate_image(file.stream):
                 raise ValueError("Invalid image format")
             
-            upload_dir = os.path.join(UPLOAD_PATH, current_user.get_id())
+            # upload_dir = os.path.join(UPLOAD_PATH, current_user.get_id())
+            upload_dir = os.path.join(UPLOAD_PATH)
             os.makedirs(upload_dir, exist_ok=True)
             file.save(os.path.join(upload_dir, filename))
         
