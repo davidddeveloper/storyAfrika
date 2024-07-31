@@ -151,7 +151,7 @@ $(function(){
     let $stories_container = $('.stories-container')
     let $story = (story) => {
         return (`
-        <article class="shrink-0 story-card fade-in" data-story_id="${story.id}">
+        <article class="shrink-0 story-card fade-in max-h-[350px]" data-story_id="${story.id}">
             <div class="flex w-[300px] items-center">
             <div class="profile flex items-center">
                 <img class=" w-[40px] h-[40px] object-cover border-2 rounded-full" src="/uploads/${story.writer.avatar}" alt="">
@@ -197,6 +197,7 @@ $(function(){
                 </div>
             </div>
         </article>
+        <hr class="border-black">
     `)}
 
     /*$.get(`/api/v1/users/${$current_user_id}/following_stories/`, function ($response, $status) {
