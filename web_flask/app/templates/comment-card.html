@@ -1,4 +1,4 @@
-<article class="comment-card rounded-lg p-4 {{ 'bg-mediumpurple text-white' if odd else 'bg-white text-lightgray' }}">
+<article class="comment-card rounded-lg p-4 {{ 'bg-mediumpurple text-white' if odd else 'bg-white text-lightgray' }}" data-comment_id="{{ comment.id }}">
     <div class="profile container mx-auto px-5 sm:px-2 ">
         <div class="flex items-center">
             {% if comment.commenter.avatar %}
@@ -22,7 +22,11 @@
         <span class="span block text-white text-sm absolute bottom-0 right-0 z-10 px-1 rounded-md bg-lightblue cursor-pointer view-more">view more</span>
     </div>
     <div class="flex items-center ml-[50px]">
-        <p class="mt-3 text-sm">{{comment.likes | length}}</p>
-        <button><img class="block active:bg-lightblue" src="/static/icons/like.svg" alt=""></button>
+        <p class="mt-3 text-sm comment-like-count">{{comment.likes | length}}</p>
+        {% if comment.is_liked_by(current_user.id) %}
+        <button class="comment-like-btn comment-liked-btn"><img class="block active:bg-lightblue" src="/static/icons/liked.svg" alt=""/></button>
+        {% else %}
+        <button class="comment-like-btn comment-like-btn-trans"><img class="block active:bg-lightblue" src="/static/icons/like.svg" alt=""/></button>
+        {% endif %}
     </div>
 </article>

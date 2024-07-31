@@ -3,6 +3,7 @@
 
 """
 
+from sqlalchemy.orm import joinedload
 from web_flask.app import app, storage
 from web_flask.app.forms import LoginForm, UserRegistrationForm, UserUpdateForm
 from flask_login import current_user, login_user
@@ -14,6 +15,7 @@ from models.story import Story
 from models.user import User
 from models.like import Like
 from models.bookmark import Bookmark
+from models.comment import Comment
 from urllib.parse import urlsplit, urlparse
 from flask import session
 from werkzeug.utils import secure_filename
@@ -299,6 +301,36 @@ def bookmark_or_unbookmark_story(story_id=None):
     storage.save()
 
     return jsonify({}), 201
+
+
+@app.route(
+    '/comments/<string:comment_id>/like/',
+    methods=['GET'],
+    strict_slashes=False
+)
+@login_required
+def like_or_unlike_comment(comment_id=None):
+    """ Like a comment
+
+        Attributes:
+            - comment_id: id of the comment
+
+    """
+    from models.engine import storage
+
+    comment = storage._session.query(Comment).options(joinedload(Comment.commenter)).filter_by(id=comment_id).scalar()
+    if comment is None:
+        abort(404)
+
+    print(comment.is_liked_by(current_user.id), '..................><><><>')
+    if not comment.is_liked_by(current_user.id):  # the user has not like a comment
+        comment.like(current_user.id)  # like the story
+        storage.save()
+        return jsonify({'status': 'liked', 'likes_count': comment.to_dict().get('likes_count')}), 201
+    else:  # user has already like the comment
+        comment.unlike(current_user.id)  # unlike it
+        storage.save()
+        return jsonify({'status': 'unliked', 'likes_count': comment.to_dict().get('likes_count')}), 201
 
 
 @app.route('/dummy', methods=['GET', 'POST'])

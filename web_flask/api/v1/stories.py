@@ -4,6 +4,7 @@
 """
 
 import json
+from sqlalchemy.orm import joinedload
 from flask import request, jsonify, abort, url_for
 from flask_login import current_user, login_required
 from web_flask.api.v1 import views
@@ -62,7 +63,7 @@ def stories():
 
 
 @views.route(
-        'users/<string:user_id>/following_stories/',
+        '/users/<string:user_id>/following_stories/',
         methods=['GET'],
         strict_slashes=False
 )
@@ -91,7 +92,7 @@ def following_stories(user_id=None):
         story_dictionary['liked'] = is_liked
 
         stories.append(story_dictionary)
-    print('=========================', stories)
+
     if stories == []:
         _stories = [ story.to_dict() for story in storage.all(Story).values() ]
         stories = []
@@ -238,19 +239,22 @@ def like_or_unlike_story(story_id=None):
 
 
 @views.route(
-    '/stories/<string:story_id>/comments/',
+    '/stories/<string:story_id>/<string:user_id>/comments/',
     methods=['POST'],
     strict_slashes=False
 )
 #login_required
-def make_comment_on_story(story_id=None):
+def make_comment_on_story(story_id=None, user_id=None):
     """ Comment on a story
 
         Attributes:
             - story_id: id of the story
 
     """
-    if story_id is None:
+
+    story = storage.get(Story, story_id)
+    user = storage.get(User, user_id)
+    if story is None or user is None:
         abort(404)
 
     try:
@@ -263,13 +267,13 @@ def make_comment_on_story(story_id=None):
         comment = Comment(
             comment=comment_json['comment'],
             story_id=story_id,
-            user_id=current_user.id
+            user_id=user.id
         )
     elif isinstance(comment_json, list):
         comment = Comment(
             comment=comment_json[0],
             story_id=story_id,
-            user_id=current_user.id
+            user_id=user.id
         )
 
     storage.new(comment)
@@ -279,28 +283,156 @@ def make_comment_on_story(story_id=None):
 
 
 @views.route(
-    '/stories/<string:story_id>/comments',
+    '/stories/<string:story_id>/<string:user_id>/comments/relevant/',
     methods=['GET'],
     strict_slashes=False
 )
 #login_required
-def get_comments_for_story(story_id=None):
+def get_relevant_comments_for_story(story_id=None, user_id=None):
     """ all comments made on a particular story
 
         Attributes:
             - story_id: the uuid of the story
 
     """
-    story = storage.get(Story, story_id)
 
-    if story is None:
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
+
+    story = storage.get(Story, story_id)
+    user = storage.get(User, user_id)
+
+    if story is None or user is None:
         abort(404)
 
-    comments = story.comments
+    #comments_obj = storage._session.execute(story.relevant_comments.options(
+    #    joinedload(Comment.commenter)
+    #)).scalars().all()
+    import sqlalchemy as sa
+
+    comments_obj = sa.select(Comment).select_from(story.relevant_comments.subquery())
+
+    print('------------->', comments_obj)
+
+    pagination = Comment.paginate(comments_obj, page, per_page)
+
+    comments = []
+    for comment in pagination['items']:
+        temp = comment.to_dict()
+        temp['is_liked_by'] = comment.is_liked_by(user_id)
+        comments.append(temp)
+
+    if comments == []:
+        comments_obj = storage._session.execute(story.relevant_comments.options(
+        joinedload(Comment.commenter)
+    )).scalars().all()
+        _comments = [ comment.to_dict() for comment in comments_obj ]
+        comments = []
+        for comment in _comments:
+            try:
+                is_liked_by = comment.is_liked_by(story['id'])
+                comment['is_liked_by'] = is_liked_by
+                comments.append(story)
+            except Exception:
+                pass
+    
+    return jsonify(
+        {
+            'total_items': pagination['total_items'],
+            'total_pages': pagination['total_pages'],
+            'page': pagination['page'],
+            'per_page': pagination['per_page'],
+            'stories': comments
+        }
+    ), 200
+
+    """comments = []
+    for comment in comments_obj:
+        temp = comment.to_dict()
+        temp['is_liked_by'] = comment.is_liked_by(user_id)
+        comments.append(temp)
+    
+    print(comments, '-----------------><>--------------')
 
     return jsonify([
-        comment.to_dict() for comment in comments
+        comment for comment in comments
+    ])"""
+
+
+@views.route(
+    '/stories/<string:story_id>/<string:user_id>/comments/newest/',
+    methods=['GET'],
+    strict_slashes=False
+)
+#login_required
+def get_newest_comments_for_story(story_id=None, user_id=None):
+    """ all comments made on a particular story
+
+        Attributes:
+            - story_id: the uuid of the story
+
+    """
+    from models.engine import storage
+
+    story = storage.get(Story, story_id)
+    user = storage.get(User, user_id)
+
+    if story is None or user is None:
+        abort(404)
+
+    comments_obj = storage._session.execute(story.newest_comments.options(
+        joinedload(Comment.commenter)
+    )).scalars().all()
+
+    comments = []
+    for comment in comments_obj:
+        temp = comment.to_dict()
+        temp['is_liked_by'] = comment.is_liked_by(user_id)
+        comments.append(temp)
+    
+    print(comments, '-----------------><>--------------')
+
+    return jsonify([
+        comment for comment in comments
     ])
+
+
+@views.route(
+    '/stories/<string:story_id>/<string:user_id>/comments/',
+    methods=['GET'],
+    strict_slashes=False
+)
+#login_required
+def get_comments_for_story(story_id=None, user_id=None):
+    """ all comments made on a particular story
+
+        Attributes:
+            - story_id: the uuid of the story
+
+    """
+    from models.engine import storage
+
+    story = storage.get(Story, story_id)
+    user = storage.get(User, user_id)
+
+    if story is None or user is None:
+        abort(404)
+
+    comments_obj = storage._session.query(Comment).options(joinedload(Comment.commenter)).filter_by(story_id=story_id).all()
+
+    comments = []
+    for comment in comments_obj:
+        temp = comment.to_dict()
+        temp['is_liked_by'] = comment.is_liked_by(user_id)
+        comments.append(temp)
+    
+    print(comments, '-----------------><>--------------')
+
+    return jsonify([
+        comment for comment in comments
+    ])
+
+
 
 
 @views.route(

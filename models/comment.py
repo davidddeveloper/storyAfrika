@@ -38,11 +38,13 @@ class Comment(BaseModel, Base):
 
     def to_dict(self):
         """ Dictionary representation of the object """
+        from models.engine import storage
 
         dictionary = super().to_dict()
 
-        dictionary['likes_count'] = len(self.likes)
-        dictionary['unlikes_count'] = len(self.unlikes)
+        dictionary['commenter'] = self.commenter.to_dict()
+        dictionary['likes_count'] = storage._session.execute(self.likes_count).scalar()
+        dictionary['unlikes_count'] = storage._session.execute(self.unlikes_count).scalar()
 
         return dictionary
 
@@ -99,59 +101,44 @@ class Comment(BaseModel, Base):
         """
 
         from models.engine import storage
+
+        query = storage._session.query(CommentUnLike).where(sa.and_(
+            CommentUnLike.user_id == user_id,  # get only the comments that the user has liked
+            CommentUnLike.comment_id == self.id
+        ))
+        if storage._session.execute(query).scalar_one_or_none():
+            comment = storage._session.execute(query).scalar()
+            comment.delete()
+
         comment_like = CommentLike(comment_id=self.id, user_id=user_id)
+        comment_like.save()
 
-        if self.is_liked_by(user_id):  # user already liked the story
-            return True
-        
-        if not self.is_liked_by(user_id) and not self.is_unliked_by(user_id):
-            # not liked or unliked the story yet
-            comment_like.save()
 
-        elif self.is_unliked_by(user_id):  # used to unliked the comment
-            # get the unlike
-            comment_unlike = storage._session.query(CommentUnLike).where(sa.and_(
-                CommentUnLike.user_id == user_id,  # get only the comments that the user has liked
-                CommentUnLike.comment_id == self.id
-            ))
-            comment_unlike.delete()
-            # create the new like
-            comment_like.save()
-            storage.save()
 
-        storage.close()
-        return 'success'
+        return 'liked'
 
     def unlike(self, user_id):
         """ like a comment 
-        
+
             Attribute:
                 - user_id: the id of the user that wants to like a comment
 
         """
         from models.engine import storage
 
+        query = storage._session.query(CommentLike).where(sa.and_(
+            CommentLike.user_id == user_id,  # get only the comments that the user has liked
+            CommentLike.comment_id == self.id
+        ))
+        if storage._session.execute(query).scalar_one_or_none():
+            comment = storage._session.execute(query).scalar()
+            comment.delete()
+
         comment_unlike = CommentUnLike(comment_id=self.id, user_id=user_id)
+        comment_unlike.save()
 
-        if self.is_unliked_by(user_id):  # user is has already unliked the story
-            return True
+        return 'unliked'
 
-        if not self.is_liked_by(user_id) and not self.is_unliked_by(user_id):
-            comment_unlike.save()
-        elif self.is_liked_by(user_id):
-            comment_like = storage._session.query(CommentLike).where(sa.and_(
-                CommentLike.user_id == user_id,  # get only the comments that the user has liked
-                CommentLike.comment_id == self.id
-            ))
-            comment_like.delete()
-            comment_like.save()
-
-            comment_unlike.save()
-            storage.save()
-
-        storage.close()
-        return 'success'
-    
     def is_liked_by(self, user_id):
         """ check if a user is liking a comment 
         

@@ -93,8 +93,8 @@ class User(BaseModel, ImageUpload, Base):
 
         dictionary = super().to_dict()
         try:
-            dictionary.pop('_sa_instance_state')
             dictionary.pop('password')
+            dictionary.pop('_sa_instance_state')
         except Exception:
             pass
 
