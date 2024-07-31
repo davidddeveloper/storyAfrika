@@ -1,34 +1,36 @@
-<div class="container mx-auto profile-card rounded-lg hidden items-center justify-center border-2 gap-4 sm:gap-10 md:gap-20 w-[85%] pt-5 px-1 pb-2 sm:p-0 sm:w-[95%] md:w-[80%] absolute sm:py-10 z-20 bg-white left-[5%] transition-all ease-out -top-[100%] md:left-[10%] md:flex">
+<div class="container mx-auto profile-card rounded-lg hidden items-center justify-center border-2 gap-3 sm:gap-10 md:gap-20 w-[85%] py-5 sm:p-0 sm:w-[95%] md:w-[80%] absolute sm:py-10 z-20 bg-white left-[5%] right-[5%] transition-all ease-out -top-[100%] md:left-[10%] md:flex">
     <form method="post" action="" class="">
         {{form.hidden_tag()}}
 
         {#{{ form.username.label }}#}
-        {{ form.username(class="bg-white text-lightgray border-2 p-1 rounded-lg focus:outline-lightblue", size=32, placeholder="Username", value=current_user.username) }}
+        {{ form.username(class="bg-white text-lightgray border-2 p-1 rounded-lg focus:outline-lightblue w-full sm:w-[290px]", placeholder="Username", value=current_user.username) }}
         {% for error in form.username.errors %}
         <p style="color: bisque;">{{error}}</p>
         {% endfor %}</br></br>
 
         {#{{ form.email.label }}#}
-        {{ form.email(class="bg-white text-lightgray border-2 p-1 rounded-lg focus:outline-lightblue", size=32, placeholder="Email", value=current_user.email) }}
+        {{ form.email(class="bg-white text-lightgray border-2 p-1 rounded-lg focus:outline-lightblue w-full sm:w-[290px]", placeholder="Email", value=current_user.email) }}
         {% for error in form.email.errors %}
         <p style="color: bisque;">{{error}}</p>
         {% endfor %}</br></br>
 
         {#{{ form.current_password.label }}#}
-        {{ form.current_password(class="bg-white text-lightgray border-2 p-1 rounded-lg focus:outline-lightblue", size=32, placeholder="Current Password") }}
+        {{ form.current_password(class="bg-white text-lightgray border-2 p-1 rounded-lg focus:outline-lightblue w-full sm:w-[290px]", placeholder="Current Password") }}
         {% for error in form.current_password.errors %}
         <p style="color: bisque;">{{error}}</p>
         {% endfor %}</br></br>
 
         {#{{ form.new_password.label }}#}
-        {{ form.new_password(class="bg-white text-lightgray border-2 p-1 rounded-lg focus:outline-lightblue", size=32, placeholder="New Password") }}
+        {{ form.new_password(class="bg-white text-lightgray border-2 p-1 rounded-lg focus:outline-lightblue w-full sm:w-[290px]", placeholder="New Password") }}
         {% for error in form.new_password.errors %}
         <p style="color: bisque;">{{error}}</p>
         {% endfor %}</br></br>
-
-        {{ form.submit(class="text-white px-2 py-1 rounded-sm bg-lightblue") }}</br></br>
+        <div class="flex justify-between items-center">
+            {{ form.submit(class="text-white px-2 py-1 rounded-sm bg-lightblue") }}</br></br>
+            <a href="/logout" class="text-lightblue">Logout</a>
+        </div>
     </form method="post" action="">
-    <div class="self-start">
+    <div class="self-center md:self-start">
         {% if current_user.avatar %}
         <button class="change-img-button-container border-2 rounded-full w-[130px] h-[130px] relative overflow-hidden"><img class="profile-image w-full h-full rounded-full object-cover" src="{{ url_for('upload', filename=current_user.avatar) }}" alt=""> <div class="image-btn-change hidden text-xs absolute inset-0 p-1 h-[25px] top-[45%] left-[20%] bg-white text-lightgray z-10 cursor-pointer">Change image</div></button>
         {% else %}
