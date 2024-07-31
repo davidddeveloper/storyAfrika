@@ -9,12 +9,18 @@ $(function () {
 
     $('body').on('click', '.show-comment-view', () => {
         if (commentView.hasClass('is-hidden')) {
+            $('.divider').show()
             commentView.removeClass('md:-right-[100%] is-hidden -bottom-[100%]').addClass('-bottom-[20%] md:right-0')
             $('textarea').focus()
 
         } else {
-            commentView.removeClass('md:right-0').addClass('md:-right-[100%] is-hidden')
+            commentView.removeClass('md:right-0').addClass('md:-right-[100%] md:-bottom-[100%] is-hidden')
         }
+    })
+
+    $('.divider').on('click', function () {
+        commentView.removeClass('md:right-0 -bottom-[20%]').addClass('md:-right-[100%] md:-bottom-[100%] -bottom-[100%] is-hidden')
+        $('.divider').hide()
     })
 
     $('.comment-textarea').on('input', function () {
@@ -147,7 +153,10 @@ $(function () {
         if (status == 'success') {
             console.log(response)
             response.forEach((comment, idx) => {
-                $comment_container.append($comment(comment, idx))
+                if (idx <= 6) {
+                    $comment_container.append($comment(comment, idx))
+
+                }
 
             })
         }
@@ -169,7 +178,9 @@ $(function () {
                     console.log(response)
                     $comment_container.empty()
                     response.forEach((comment, idx) => {
-                        $comment_container.append($comment(comment, idx))
+                        if (idx <= 5) {
+                            $comment_container.append($comment(comment, idx))
+                        }
 
                     })
                 }
@@ -183,7 +194,10 @@ $(function () {
                     $response = {}
                     $comment_container.empty()
                     response.forEach((comment, idx) => {
-                        $comment_container.append($comment(comment, idx))
+                        if (idx <= 5) {
+                            $comment_container.append($comment(comment, idx))
+
+                        }
 
                     })
                 }

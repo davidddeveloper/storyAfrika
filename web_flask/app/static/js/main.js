@@ -177,10 +177,10 @@ $(function(){
                 <div class="flex items-center">
                     <div class="flex items-center">
                         <p class="mt-3 like-count">${story.likes_count}</p>
-                        ${
-                            story.liked === false 
-                              ? '<button class="like-btn like-btn-trans"><img class="block active:bg-lightblue" src="/static/icons/like.svg" alt=""/></button>' 
-                              : '<button class="like-btn liked-btn"><img class="block active:bg-lightblue" src="/static/icons/liked.svg" alt=""/></button>'
+                        ${console.log(story.liked),
+                            story.liked === true 
+                              ? '<button class="like-btn liked-btn"><img class="block active:bg-lightblue" src="/static/icons/liked.svg" alt=""/></button>' 
+                              : '<button class="like-btn like-btn-trans"><img class="block active:bg-lightblue" src="/static/icons/like.svg" alt=""/></button>'
                           }
                           
                         </div>
@@ -189,9 +189,11 @@ $(function(){
                     </div>
                 </div>
                 <div class="bookmark">
-                    <button class="bookmark-btn">
-                        <img class='bookmark-img' src="/static/icons/bookmark.svg" alt="" srcset="">
-                    </button>
+                ${console.log(story.bookmarked),
+                    story.bookmarked == true
+                    ? `<button class="bookmark-btn unbookmark-btn"><img class='bookmark-img' src="/static/icons/bookmarked.svg" alt="" srcset=""></button>`
+                    : `<button class="bookmark-btn"><img class='bookmark-img' src="/static/icons/bookmark.svg" alt="" srcset=""></button>`
+                }
                 </div>
             </div>
         </article>
@@ -220,6 +222,7 @@ $(function(){
         let $url = `http://127.0.0.1:4000/api/v1/users/${$current_user_id}/following_stories?page=${page}&per_page=${perPage}`
         $.get($url, function ($response, $status, $error) {
             if ($status == 'success') {
+                console.log($response)
                 $response.stories.forEach($story_data => {
                     $stories_container.append($story($story_data))
                 })

@@ -87,9 +87,9 @@ def following_stories(user_id=None):
 
     stories = []
     for story in pagination['items']:
-        is_liked = user.liked_story(story.id)
         story_dictionary = story.to_dict()
-        story_dictionary['liked'] = is_liked
+        story_dictionary['liked'] = user.liked_story(story.id)
+        story_dictionary['bookmarked'] = user.bookmarked_story(story.id)
 
         stories.append(story_dictionary)
 
@@ -98,8 +98,8 @@ def following_stories(user_id=None):
         stories = []
         for story in _stories:
             try:
-                is_liked = user.liked_story(story['id'])
-                story['liked'] = is_liked
+                story['liked'] = user.liked_story(story['id'])
+                story['bookmarked'] = user.bookmarked_story(story['id'])
                 stories.append(story)
             except Exception:
                 pass
@@ -305,58 +305,58 @@ def get_relevant_comments_for_story(story_id=None, user_id=None):
     if story is None or user is None:
         abort(404)
 
-    #comments_obj = storage._session.execute(story.relevant_comments.options(
-    #    joinedload(Comment.commenter)
-    #)).scalars().all()
-    import sqlalchemy as sa
-
-    comments_obj = sa.select(Comment).select_from(story.relevant_comments.subquery())
-
-    print('------------->', comments_obj)
-
-    pagination = Comment.paginate(comments_obj, page, per_page)
-
-    comments = []
-    for comment in pagination['items']:
-        temp = comment.to_dict()
-        temp['is_liked_by'] = comment.is_liked_by(user_id)
-        comments.append(temp)
-
-    if comments == []:
-        comments_obj = storage._session.execute(story.relevant_comments.options(
+    comments_obj = storage._session.execute(story.relevant_comments.options(
         joinedload(Comment.commenter)
     )).scalars().all()
-        _comments = [ comment.to_dict() for comment in comments_obj ]
-        comments = []
-        for comment in _comments:
-            try:
-                is_liked_by = comment.is_liked_by(story['id'])
-                comment['is_liked_by'] = is_liked_by
-                comments.append(story)
-            except Exception:
-                pass
-    
-    return jsonify(
-        {
-            'total_items': pagination['total_items'],
-            'total_pages': pagination['total_pages'],
-            'page': pagination['page'],
-            'per_page': pagination['per_page'],
-            'stories': comments
-        }
-    ), 200
+    # import sqlalchemy as sa
 
-    """comments = []
+    # comments_obj = sa.select(Comment).select_from(story.relevant_comments.subquery())
+
+    # print('------------->', comments_obj)
+
+    # pagination = Comment.paginate(comments_obj, page, per_page)
+
+    # comments = []
+    # for comment in pagination['items']:
+        # temp = comment.to_dict()
+        # temp['is_liked_by'] = comment.is_liked_by(user_id)
+        # comments.append(temp)
+
+    # if comments == []:
+       # comments_obj = storage._session.execute(story.relevant_comments.options(
+       # joinedload(Comment.commenter)
+    # )).scalars().all()
+    #    _comments = [ comment.to_dict() for comment in comments_obj ]
+    #    comments = []
+    #    for comment in _comments:
+    #        try:
+    #            is_liked_by = comment.is_liked_by(story['id'])
+    #            comment['is_liked_by'] = is_liked_by
+    #            comments.append(story)
+    #        except Exception:
+    #            pass
+    
+    # return jsonify(
+        #  {
+            #  'total_items': pagination['total_items'],
+            #  'total_pages': pagination['total_pages'],
+            #  'page': pagination['page'],
+            #  'per_page': pagination['per_page'],
+            #  'stories': comments
+        #  }
+    #  ), 200
+
+    comments = []
     for comment in comments_obj:
         temp = comment.to_dict()
         temp['is_liked_by'] = comment.is_liked_by(user_id)
         comments.append(temp)
     
-    print(comments, '-----------------><>--------------')
+    #  print(comments, '-----------------><>--------------')
 
     return jsonify([
         comment for comment in comments
-    ])"""
+    ])
 
 
 @views.route(

@@ -109,18 +109,30 @@ class User(BaseModel, ImageUpload, Base):
         return check_password_hash(self.password, password)
 
     def liked_story(self, story_id):
+        """ check if the user has liked the story """
         from models.engine import storage
         from models.like import Like
 
-        story_likes = sa.select(Story).join(Like).where(sa.and_(
-            Story.id == story_id,
-            User.id == self.id
+        story_like = sa.select(Like).where(sa.and_(
+            Like.story_id == story_id,
+            Like.user_id == self.id
         ))
 
-        if storage._session.query(story_likes.subquery()).all() != []:
-            return True
-        else:
-            return False
+        result = storage._session.execute(story_like).scalar_one_or_none()
+        return result is not None
+    
+    def bookmarked_story(self, story_id):
+        """ check if a user has bookmarked the story """
+        from models.engine import storage
+        from models.bookmark import Bookmark
+
+        story_bookmark = sa.select(Bookmark).where(sa.and_(
+            Bookmark.story_id == story_id,
+            Bookmark.user_id == self.id
+        ))
+
+        result = storage._session.execute(story_bookmark).scalar_one_or_none()
+        return result is not None
     
     def liked_comment(self, comment_id):
         """ check if a comment is liked """
