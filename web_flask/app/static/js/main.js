@@ -125,7 +125,9 @@ $(function(){
         if (status == 'success') {
             let content = ''
             JSON.parse(response.text).forEach(block => {
-                content = content + block.content;
+                console.log(block.content)
+                let temp = $(block.content).removeAttr('contenteditable')
+                content = content + temp[0].outerHTML;
             })
             let $jcontent = $(`<div>${content}</div>`.replaceAll("⇅", "")).html();
             $story_text_container.html(`${$jcontent}`)
@@ -188,12 +190,21 @@ $(function(){
                         <p class="text-xs">${story.read_time} min read</p>
                     </div>
                 </div>
+                <div class="flex flex-row gap-2 justify-between items-center">
                 <div class="bookmark">
                 ${console.log(story.bookmarked),
                     story.bookmarked == true
                     ? `<button class="bookmark-btn unbookmark-btn"><img class='bookmark-img' src="/static/icons/bookmarked.svg" alt="" srcset=""></button>`
                     : `<button class="bookmark-btn"><img class='bookmark-img' src="/static/icons/bookmark.svg" alt="" srcset=""></button>`
                 }
+                </div>
+                <div class="more-tools-btn">
+                    <img src="/static/icons/more.svg" alt=""/>
+                    <div class="is-hidden more-tools bg-offset shadow-lg flex flex-row justify-center items-center gap-3 transition-all">
+                        <button class="hidden"><img class="h-5 object-contain" src="/static/icons/update.svg" alt="update icon" /></button>
+                        <button class="hidden"><img class="h-5 object-contain" src="/static/icons/delete.svg" alt="delete icon" /></button>
+                    </div>
+                </div>
                 </div>
             </div>
         </article>
@@ -236,6 +247,8 @@ $(function(){
                 } else {
                     $('.stories-container').off('scroll', handleScroll);
                 }
+
+                showMoreTools()
             }
             else {
                 $stories_container.html('<h1>Failed to load data</h1>')
@@ -408,5 +421,23 @@ $(function(){
         $('.profile-card').addClass('-top-[100%] hidden').removeClass('sm:top-[20%]').removeClass('top-[10%]')
     })
 
-    console.log(get_current_user())
+    // show more tools
+    /*let show_more = $('.more-tools-btn')
+    let buttons = show_more.find('button')
+    console.log(buttons)
+    $('body').on('click', show_more, function (e) {
+        let more_tools = $($(e.target).parent).find('.more-tools')
+        let buttons = $($(e.target).parent).find('button')
+        console.log(more_tools)
+
+        if (more_tools.hasClass('is-hidden')) {
+            more_tools.addClass('h-[40px] w-[80px]').removeClass('is-hidden')
+            buttons.show(400, 'swing')
+        } else {
+            more_tools.removeClass('h-[40px] w-[80px]').addClass('is-hidden')
+            buttons.hide()
+        }
+    })*/
 })
+
+

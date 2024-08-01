@@ -39,7 +39,8 @@ $(function () {
           if ($(this).val() == '' || $(this).val() == undefined) {
             blocks.push({ content: '<br />'})
           }
-          blocks.push({ content: $(this).html() });
+          console.log($(this)[0])
+          blocks.push({ content: `${$(this)[0].outerHTML}` });
         });
 
         //localStorage.setItem('blocks', JSON.stringify(blocks));

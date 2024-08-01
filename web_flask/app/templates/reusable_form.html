@@ -1,27 +1,28 @@
-<div class="container mx-auto w-full md:w-[60%] lg:w-[55%] flex justify-center z-10">
+<div class="container mx-auto w-full h-full p-4 px:p-0 md:w-[60%] lg:w-[55%] flex flex-col justify-center items-center z-10">
+    <h1 class="text-xl font-medium -mt-20 mb-20 text-white sm:text-black bg-clip-text flex flex-col items-center"><img src="/static/images/storyafrika.png" alt="" srcset=""><mark class="p-2 bg-white ">storyafrika</mark></h1>
     <form action="" method="post" novalidate>
         {{form.hidden_tag()}}
 
         {#{{ form.username.label }}#}
-        {{ form.username(class="bg-white text-lightgray border-2 p-1 rounded-lg focus:outline-lightblue", size=32, placeholder="Username") }}
+        {{ form.username(class="bg-white text-lightgray border-2 p-1 rounded-lg focus:outline-lightblue w-full sm:w-[290px]", size=32, placeholder="Username") }}
         {% for error in form.username.errors %}
         <p style="color: bisque;">{{error}}</p>
         {% endfor %}</br></br>
 
         {#{{ form.email.label }}#}
-        {{ form.email(class="bg-white text-lightgray border-2 p-1 rounded-lg focus:outline-lightblue", size=32, placeholder="Email") }}
+        {{ form.email(class="bg-white text-lightgray border-2 p-1 rounded-lg focus:outline-lightblue w-full sm:w-[290px]", size=32, placeholder="Email") }}
         {% for error in form.email.errors %}
         <p style="color: bisque;">{{error}}</p>
         {% endfor %}</br></br>
 
         {#{{ form.password.label }}#}
-        {{ form.password(class="bg-white text-lightgray border-2 p-1 rounded-lg focus:outline-lightblue", size=32, placeholder="Password") }}
+        {{ form.password(class="bg-white text-lightgray border-2 p-1 rounded-lg focus:outline-lightblue w-full sm:w-[290px]", size=32, placeholder="Password") }}
         {% for error in form.password.errors %}
         <p style="color: bisque;">{{error}}</p>
         {% endfor %}</br></br>
 
         {#{{ form.password2.label }}#}
-        {{ form.password2(class="bg-white text-lightgray border-2 p-1 rounded-lg focus:outline-lightblue", size=32, placeholder="Password confirmation") }}
+        {{ form.password2(class="bg-white text-lightgray border-2 p-1 rounded-lg focus:outline-lightblue w-full sm:w-[290px]", size=32, placeholder="Password confirmation") }}
         {% for error in form.password2.errors %}
         <p style="color: bisque;">{{error}}</p>
         {% endfor %}</br></br>

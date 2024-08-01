@@ -3,8 +3,8 @@
 {% block home %}
 {% include 'profile_card.html' %}
 <div class="flex relative overflow-hidden">
-    <div class='px-3 sm:px-0 md:min-w-[300px] md:max-w-[800px] md:w-[568px] lg:min-w-[400px] lg:max-w-[900px] lg:w-[768px] container left-0 shrink-1 overflow-y-hidden mx-auto md:border-r-[1px] md:border-r-black md:px-10 lg:px-20 xl:w-[768px]'>
-    <header class="container px-2 mx-auto flex flex-col-reverse sm:px-0 sm:flex sm:flex-row sm:justify-between sm:items-center mt-[72px] shrink-1">
+    <div class='px-5 sm:px-0 md:min-w-[300px] md:max-w-[800px] md:w-[568px] lg:min-w-[400px] lg:max-w-[900px] lg:w-[768px] container left-0 shrink-1 overflow-y-hidden mx-auto md:border-r-[1px] md:border-r-black md:px-10 lg:px-20 xl:w-[768px]'>
+    <header class="container relative px-2 mx-auto flex flex-col-reverse sm:px-0 sm:flex sm:flex-row sm:justify-between sm:items-center mt-[72px] shrink-1">
         <div class="flex gap-[25px] items-center">
             <div class="slider-container flex items-center justify-between shrink-0 px-1 sm:gap-2">
                 <button class="prev"><img src="/static/icons/lt.svg" alt="" srcset=""></button>
@@ -29,7 +29,9 @@
         </div>
 
         <div class="flex justify-between items-center gap-4 -mt-10 mb-5 sm:block sm:mb-0 sm:gap-0 sm:-mt-0">
-            <h1 class="block sm:hidden text-2xl font-medium shrink-0">storyafrika</h1>
+            <h1 class="flex sm:hidden text-2xl font-medium shrink-0 flex-row items-center"><img src="/static/images/storyafrika.png" class="" alt="" srcset=""><span class="z-20">storyafrika</span></h1>
+            <h1 class="absolute container mx-auto left-0 -mt-14 hidden sm:flex md:hidden text-2xl font-medium shrink-0 flex-row items-center"><img src="/static/images/storyafrika.png" class="" alt="" srcset=""><span class="z-20">storyafrika</span></h1>
+
             <div class="flex items-center justify-center sm:pr-0 lg:pr-2">
                 <button class="hidden mr-5"><img src="/static/icons/search.svg" alt=""></button>
                 {% if current_user.avatar %}
@@ -41,7 +43,7 @@
         </div>
 
     </header>
-    <main class="container stories-container relative mx-auto mt-[20px] pt-[25px] border-t border-gray-500 flex flex-col gap-[50px] shrink-1 h-screen overflow-y-scroll no-scrollbar">
+    <main class="container stories-container relative mx-auto mt-[20px] pt-[25px] flex flex-col gap-[50px] shrink-1 h-screen overflow-y-scroll no-scrollbar">
         {#{% for story in following_stories %}
             {% include 'story_card.html' %}
             <hr>
@@ -52,7 +54,7 @@
     </div>
     <aside class="container right-0 overflow-y-scroll no-scrollbar shrink-1 mx-auto h-screen py-[80px] min-w-[200px] w-[400px] max-w-[700px] hidden md:block md:px-[20px] lg:px-[20px]">
         <div class="flex justify-between">
-            <h1>storyafrika</h1>
+            <h1 class="text-2xl font-medium shrink-0 flex flex-row items-center"><img src="/static/images/storyafrika.png" class="" alt="" srcset="">storyafrika</h1>
             <div class="flex items-center gap-5">
                 <button><img src="/static/icons/search.svg" alt=""></button>
                 <button><a href="{{ url_for('write')}}"><img src="/static/icons/write.svg" alt="" srcset=""></a></button>
