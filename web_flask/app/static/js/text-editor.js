@@ -47,7 +47,7 @@ $(function () {
         let $story_id = localStorage.getItem('story_id')
         // get the story
         console.log($story)
-        $story.title = $('#title').val()
+        $story.title = $('#title').val() === '' ? 'random title' : $('#title').val()
         $story.text = JSON.stringify(blocks)
         $.ajax({
             type: "PUT",
@@ -88,6 +88,7 @@ $(function () {
 
     //inserts a new block or delete a block
     $(document).on('keydown', '.block', function (e) {
+        saveBlocks()
         $(this).focus()
         //inserts a new block on enter key
         if (e.key === 'Enter') {

@@ -26,7 +26,7 @@ class Comment(BaseModel, Base):
     if os.getenv('STORAGE') in ['db', 'DB']:
         __tablename__ = 'comments'
         comment = Column(Text, nullable=False)
-        story_id = Column('Story', ForeignKey('stories.id'), nullable=False)
+        story_id = Column('Story', ForeignKey('stories.id', ondelete='CASCADE'), nullable=False)
         user_id = Column('User', ForeignKey('users.id'), nullable=False)
         likes = relationship('CommentLike', backref='comment', lazy=True)
         unlikes = relationship('CommentUnLike', backref='comment', lazy=True)
@@ -158,7 +158,6 @@ class Comment(BaseModel, Base):
         ))
 
         result = storage._session.execute(comment_like).scalar_one_or_none()
-        storage.close()
         return result is not None
 
     def is_unliked_by(self, user_id):
@@ -181,7 +180,6 @@ class Comment(BaseModel, Base):
         ))
 
         result = storage._session.execute(comment_unlike).scalar_one_or_none()
-        storage.close()
         return result is not None
         
     @property

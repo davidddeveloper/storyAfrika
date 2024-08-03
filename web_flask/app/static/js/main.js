@@ -438,6 +438,18 @@ $(function(){
             buttons.hide()
         }
     })*/
+
+    if (window.location.pathname.includes('/story/')) {
+        let delete_button = $('.delete-story')
+        let story_card = $('.story-card')
+        let story_id = story_card.data('story_id')
+        delete_button.on('click', function () {
+            localStorage.setItem('story_id', story_id)
+            delete_story();
+
+            window.location.replace('/')
+        })
+    }
 })
 
 

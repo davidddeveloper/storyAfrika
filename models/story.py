@@ -26,11 +26,11 @@ class Story(BaseModel, ImageUpload, Base):
         __tablename__ = 'stories'
         title = Column(String(200), nullable=False)
         text = Column(Text, nullable=False)
-        user_id = Column('User', ForeignKey('users.id'), nullable=False)
+        user_id = Column('User', ForeignKey('users.id', ondelete='CASCADE'), nullable=False,)
 
-        comments = relationship('Comment', backref='story', lazy=True)
-        likes = relationship('Like', backref='story', lazy=True)
-        bookmarks = relationship('Bookmark', backref='story', lazy=True)
+        comments = relationship('Comment', backref='story', passive_deletes=True, cascade='all, delete-orphan', lazy=True,)
+        likes = relationship('Like', backref='story', passive_deletes=True, cascade='all, delete-orphan', lazy=True)
+        bookmarks = relationship('Bookmark', backref='story', passive_deletes=True, cascade='all, delete-orphan', lazy=True)
         image = Column(String(100), nullable=True) # path to image
 
     else:

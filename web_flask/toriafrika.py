@@ -32,6 +32,11 @@ def make_shell_context():
     }
 
 
+#  @app.before_request
+#  def create_new_session():
+#      storage.reload()
+
+
 @app.teardown_appcontext
 def shutdown_session(exception=None):
     storage.close()

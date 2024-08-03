@@ -20,7 +20,7 @@ class Bookmark(BaseModel, Base):
 
     if os.getenv('STORAGE') in ['db', 'DB']:
         __tablename__ = 'bookmarks'
-        story_id = Column(String(60), ForeignKey('stories.id'), nullable=False)
+        story_id = Column(String(60), ForeignKey('stories.id', ondelete='CASCADE'), nullable=False)
         user_id = Column(String(60), ForeignKey('users.id'), nullable=False)
     else:
         story_id = ''

@@ -195,8 +195,8 @@ class User(BaseModel, ImageUpload, Base):
             and own stories
 
         """
-
         from models.engine import storage
+    
         Writer = so.aliased(User)
         Follower = so.aliased(User)
 

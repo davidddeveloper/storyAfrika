@@ -46,6 +46,12 @@ def load_user(id):
 def login():
     return redirect('http://127.0.0.1:5000/login')
 
+
+#  @app.before_request
+#  def create_new_session():
+#      storage.reload()
+
+
 @app.teardown_appcontext
 def shutdown_session(exception=None):
     storage.close()
