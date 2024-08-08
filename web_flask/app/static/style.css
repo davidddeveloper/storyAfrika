@@ -13,6 +13,14 @@
     scrollbar-width: none; /* Firefox */
 }
 
+.truncate-ellipsis {
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Change this to the number of lines you want */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -26,4 +34,68 @@
   
 .fade-in {
   animation: fadeIn .25s ease-in-out;
+}
+
+@layer base {
+  @font-face {
+    font-family: 'comic';
+    font-style: normal;
+    font-display: swap;
+    src: url(./fonts/Comic_Neue/ComicNeue-Regular.ttf) format('ttf');
+  }
+
+  @font-face {
+    font-family: 'comic-light';
+    font-style: normal;
+    font-display: swap;
+    src: url(./fonts/Comic_Neue/ComicNeue-Light.ttf) format('ttf');
+  }
+
+  @font-face {
+    font-family: 'comic-bold';
+    font-style: normal;
+    font-display: swap;
+    src: url(./fonts/Comic_Neue/ComicNeue-Bold.ttf) format('ttf');
+  }
+
+  @font-face {
+    font-family: 'sitka-small';
+    font-display: swap;
+    src: url(./fonts/sitka-font/sitka-small-599.ttf) format('ttf');
+  }
+
+  @font-face {
+    font-family: 'sitka-medium';
+    font-style: normal;
+    font-display: swap;
+    src: url(./fonts/sitka-font/sitka-small-652.ttf) format('ttf');
+  }
+
+  @font-face {
+    font-family: 'sitka-large';
+    font-style: normal;
+    font-display: swap;
+    src: url(./fonts/sitka-font/sitka-small-815.ttf) format('ttf');
+  }
+
+  @font-face {
+    font-family: 'calibri-bold';
+    font-style: normal;
+    font-display: swap;
+    src: url(./fonts/calibri-font/Calibri\ Bold.TTF) format('ttf');
+  }
+
+  @font-face {
+    font-family: 'calibri-regular';
+    font-style: normal;
+    font-display: swap;
+    src: url(./fonts/calibri-font/Calibri-Regular.ttf) format('ttf');
+  }
+
+  @font-face {
+    font-family: 'calibri-light';
+    font-style: normal;
+    font-display: swap;
+    src: url(./fonts/calibri-font/Calibri-Light.ttf) format('ttf');
+  }
 }

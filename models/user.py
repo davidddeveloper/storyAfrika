@@ -214,6 +214,21 @@ class User(BaseModel, ImageUpload, Base):
         )
 
     @property
+    def following_topics(self):
+        """ All the topics a user is following """
+        pass
+
+    @property
+    def stories_from_topic(self, topic):
+        """ All stories from a specific topic a user is following """
+        pass
+
+    @property
+    def stories_from_topics(self):
+        """ All stories from all the topics a user is following """
+        pass
+
+    @property
     def get_comments(self):
         """ gets all the comments for that specific user """
         pass

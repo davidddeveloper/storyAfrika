@@ -1,0 +1,119 @@
+USE storyafrika;
+-- Insert Users
+INSERT INTO users (id, username, email, password, first_name, last_name, full_name, created_at, updated_at) VALUES
+(uuid(), 'aminabello', 'amina@example.com', 'password123', 'Amina', 'Bello', 'Amina Bello', NOW(), NOW()),
+(uuid(), 'chiamaka89', 'chiamaka@example.com', 'password123', 'Chiamaka', 'Igwe', 'Chiamaka Igwe', NOW(), NOW()),
+(uuid(), 'yusuf_teacher', 'yusuf@example.com', 'password123', 'Yusuf', 'Abdullah', 'Yusuf Abdullah', NOW(), NOW());
+
+-- Insert More Users
+INSERT INTO users (id, username, email, password, first_name, last_name, full_name, created_at, updated_at) VALUES
+(uuid(), 'john_doe', 'john.doe@example.com', 'password456', 'John', 'Doe', 'John Doe', NOW(), NOW()),
+(uuid(), 'jane_doe', 'jane.doe@example.com', 'password456', 'Jane', 'Doe', 'Jane Doe', NOW(), NOW()),
+(uuid(), 'mary_jane', 'mary.jane@example.com', 'password456', 'Mary', 'Jane', 'Mary Jane', NOW(), NOW()),
+(uuid(), 'peter_parker', 'peter.parker@example.com', 'password456', 'Peter', 'Parker', 'Peter Parker', NOW(), NOW()),
+(uuid(), 'tony_stark', 'tony.stark@example.com', 'password456', 'Tony', 'Stark', 'Tony Stark', NOW(), NOW()),
+(uuid(), 'bruce_wayne', 'bruce.wayne@example.com', 'password456', 'Bruce', 'Wayne', 'Bruce Wayne', NOW(), NOW()),
+(uuid(), 'clark_kent', 'clark.kent@example.com', 'password456', 'Clark', 'Kent', 'Clark Kent', NOW(), NOW()),
+(uuid(), 'diana_prince', 'diana.prince@example.com', 'password456', 'Diana', 'Prince', 'Diana Prince', NOW(), NOW()),
+(uuid(), 'steve_rogers', 'steve.rogers@example.com', 'password456', 'Steve', 'Rogers', 'Steve Rogers', NOW(), NOW()),
+(uuid(), 'natasha_romanoff', 'natasha.romanoff@example.com', 'password456', 'Natasha', 'Romanoff', 'Natasha Romanoff', NOW(), NOW());
+
+
+-- Insert Stories
+INSERT INTO stories (id, title, text, User, created_at, updated_at, image) VALUES
+(uuid(), 'The Power of Education', '[{""content"":"Education can transform lives. Through years of teaching in rural areas, I have witnessed firsthand how access to quality education can uplift communities. It gives children the tools to dream big and equips them with the skills to pursue their goals. Every child deserves this chance."', (SELECT id FROM users WHERE username = 'yusuf_teacher'), NOW(), NOW(), 'https://unsplash.it/600'),
+(uuid(), 'A Journey of Resilience', '[{"content":"This story is about a woman who faced insurmountable odds yet emerged victorious. From growing up in a war-torn region to becoming a leader in her community, her journey is a testament to the strength and resilience of the human spirit. Her story is one of hope and determination."}]', (SELECT id FROM users WHERE username = 'aminabello'), NOW(), NOW(), 'https://unsplash.it/600'),
+(uuid(), 'Innovating for Change', '[{"content":"How technology is changing lives in Africa. In regions where resources are scarce, innovation is not just a luxury, but a necessity. This story explores various technological advancements that are helping to solve problems in healthcare, education, and agriculture, bringing about a new wave of change."}]', (SELECT id FROM users WHERE username = 'chiamaka89'), NOW(), NOW(), 'https://unsplash.it/600'),
+(uuid(), 'Finding My Passion', '[{"content":"My journey to becoming an artist. It wasn’t easy finding my path, but through dedication and a lot of hard work, I was able to turn my passion for art into a fulfilling career. This story delves into the challenges I faced and the lessons I learned along the way."}]', (SELECT id FROM users WHERE username = 'aminabello'), NOW(), NOW(), 'https://unsplash.it/600'),
+(uuid(), 'Building a Business', '[{"content":"Challenges and triumphs of entrepreneurship. Starting a business in Africa comes with its own set of challenges, from limited access to funding to navigating complex regulatory environments. This story highlights the perseverance required to succeed and the triumphs that make the journey worthwhile."}]', (SELECT id FROM users WHERE username = 'chiamaka89'), NOW(), NOW(), 'https://unsplash.it/600');
+
+
+-- Insert More Stories
+INSERT INTO stories (id, title, text, User, created_at, updated_at, image) VALUES
+(uuid(), 'Exploring the Unknown', '[{"content":"Exploring the Unknown takes you on a journey through the most remote and mysterious places on Earth. It delves into the adventures and discoveries made by explorers who dared to venture into the unknown, facing numerous challenges along the way."}]', (SELECT id FROM users WHERE username = 'john_doe'), NOW(), NOW(), 'https://unsplash.it/600'),
+(uuid(), 'The Last Frontier', '[{"content":"The Last Frontier explores the vast and uncharted territories that remain on our planet. From the deepest oceans to the highest mountains, this story captures the spirit of adventure and the drive to explore the unknown."}]', (SELECT id FROM users WHERE username = 'jane_doe'), NOW(), NOW(), 'https://unsplash.it/600'),
+(uuid(), 'Innovations in Medicine', '[{"content":"Innovations in Medicine showcases the latest advancements in medical science and technology. It highlights breakthrough treatments and technologies that are revolutionizing healthcare and improving patient outcomes."}]', (SELECT id FROM users WHERE username = 'mary_jane'), NOW(), NOW(), 'https://unsplash.it/600'),
+(uuid(), 'Journey to the Stars', '[{"content":"Journey to the Stars is a captivating story about the quest to explore space. It details the challenges and triumphs of space exploration, from the early days of rocketry to the latest missions to distant planets and beyond."}]', (SELECT id FROM users WHERE username = 'peter_parker'), NOW(), NOW(), 'https://unsplash.it/600'),
+(uuid(), 'The Rise of AI', '[{"content":"The Rise of AI explores the rapid development of artificial intelligence and its impact on society. It examines how AI is transforming industries, improving lives, and raising important ethical questions."}]', (SELECT id FROM users WHERE username = 'tony_stark'), NOW(), NOW(), 'https://unsplash.it/600'),
+(uuid(), 'Climate Change Warriors', '[{"content":"Climate Change Warriors tells the inspiring stories of individuals and organizations fighting to combat climate change. It highlights their efforts to protect the environment and promote sustainable practices."}]', (SELECT id FROM users WHERE username = 'bruce_wayne'), NOW(), NOW(), 'https://unsplash.it/600'),
+(uuid(), 'The Digital Revolution', '[{"content":"The Digital Revolution examines the profound changes brought about by digital technology. It explores how digital innovations are reshaping industries, economies, and our daily lives."}]', (SELECT id FROM users WHERE username = 'clark_kent'), NOW(), NOW(), 'https://unsplash.it/600'),
+(uuid(), 'Breaking Barriers', '[{"content":"Breaking Barriers is a story about individuals who have overcome significant obstacles to achieve their dreams. It celebrates their resilience and determination, showcasing their inspiring journeys."}]', (SELECT id FROM users WHERE username = 'diana_prince'), NOW(), NOW(), 'https://unsplash.it/600'),
+(uuid(), 'The Future of Work', '[{"content":"The Future of Work explores how automation and digitalization are changing the nature of work. It looks at the opportunities and challenges these changes present and what they mean for the workforce of tomorrow."}]', (SELECT id FROM users WHERE username = 'steve_rogers'), NOW(), NOW(), 'https://unsplash.it/600'),
+(uuid(), 'Art in the Digital Age', '[{"content":"Art in the Digital Age examines how digital technology is transforming the world of art. It highlights how artists are using digital tools to create innovative works and reach new audiences."}]', (SELECT id FROM users WHERE username = 'natasha_romanoff'), NOW(), NOW(), 'https://unsplash.it/600');
+
+
+-- Insert Topics
+INSERT INTO topics (id, name, created_at, updated_at) VALUES
+(uuid(), 'Education', NOW(), NOW()),
+(uuid(), 'Resilience', NOW(), NOW()),
+(uuid(), 'Innovation', NOW(), NOW()),
+(uuid(), 'Art', NOW(), NOW()),
+(uuid(), 'Entrepreneurship', NOW(), NOW());
+
+-- Insert TopicFollowers
+INSERT INTO topic_followers (id, topic_id, user_id, created_at, updated_at) VALUES
+(uuid(), (SELECT id FROM topics WHERE name = 'Education'), (SELECT id FROM users WHERE username = 'yusuf_teacher'), NOW(), NOW()),
+(uuid(), (SELECT id FROM topics WHERE name = 'Resilience'), (SELECT id FROM users WHERE username = 'aminabello'), NOW(), NOW()),
+(uuid(), (SELECT id FROM topics WHERE name = 'Innovation'), (SELECT id FROM users WHERE username = 'chiamaka89'), NOW(), NOW()),
+(uuid(), (SELECT id FROM topics WHERE name = 'Art'), (SELECT id FROM users WHERE username = 'aminabello'), NOW(), NOW()),
+(uuid(), (SELECT id FROM topics WHERE name = 'Entrepreneurship'), (SELECT id FROM users WHERE username = 'chiamaka89'), NOW(), NOW());
+
+-- Insert Bookmarks
+INSERT INTO bookmarks (id, story_id, user_id, created_at, updated_at) VALUES
+(uuid(), (SELECT id FROM stories WHERE title = 'The Power of Education'), (SELECT id FROM users WHERE username = 'aminabello'), NOW(), NOW()),
+(uuid(), (SELECT id FROM stories WHERE title = 'A Journey of Resilience'), (SELECT id FROM users WHERE username = 'yusuf_teacher'), NOW(), NOW()),
+(uuid(), (SELECT id FROM stories WHERE title = 'Innovating for Change'), (SELECT id FROM users WHERE username = 'chiamaka89'), NOW(), NOW());
+
+
+-- Insert Comments
+INSERT INTO comments (id, comment, Story, User, created_at, updated_at) VALUES
+(uuid(), 'This is an amazing story! It really captures the essence of how education can change lives.', (SELECT id FROM stories WHERE title = 'The Power of Education'), (SELECT id FROM users WHERE username = 'aminabello'), NOW(), NOW()),
+(uuid(), 'Very inspiring! I am moved by the resilience shown in this story.', (SELECT id FROM stories WHERE title = 'A Journey of Resilience'), (SELECT id FROM users WHERE username = 'yusuf_teacher'), NOW(), NOW()),
+(uuid(), 'Great read! Technology truly is a game-changer in our society.', (SELECT id FROM stories WHERE title = 'Innovating for Change'), (SELECT id FROM users WHERE username = 'chiamaka89'), NOW(), NOW());
+
+-- Insert More Comments
+INSERT INTO comments (id, comment, Story, User, created_at, updated_at) VALUES
+(uuid(), 'This story is incredibly inspiring and thought-provoking.', (SELECT id FROM stories WHERE title = 'Exploring the Unknown'), (SELECT id FROM users WHERE username = 'john_doe'), NOW(), NOW()),
+(uuid(), 'A fascinating read! The Last Frontier captures the essence of adventure.', (SELECT id FROM stories WHERE title = 'The Last Frontier'), (SELECT id FROM users WHERE username = 'jane_doe'), NOW(), NOW()),
+(uuid(), 'Innovations in Medicine is an eye-opening look at the future of healthcare.', (SELECT id FROM stories WHERE title = 'Innovations in Medicine'), (SELECT id FROM users WHERE username = 'mary_jane'), NOW(), NOW()),
+(uuid(), 'Journey to the Stars is a captivating and inspiring tale of space exploration.', (SELECT id FROM stories WHERE title = 'Journey to the Stars'), (SELECT id FROM users WHERE username = 'peter_parker'), NOW(), NOW()),
+(uuid(), 'The Rise of AI raises important questions about the future of technology.', (SELECT id FROM stories WHERE title = 'The Rise of AI'), (SELECT id FROM users WHERE username = 'tony_stark'), NOW(), NOW()),
+(uuid(), 'Climate Change Warriors is a powerful call to action for environmental protection.', (SELECT id FROM stories WHERE title = 'Climate Change Warriors'), (SELECT id FROM users WHERE username = 'bruce_wayne'), NOW(), NOW()),
+(uuid(), 'The Digital Revolution provides a fascinating look at how technology is changing the world.', (SELECT id FROM stories WHERE title = 'The Digital Revolution'), (SELECT id FROM users WHERE username = 'clark_kent'), NOW(), NOW()),
+(uuid(), 'Breaking Barriers is an inspiring story of resilience and determination.', (SELECT id FROM stories WHERE title = 'Breaking Barriers'), (SELECT id FROM users WHERE username = 'diana_prince'), NOW(), NOW()),
+(uuid(), 'The Future of Work offers valuable insights into the future of employment.', (SELECT id FROM stories WHERE title = 'The Future of Work'), (SELECT id FROM users WHERE username = 'steve_rogers'), NOW(), NOW()),
+(uuid(), 'Art in the Digital Age highlights the innovative use of technology in art.', (SELECT id FROM stories WHERE title = 'Art in the Digital Age'), (SELECT id FROM users WHERE username = 'natasha_romanoff'), NOW(), NOW());
+
+INSERT INTO comment_likes (id, comment_id, user_id, created_at, updated_at) VALUES
+(uuid(), (SELECT id FROM comments WHERE comment = 'This is an amazing story! It really captures the essence of how education can change lives.'), (SELECT id FROM users WHERE username = 'chiamaka89'), NOW(), NOW()),
+(uuid(), (SELECT id FROM comments WHERE comment = 'Very inspiring! I am moved by the resilience shown in this story.'), (SELECT id FROM users WHERE username = 'aminabello'), NOW(), NOW()),
+(uuid(), (SELECT id FROM comments WHERE comment = 'Great read! Technology truly is a game-changer in our society.'), (SELECT id FROM users WHERE username = 'yusuf_teacher'), NOW(), NOW());
+
+INSERT INTO comment_unlikes (id, comment_id, user_id, created_at, updated_at) VALUES
+(uuid(), (SELECT id FROM comments WHERE comment = 'This is an amazing story! It really captures the essence of how education can change lives.'), (SELECT id FROM users WHERE username = 'yusuf_teacher'), NOW(), NOW()),
+(uuid(), (SELECT id FROM comments WHERE comment = 'Very inspiring! I am moved by the resilience shown in this story.'), (SELECT id FROM users WHERE username = 'chiamaka89'), NOW(), NOW()),
+(uuid(), (SELECT id FROM comments WHERE comment = 'Great read! Technology truly is a game-changer in our society.'), (SELECT id FROM users WHERE username = 'aminabello'), NOW(), NOW());
+
+
+-- Insert Followers
+INSERT INTO followers (id, follower_id, followed_id, created_at, updated_at) VALUES
+(uuid(), (SELECT id FROM users WHERE username = 'aminabello'), (SELECT id FROM users WHERE username = 'yusuf_teacher'), NOW(), NOW()),
+(uuid(), (SELECT id FROM users WHERE username = 'chiamaka89'), (SELECT id FROM users WHERE username = 'aminabello'), NOW(), NOW()),
+(uuid(), (SELECT id FROM users WHERE username = 'yusuf_teacher'), (SELECT id FROM users WHERE username = 'chiamaka89'), NOW(), NOW());
+
+-- Insert Likes
+INSERT INTO likes (id, story_id, user_id, created_at, updated_at) VALUES
+(uuid(), (SELECT id FROM stories WHERE title = 'The Power of Education'), (SELECT id FROM users WHERE username = 'aminabello'), NOW(), NOW()),
+(uuid(), (SELECT id FROM stories WHERE title = 'A Journey of Resilience'), (SELECT id FROM users WHERE username = 'yusuf_teacher'), NOW(), NOW()),
+(uuid(), (SELECT id FROM stories WHERE title = 'Innovating for Change'), (SELECT id FROM users WHERE username = 'chiamaka89'), NOW(), NOW());
+
+INSERT INTO likes (id, story_id, user_id, created_at, updated_at) VALUES
+(uuid(), (SELECT id FROM stories WHERE title = 'Exploring the Unknown'), (SELECT id FROM users WHERE username = 'john_doe'), NOW(), NOW()),
+(uuid(), (SELECT id FROM stories WHERE title = 'The Last Frontier'), (SELECT id FROM users WHERE username = 'jane_doe'), NOW(), NOW()),
+(uuid(), (SELECT id FROM stories WHERE title = 'Innovations in Medicine'), (SELECT id FROM users WHERE username = 'mary_jane'), NOW(), NOW()),
+(uuid(), (SELECT id FROM stories WHERE title = 'Journey to the Stars'), (SELECT id FROM users WHERE username = 'peter_parker'), NOW(), NOW()),
+(uuid(), (SELECT id FROM stories WHERE title = 'The Rise of AI'), (SELECT id FROM users WHERE username = 'tony_stark'), NOW(), NOW()),
+(uuid(), (SELECT id FROM stories WHERE title = 'Climate Change Warriors'), (SELECT id FROM users WHERE username = 'bruce_wayne'), NOW(), NOW()),
+(uuid(), (SELECT id FROM stories WHERE title = 'The Digital Revolution'), (SELECT id FROM users WHERE username = 'clark_kent'), NOW(), NOW()),
+(uuid(), (SELECT id FROM stories WHERE title = 'Breaking Barriers'), (SELECT id FROM users WHERE username = 'diana_prince'), NOW(), NOW()),
+(uuid(), (SELECT id FROM stories WHERE title = 'The Future of Work'), (SELECT id FROM users WHERE username = 'steve_rogers'), NOW(), NOW());

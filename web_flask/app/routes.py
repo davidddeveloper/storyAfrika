@@ -202,6 +202,22 @@ def register():
 
 
 @app.route(
+    '/immersive_read/<string:story_id>/',
+    methods=['GET'],
+    strict_slashes=False
+)
+def immersive_read(story_id=None):
+    """ Immersive read 
+    
+        - story_id: id of the story
+    """
+    story = storage.get(Story, story_id)
+    if story is None:
+        abort(404)
+
+    return render_template('immersive-read.html', story=story)
+
+@app.route(
     '/stories/<string:story_id>/like/',
     methods=['GET'],
     strict_slashes=False
@@ -257,9 +273,9 @@ def follow_or_unfollow(user_id=None):
         abort(404)
 
     if current_user.is_following(user):
-        current_user.following.remove(user)
+        current_user.unfollow(user)
     else:
-        current_user.following.add(user)
+        current_user.follow(user)
 
     storage.save()
 
@@ -371,3 +387,6 @@ def validate_image(stream):
     if not format:
         return None
     return '.' + (format if format != 'jpeg' else 'jpg')
+
+
+

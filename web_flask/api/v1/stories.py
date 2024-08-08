@@ -90,6 +90,7 @@ def following_stories(user_id=None):
         story_dictionary = story.to_dict()
         story_dictionary['liked'] = user.liked_story(story.id)
         story_dictionary['bookmarked'] = user.bookmarked_story(story.id)
+        story_dictionary['user_is_following_writer'] = user.is_following(story.writer)
 
         stories.append(story_dictionary)
 
@@ -100,6 +101,8 @@ def following_stories(user_id=None):
             try:
                 story['liked'] = user.liked_story(story['id'])
                 story['bookmarked'] = user.bookmarked_story(story['id'])
+                writer = storage.get(User, story['writer']['id'])
+                story_dictionary['user_is_following_writer'] = user.is_following(writer)
                 stories.append(story)
             except Exception:
                 pass
@@ -166,15 +169,13 @@ def get_story(story_id=None):
     if request.method == 'PUT':
         try:
             story_json = request.get_json()
-            check_for_valid_json(story_json, ['title', 'text', 'user_id'])
+            check_for_valid_json(story_json, ['title', 'text'])  # removed check for user_id
 
         except Exception:
-            print('----03')
             return jsonify({"Error": 'not a valid json'}), 400
 
         else:
             for key, val in story_json.items():
-                print('----04', key)
                 if key in ['text', 'title']:
                     setattr(story, key, val)
 

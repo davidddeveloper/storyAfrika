@@ -23,10 +23,20 @@
                 <img class="rounded-full h-[50px] w-[50px] object-cover" src="https://picsum.photos/200/700" alt="">
                 {% endif %}
                 <div class="ml-[15px]">
+                    {% if story.writer.id != current_user.id %}
                     <div class="flex gap-[15px] follow-card" data-user_id={{current_user.id}}>
                         <h3>{{story.writer.username}}</h3>
-                        <button class="follow flex items-center text-lightblue"><img src="/static/icons/plus.svg" alt="">Follow</button>
+                        {% if current_user.is_authenticated %}
+                            {% if current_user.is_following(story.writer) %}
+                                <button class="follow flex items-center text-lightblue unfollow"><img src="/static/icons/correct.svg" alt="">Following</button>
+                            {% else %}
+                                <button class="follow flex items-center text-lightblue"><img src="/static/icons/plus.svg" alt="">Follow</button>
+                            {% endif %}
+                        {% else %}
+                            <button class="follow flex items-center text-lightblue"><img src="/static/icons/plus.svg" alt="">Follow</button>
+                        {% endif %}
                     </div>
+                    {% endif %}
                     <div class="mt-[5px] flex gap-[5px] items-center">
                         <p>{{story.read_time}} min read</p>
                         <p class="w-2 h-2 bg-black rounded-full mx-2"></p>
@@ -35,7 +45,7 @@
                 </div>
             </div>
         </div>
-        <div class="actions container mx-auto">
+        <div class="actions container mx-auto relative">
             <hr class="bg-black border-2 border-black">
             {% include 'actions.html' %}
             <hr class="border-2 mt-2 mb-[30px] border-black">
@@ -43,7 +53,7 @@
         <section class="content container mx-auto">
             <div class="pl-[30px] pr-[30px] h-[320px] w-full mb-[50px]">
                 {% if story.image %}
-                <img class='w-full h-full object-scale-down' src="{{ url_for('upload', filename=story.image )}}" alt="" srcset="">
+                <img class='w-full h-full object-scale-down view-image' src="{{ url_for('upload', filename=story.image )}}" alt="" srcset="">
             {% else %}
                 <img class='w-full h-full object-scale-down' src="https://unsplash.it/500" alt="" srcset="">
             {% endif %}
@@ -52,7 +62,7 @@
                 <p class="text-xl">{{story.text}}</p>
             </div>
         </section>
-        <div class="mt-[80px] container mx-auto">
+        <div class="mt-[80px] container mx-auto relative">
             {% include 'actions.html' %}
         </div>
         <hr class="border-2 mt-[120px] mb-[30px] border-black">

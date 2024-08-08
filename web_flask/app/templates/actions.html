@@ -27,8 +27,32 @@
         <div class="mt-[10px]">
             <button class="share-btn"><img class="block active:bg-lightblue" src="/static/icons/share.svg" alt=""></button>
         </div>
-        <div class="flex items-center cursor-pointer delete-story">
-            <img class="cursor-pointer" src="/static/icons/delete.svg" alt="">
+        <div class="more-tools-main-container flex items-center">
+            <button class="show-more-tools-btn flex items-center">
+                <img class="" src="/static/icons/more.svg" alt=""/>
+            </button>
+            <div class="is-hidden more-tools overflow-hidden flex flex-col h-0 w-0 bg-offwhite rounded-xl shadow-xl transition-all absolute right-0 bottom-10 before:block before:absolute before:bg-offwhite before:w-[20px] before:h-[20px] before:-bottom-2 before:shadow-xl before:right-[10%] before:rotate-45">
+                <div class="p-3 pt-4">
+                    {% if current_user.id != story.writer.id %}
+                    <div class="flex gap-[15px] follow-card" data-user_id={{current_user.id}}>
+                        {% if current_user.is_following(story.writer) %}
+                            <button class="follow flex items-center text-lightblue unfollow"><img src="/static/icons/correct.svg" alt="">Following</button>
+                        {% else %}
+                            <button class="follow flex items-center text-lightblue"><img src="/static/icons/plus.svg" alt="">Follow author</button>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    <button class="text-lightgray block cursor-pointer hover:underline">Read in immersive mode</button>
+                </div>
+                <hr class="border-black"/>
+                <div class="p-3 pt-4 login-user-actions-container">
+                    {% if current_user.id == story.writer.id %}
+                        <button class="update-story-btn block text-lightblue cursor-pointer hover:underline">Update story</button>
+                        <button class="delete-story-btn block text-red-500 cursor-pointer hover:underline">Delete story</button>`
+                    {% endif %}
+                </div>
+
+            </div>
         </div>
     </div>
 </div>

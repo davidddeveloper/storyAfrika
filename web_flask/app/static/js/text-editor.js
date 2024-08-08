@@ -8,7 +8,7 @@ $(function () {
     if (!localStorage.getItem('story_id')) {
         $.ajax({
             type: 'POST',
-            url: '/api/v1/stories/',
+            url: 'http://127.0.0.1:4000/api/v1/stories/',
             data: JSON.stringify({"title": " ", "text": '[{"content":"xyzzzzzz"}]', "user_id": $body.data('current_user_id')}),
             dataType: 'json',
             contentType: 'application/json',
@@ -24,7 +24,7 @@ $(function () {
         const story_id = localStorage.getItem('story_id')
         $.ajax({
             type: 'DELETE',
-            url: `/api/v1/stories/${story_id}/`,
+            url: `http://127.0.0.1:4000/api/v1/stories/${story_id}/`,
             success: function (response) {
                 console.log(response)
             }
@@ -51,7 +51,7 @@ $(function () {
         $story.text = JSON.stringify(blocks)
         $.ajax({
             type: "PUT",
-            url: `/api/v1/stories/${$story_id}/`,
+            url: `http://127.0.0.1:4000/api/v1/stories/${$story_id}/`,
             data: JSON.stringify($story),
             dataType: "json",
             contentType: "application/json",
@@ -66,32 +66,36 @@ $(function () {
         let $story_id = localStorage.getItem('story_id')
 
         // get the story state
-        $.get(`/api/v1/stories/${$story_id}/`, function (response, status) {
+        $.get(`http://127.0.0.1:4000/api/v1/stories/${$story_id}/`, function (response, status) {
             if (status == 'success') {
-                console.log(response)
                 const blocks = JSON.parse(response.text) || [];
-                console.log(blocks, 'asdf')
                 const $container = $('#blocks-container');
-
+                console.log(blocks, 'alx')
                 $container.empty();
                 blocks.forEach(block => {
-                    const $block = $(`<div class="block" contenteditable="true"><span class="handle">⇅</span>${block.content}</div>`);
-                    $block.html(block.content);
-                    $container.append($block);
-                    console.log(block.content)
+                    const $block = $(`<div class="block" contenteditable="true">${$(block.content).html()}</div>`);
+                    //$block.html(block.content);
+                    $container.append(
+                        block.content === '<br />'
+                        ? `<div class="block" contenteditable="true"><span class="handle" style="display: none;">⇅</span></div>`
+                        : block.content
+                    )
                 });
+                $('.story-title-input').val(response.title)
             }
         })
         
-        makeBlocksSortable();
+        //makeBlocksSortable();
     };
+
+    loadBlocks()
 
     //inserts a new block or delete a block
     $(document).on('keydown', '.block', function (e) {
-        saveBlocks()
         $(this).focus()
         //inserts a new block on enter key
         if (e.key === 'Enter') {
+            saveBlocks()
             e.preventDefault()
             let $newBlock = $('<div contenteditable=true class="block"><span class="handle">⇅</span></div>')
             $(this).after($newBlock)
@@ -121,6 +125,7 @@ $(function () {
 
         //delete a block on enter key
         if (e.key === 'Backspace' && $(this).text().trim() === "") {
+            saveBlocks()
             if ($(this).prev('.block').length) {
                 $(this).prev('.block').focus()
                 $(this).remove()
@@ -178,6 +183,7 @@ $(function () {
     $.each($("#formatting button"), function (key, button) {
         button.addEventListener("click", function (e) {
             document.execCommand($(this).data('format'))
+            saveBlocks()
         })
     })
 
@@ -320,7 +326,7 @@ $(function () {
 
     // enable and disable the button to let user submit a title for a story
     $('.story-title-input').on('input', function () {
-        if ($(this).val().length > 8) $('.publish').removeAttr('disabled').removeClass('opacity-55')
+        if ($(this).val().length > 8 && $(this).val().replaceAll(' ', '') != '') $('.publish').removeAttr('disabled').removeClass('opacity-55')
         else $('.publish').addClass('opacity-55').attr('disabled')
     })
 

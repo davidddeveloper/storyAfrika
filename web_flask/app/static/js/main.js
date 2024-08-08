@@ -1,17 +1,21 @@
 $(function(){
-    const get_current_user = () => {
+    let get_current_user = () => {
         let $current_user_id = $('body').data('current_user_id')
-        let $current_user = null
-        $.get(`/api/v1/users/${$current_user_id}/`, function (response, status) {
-                if (status == 'success') {
-                    $current_user = response
-                    console.log($current_user)
-                }
-            }
-        );
-
-        return $current_user
+        return $.get(`http://127.0.0.1:4000/api/v1/users/${$current_user_id}/`)
+            .done(function (response, statusText, jqXHR) {
+                if (statusText === 'success') return response;
+            })
+            .fail(function (jqXHR, statusText, error) {
+                console.log("Error fetching user", statusText, error)
+            })
     }
+
+
+    get_current_user().then(response => {
+        console.log(response.username, 'me')
+        return response
+    })
+    console.log(`${get_current_user()}`, 'xyzasdf')
     // creating the carousel
     const slider = $('.slider');
     const sliderItems = $('.slider-item');
@@ -121,13 +125,19 @@ $(function(){
     let $story_text_container = $('.story-story-text')
     const $story_id = $story_text_container.data('story_id')
     
-    $.get(`/api/v1/stories/${$story_id}`, function (response, status) {
+    $.get(`http://127.0.0.1:4000/api/v1/stories/${$story_id}`, function (response, status) {
         if (status == 'success') {
             let content = ''
+            console.log('asdf4134', JSON.parse(response.text))
             JSON.parse(response.text).forEach(block => {
                 console.log(block.content)
-                let temp = $(block.content).removeAttr('contenteditable')
-                content = content + temp[0].outerHTML;
+                try {
+                    let temp = $(block.content).removeAttr('contenteditable')
+                    content = content + temp[0].outerHTML;
+                }
+                catch {
+                    content = block.content;
+                }
             })
             let $jcontent = $(`<div>${content}</div>`.replaceAll("⇅", "")).html();
             $story_text_container.html(`${$jcontent}`)
@@ -153,7 +163,7 @@ $(function(){
     let $stories_container = $('.stories-container')
     let $story = (story) => {
         return (`
-        <article class="shrink-0 story-card fade-in max-h-[350px]" data-story_id="${story.id}">
+        <article class="shrink-0 story-card fade-in max-h-[350px] relative" data-story_id="${story.id}">
             <div class="flex w-[300px] items-center">
             <div class="profile flex items-center">
                 <img class=" w-[40px] h-[40px] object-cover border-2 rounded-full" src="/uploads/${story.writer.avatar}" alt="">
@@ -169,10 +179,10 @@ $(function(){
             <div class="flex justify-between gap-[25px]">
                 <div class="mt-3 flex flex-col w-3/4">
                     <h3 class="font-medium text-lg home-story-title shrink-0" data-story_id="${story.id}"><a href="/story/${story.id}">${story.title}</a></h3>
-                    <p class="shrink-0 mt-[10px] w-full max-w-[400px] overflow-x-hidden whitespace-nowrap overflow-ellipsis sm:w-[250px] md:w-[400px]">${loadTextFormat(story.text)}</p>
+                    <p class="shrink-0 mt-[10px] w-full max-w-[400px] overflow-x-hidden whitespace-normal overflow-ellipsis line-clamp-2 sm:w-[250px] md:w-[400px]">${loadTextFormat(story.text)}</p>
                 </div>
                 <div class="story-image self-center w-1/4">
-                    <img class='w-full h-3/4 object-cover' src="/uploads/${story.image}" alt="" srcset="">
+                    <img class='w-full h-3/4 object-cover max-h-[130px]' src="/uploads/${story.image}" alt="" srcset="">
                 </div>
             </div>
             <div class="px-3 mt-[15px] flex items-center justify-between">
@@ -198,11 +208,37 @@ $(function(){
                     : `<button class="bookmark-btn"><img class='bookmark-img' src="/static/icons/bookmark.svg" alt="" srcset=""></button>`
                 }
                 </div>
-                <div class="more-tools-btn">
-                    <img src="/static/icons/more.svg" alt=""/>
-                    <div class="is-hidden more-tools bg-offset shadow-lg flex flex-row justify-center items-center gap-3 transition-all">
-                        <button class="hidden"><img class="h-5 object-contain" src="/static/icons/update.svg" alt="update icon" /></button>
-                        <button class="hidden"><img class="h-5 object-contain" src="/static/icons/delete.svg" alt="delete icon" /></button>
+                <div class="more-tools-main-container">
+                    <button class="show-more-tools-btn">
+                        <img class="" src="/static/icons/more.svg" alt=""/>
+                    </button>
+                    <div class="is-hidden more-tools overflow-hidden flex flex-col h-0 w-0 bg-offwhite rounded-xl shadow-xl transition-all absolute right-0 bottom-10 before:block before:absolute before:bg-offwhite before:w-[20px] before:h-[20px] before:-bottom-2 before:shadow-xl before:right-[10%] before:rotate-45">
+                        <div class="p-3 pt-4">
+                            ${
+                                $current_user_id != story.writer.id
+                                ? `<div class="flex gap-[15px] follow-card" data-user_id=${story.writer.id}>
+                                        ${
+                                            story.user_is_following_writer == true
+                                            ? `<button class="follow flex items-center text-lightblue unfollow"><img src="/static/icons/correct.svg" alt="">Following</button>`
+                                            : `<button class="follow flex items-center text-lightblue"><img src="/static/icons/plus.svg" alt="">Follow author</button>`
+                                        }
+                                    </div>`
+                                : ''
+                            }
+                            <button class="text-lightgray block cursor-pointer hover:underline"><a href="/immersive_read/${story.id}">Read in immersive mode</a></button>
+                        </div>
+                        <hr class="border-black"/>
+                        <div class="p-3 pt-4 login-user-actions-container">
+                            <! -- append actions if user is login -->
+                            ${
+                                $current_user_id == story.writer.id
+                                ? `<button class="update-story-btn block text-lightblue cursor-pointer hover:underline">Update story</button>
+                                    <button class="delete-story-btn block text-red-500 cursor-pointer hover:underline">Delete story</button>`
+                                : ''
+                            }
+                        </div>
+                        }
+                        
                     </div>
                 </div>
                 </div>
@@ -231,10 +267,10 @@ $(function(){
         if (loading) return
         loading = true
 
-        let $url = `/api/v1/users/${$current_user_id}/following_stories?page=${page}&per_page=${perPage}`
+        let $url = `http://127.0.0.1:4000/api/v1/users/${$current_user_id}/following_stories?page=${page}&per_page=${perPage}`
         $.get($url, function ($response, $status, $error) {
             if ($status == 'success') {
-                console.log($response)
+                console.log($response,'apc')
                 $response.stories.forEach($story_data => {
                     $stories_container.append($story($story_data))
                 })
@@ -271,9 +307,9 @@ $(function(){
     // function to delete a story
     const delete_story = () => {
         const story_id = localStorage.getItem('story_id')
-        $.ajax({
+        return $.ajax({
             type: 'DELETE',
-            url: `/api/v1/stories/${story_id}/`,
+            url: `http://127.0.0.1:4000/api/v1/stories/${story_id}/`,
             success: function (response) {
                 localStorage.removeItem('story_id')
             }
@@ -412,44 +448,103 @@ $(function(){
 
     // show profile card on profile-image click
     $('.home-profile-img').on('click', function () {
-        $('.profile-card-shadow').show(200)
+        $('.profile-card-shadow').show()
         $('.profile-card').removeClass('-top-[100%] hidden').addClass('flex flex-col-reverse md:flex-row top-[10%] sm:top-[20%]')
     })
 
     $('.profile-card-shadow').on('click', function () {
-        $('.profile-card-shadow').hide(200)
+        $('.profile-card-shadow').hide()
         $('.profile-card').addClass('-top-[100%] hidden').removeClass('sm:top-[20%]').removeClass('top-[10%]')
     })
 
     // show more tools
-    /*let show_more = $('.more-tools-btn')
-    let buttons = show_more.find('button')
-    console.log(buttons)
-    $('body').on('click', show_more, function (e) {
-        let more_tools = $($(e.target).parent).find('.more-tools')
-        let buttons = $($(e.target).parent).find('button')
-        console.log(more_tools)
+    const showMoreTools = () => {
 
-        if (more_tools.hasClass('is-hidden')) {
-            more_tools.addClass('h-[40px] w-[80px]').removeClass('is-hidden')
-            buttons.show(400, 'swing')
-        } else {
-            more_tools.removeClass('h-[40px] w-[80px]').addClass('is-hidden')
-            buttons.hide()
+        const showTool = (target) => {
+            // hide all tool except the selected one
+            $('.more-tools').addClass('h-0 w-0 is-hiddden overflow-hidden') 
+            target.removeClass('h-0 w-0 is-hidden overflow-hidden') 
         }
-    })*/
+        const hideTool = (target) => {
+            target.addClass('h-0 w-0 is-hidden overflow-hidden');
+        }
 
-    if (window.location.pathname.includes('/story/')) {
-        let delete_button = $('.delete-story')
-        let story_card = $('.story-card')
-        let story_id = story_card.data('story_id')
-        delete_button.on('click', function () {
-            localStorage.setItem('story_id', story_id)
-            delete_story();
+        let moreToolBtn = $('.show-more-tools-btn')
+        moreToolBtn.on('click', function (e) {
+            console.log('yeah!')
+            let parent = $(e.target).parent().parent();
+            let moreTool = parent.find('.more-tools');
 
-            window.location.replace('/')
+            if (moreTool.hasClass('is-hidden')) {
+                showTool(moreTool)
+            }
+            else {
+                hideTool(moreTool)
+            }
         })
+
+        // handle deleting story
+        let card = $('.confirm-story-deletion')
+        let divider = $('.home-divider')
+        let story_id = ''
+        $('body').delegate('.delete-story-btn', 'click', function () {
+            story_id = $(this).closest('.story-card').data('story_id')
+
+            if (card.hasClass('is-hidden')) {
+                card.addClass('top-0 sm:top-2/4').removeClass('is-hidden')
+                divider.show()
+            } else {
+                card.removeClass('top-0 sm:top-2/4').addClass('is-hidden')
+                divider.hide()
+            }
+        })
+
+        // hide divider and card when divider is clicked
+        divider.on('click', function () {
+            divider.hide()
+            card.removeClass('top-0 sm:top-2/4').addClass('is-hidden')
+        })
+
+        // hide divider and card when cancel is cicked
+        $('.confirm-delete-cancel').on('click', function () {
+            divider.hide()
+            card.removeClass('top-0 sm:top-2/4').addClass('is-hidden')
+        })
+
+        // delete story with yes
+        $('.confirm-delete-yes').on('click', function () {
+            localStorage.setItem('story_id', story_id) // add story_id to localstorage so delete_story would work
+            // get the id of story previously added to localstorage
+            if (localStorage.getItem('story_id')) delete_story().then(response => {
+                if (response.title) window.location.reload();
+            });
+        })
+
+        //handle update story
+        $('body').delegate('.update-story-btn', 'click', function () {
+            story_id = $(this).closest('.story-card').data('story_id') // get story id
+            localStorage.setItem('story_id', story_id)
+            // if story_id was added successfully to localstorage redirect to update page
+            if (localStorage.getItem('story_id')) window.location.assign('/story/write/');
+        })
+
     }
+
+    //story view
+    if (window.location.pathname.includes('/story/')) showMoreTools()
+
+    // a divider is a nice bg that separates fixed or absolute card from the body
+    const showDivider = () => {
+        
+    }
+
+    let viewImages = $('.view-image');
+    viewImages.each((idx, img) => {
+        let image = $(img);
+        image.on('click', () => {
+            image.addClass('block container mx-auto top-0 absolute h-screen')
+        })
+    })
 })
 
 

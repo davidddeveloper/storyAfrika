@@ -9,7 +9,7 @@ $(function () {
 
     $('body').on('click', '.show-comment-view', () => {
         if (commentView.hasClass('is-hidden')) {
-            $('.divider').show()
+            $('.divider').addClass('bg-lightblue opacity-45').show()
             commentView.removeClass('md:-right-[100%] is-hidden -bottom-[100%]').addClass('-bottom-[20%] md:right-0')
             $('textarea').focus()
 
@@ -101,12 +101,13 @@ $(function () {
 
         $.ajax({
             type: "POST",
-            url: `/api/v1/stories/${$story_id}/${$current_user_id}/comments/`,
+            url: `http://127.0.0.1:4000/api/v1/stories/${$story_id}/${$current_user_id}/comments/`,
             data: comment_json,
             dataType: 'json',
             contentType: 'application/json',
             success: function (response) {
-                console.log('xyz', response)
+                fetchComments()
+                $comment_form.find('#comment-textarea').val('')
             }
         });
     })
@@ -149,60 +150,42 @@ $(function () {
     </article>
     `)}
 
-    $.get(`/api/v1/stories/${$story_id}/${$current_user_id}/comments/`, function (response, status) {
-        if (status == 'success') {
-            console.log(response)
-            response.forEach((comment, idx) => {
-                if (idx <= 6) {
-                    $comment_container.append($comment(comment, idx))
-
-                }
-
-            })
-        }
-    })
-
-
-
     // fetch comments based on sort-type (newest, relevant)
+    const fetchComments = (type) => {
+        let url = `http://127.0.0.1:4000/api/v1/stories/${$story_id}/${$current_user_id}/comments/newest/`
+        if (type) url = `http://127.0.0.1:4000/api/v1/stories/${$story_id}/${$current_user_id}/comments/${type}/`
+
+        $.get(url, function (response, status) {
+            if (status == 'success') {
+                console.log(response)
+                $comment_container.empty()
+                response.forEach((comment, idx) => {
+                    if (idx <= 5) {
+                        $comment_container.append($comment(comment, idx))
+                    }
+
+                })
+                $('.comments-count').text(
+                    (
+                        response.length == 1
+                        ? (response.length + ' person ')
+                        : (response.length) + ' people ') + 'has commented on this story'
+                );
+            }
+        })
+    }
+
     let $sort_comment_by_select = $('#sort-comment-by')
 
     $sort_comment_by_select.on('change', function () {
         let value = $sort_comment_by_select.val()
         let $response = {}
 
-        if (value == 'relevants') {
-            
-            $.get(`/api/v1/stories/${$story_id}/${$current_user_id}/comments/relevant/`, function (response, status) {
-                if (status == 'success') {
-                    console.log(response)
-                    $comment_container.empty()
-                    response.forEach((comment, idx) => {
-                        if (idx <= 5) {
-                            $comment_container.append($comment(comment, idx))
-                        }
+        if (value == 'relevants') fetchComments('relevant');
 
-                    })
-                }
-            })
-        }
-
-        if (value == 'newests') {
-            
-            $.get(`/api/v1/stories/${$story_id}/${$current_user_id}/comments/newest/`, function (response, status) {
-                if (status == 'success') {
-                    $response = {}
-                    $comment_container.empty()
-                    response.forEach((comment, idx) => {
-                        if (idx <= 5) {
-                            $comment_container.append($comment(comment, idx))
-
-                        }
-
-                    })
-                }
-            })
-        }
+        if (value == 'newests') fetchComments();
         
     })
+
+    fetchComments()
 })

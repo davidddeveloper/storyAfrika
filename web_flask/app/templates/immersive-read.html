@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Storyafrika is a platform showcasing the real-life experiences and stories of individual Africans, highlighting their upbringing, everyday successes, and much more." property="og:description">
+    <meta content="storyafrika - Success Stories and Experiences of Everyday Africans" property="og:title">
+    <meta content="https://stories.storyafrika.live" property="og:url">
+    <meta content="/static/images/write.webp" property="og:image">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="storyafrika (Immersive Read) - {{story.title}}">
+    <meta name="twitter:description" content="{{story.title}} written by {{story.writer.username}} on {{story.created_at}} and updated_at {{story.updated_at}}">
+    <meta name="twitter:image" content="/uploads/{{story.image}}">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/tailwind.css">
+    <!-- pretty checkbox -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css">
+
+    <link rel="canonical" href="https://stories.storyafrika.live">
+    <link rel="icon" type="image/png" href="/static/images/storyafrika.png">
+    <link rel="me" href="https://www.linkedin.com/in/david-conteh-a42871253/">
+    <title>storyafrika (Immersive Read) - {{story.title}}</title>
+    <link rel="stylesheet" href="/static/immersive-read.css">
+    
+    <script src="/static/js/jquery.min.js" defer></script>
+    <script src="/static/js/main.js" defer type="module"></script>
+    <script src="/static/js/comment-view.js" defer></script>
+    <script src="/static/js/immersive-read.js" defer></script>
+
+    <script src="https://code.responsivevoice.org/responsivevoice.js?key=KNpmra46"></script>
+</head>
+<body class="bg-white text-lightgray transition-colors duration-1000">
+    <section class="toolbar-container flex justify-end items-center h-14 w-full bg-lightgray fixed top-0 z-10 transition-all duration-700 before:absolute before: before:mt-14 before:z-20 before:w-full before:h-full before:bg-transparent">
+        <article class="flex flex-nowrap gap-4 text-white">
+            <button class="listen-story setting-btn flex items-center gap-2 px-3 py-2 hover:bg-mediumpurple hover:rounded-sm"><img class="h-[20px] object-cover" src="/static/icons/listen.svg" alt=""><span class="hidden md:block">Listen</span></button>
+            <div class="flex items-center">
+                <button class="text-preferences-btn setting-btn flex items-center gap-2 px-3 py-2 hover:bg-mediumpurple hover:rounded-sm"><img class="h-[20px] object-cover" src="/static/icons/text.svg" alt=""><span class="hidden md:block">Text preferences</span></button>
+                <div class="text-preferences is-hidden rounded-sm absolute left-0 sm:inset-auto sm:top-0 py-5 w-full sm:w-auto top-0 border-2 h-[300px] sm:h-[450px] md:h-[550px] overflow-scroll hidden no-scrollbar bg-lightgray mt-14 p-3">
+                    <article class="text-size-setting">
+                        <label for="text-size" class="text-offwhite font-bold"><h2>Text size</h2></label>
+                        <input id="text-size-input" class="w-full cursor-pointer" type="range" name="" id="" min="26" max="80" value="25px">
+                        <div class="slider-marks relative -mt-[8px] flex justify-between w-full px-1">
+                            <span class="text-xs">Small</span>
+                            <span class="text-xs">Medium</span>
+                            <span class="text-xs" >Large</span>
+                        </div>
+                    </article>
+                    <article class="text-spacing-setting flex pretty p-switch p-slim justify-between mt-5">
+                        <h2 class="mb-2 text-offwhite text-base font-bold">Extra spacing between the letters</h2>
+                        <input type="checkbox" />
+                        <div class="state">
+                            <label>Letter Spacing</label>
+                        </div>
+                        <p class="text-sm mt-2 text-offset">Wider spacing could improve reading fluency</p>
+                    </article>
+                    <article class="text-font-setting mt-5">
+                        <h2 class="mb-2 text-offwhite font-bold">Font</h2>
+                        <article class="flex flex-col gap-4">
+
+                            <div class="pretty p-default p-round flex gap-2">
+                                <input type="radio" name="radio1" data-font="comic">
+                                <div class="state">
+                                    <label>Comic</label>
+                                </div>
+                            </div>
+                            <div class="pretty p-default p-round flex gap-2">
+                                <input type="radio" name="radio1" data-font="cursive" checked>
+                                <div class="state">
+                                    <label>Cursive</label>
+                                </div>
+                            </div>
+                            <div class="pretty p-default p-round flex gap-2">
+                                <input type="radio" name="radio1" data-font="sitka">
+                                <div class="state">
+                                    <label>Sitka</label>
+                                </div>
+                            </div>
+                        </article>
+                    </article>
+                    <article class="text-column-setting mt-5">
+                        <h2 class="mb-2 text-offwhite font-bold">Text column style</h2>
+                        <article class="flex gap-5">
+                            <button class="change-col-btn col-1 p-2 rounded-sm border shadow-lg border-offwhite bg-offset flex flex-col items-center gap-1 justify-center transition-transform">
+                                <span class="w-[20px] border-t border-lightgray"></span><span class="w-[20px] border-t border-lightgray"></span><span class="w-[20px] border-t border-lightgray"></span><span class="w-[20px] border-t border-lightgray"></span>
+                            </button>
+                            <button class="change-col-btn active-column col-2 p-2 rounded-sm border shadow-lg border-offwhite bg-offset flex flex-col items-center gap-1 justify-center transition-transform">
+                                <span class="w-[30px] border-t border-lightgray"></span><span class="w-[30px] border-t border-lightgray"></span><span class="w-[30px] border-t border-lightgray"></span><span class="w-[30px] border-t border-lightgray"></span>
+                            </button>
+                            <button class="change-col-btn col-3 p-2 rounded-sm border shadow-lg border-offwhite bg-offset flex flex-col items-center gap-1 justify-center transition-transform">
+                                <span class="w-[35px] border-t border-lightgray"></span><span class="w-[35px] border-t border-lightgray"></span><span class="w-[35px] border-t border-lightgray"></span><span class="w-[35px] border-t border-lightgray"></span>
+                            </button>
+                        </article>
+                        <p class="column-info text-sm text-offset mt-2">Medium column</p>
+                    </article>
+                    <article class="themes mt-5">
+                        <h2 class="mb-2 text-offwhite font-bold">Page themes</h2>
+                        <article class="themes-container flex gap-2">
+                            <button class="theme active-column cursor-pointer p-2 px-3 rounded-sm bg-white text-black text-sm transition-transform" data-theme="bg-white text-black">
+                                <p>Aa</p>
+                            </button>
+                            <button class="theme cursor-pointer p-2 px-3 rounded-sm bg-sepia text-black text-sm transition-transform" data-theme="bg-sepia text-black">
+                                <p>Aa</p>
+                            </button>
+                            <button class="theme cursor-pointer p-2 px-3 rounded-sm bg-grey text-black text-sm transition-transform" data-theme="bg-grey text-black">
+                                <p>Aa</p>
+                            </button>
+                            <button class="theme cursor-pointer p-2 px-3 rounded-sm bg-darkGrey text-sm text-darkGrayForeground transition-transform" data-theme="bg-darkGrey text-darkGrayForeground">
+                                <p>Aa</p>
+                            </button>
+                            <button class="theme cursor-pointer p-2 px-3 rounded-sm bg-black text-sm text-white transition-transform" data-theme="bg-black text-white">
+                                <p>Aa</p>
+                            </button>
+                        </article>
+                    </article>
+                </div>
+            </div>
+            <div class="flex items-center">
+                <button class="reading-preferences-btn setting-btn flex items-center gap-2 px-3 py-2 hover:bg-mediumpurple hover:rounded-sm"><img class="h-[20px] object-cover" src="/static/icons/reading.svg" alt=""><span class="hidden md:block">Reading preferences</span></button>
+                <!--<div class="block rounded-sm absolute top-0 border-2 bg-lightgray mt-14 p-1">
+                    
+                </div>-->
+            </div>
+            <div class="flex items-center">
+                <div class="h-4 w-2 border-l-2 border-white mr-2"></div>
+                <button class="pin-toolbar px-3 py-2 hover:bg-mediumpurple hover:rounded-sm"><img src="/static/icons/pin.svg" alt="" srcset=""></button>
+            </div>
+        </article>
+    </section>
+    <section class="content container w-full p-4 sm:p-0 mx-auto font-[cursive] transition-colors duration-1000 sm:w-[720px]">
+        <h1 class=" mt-16 logo-text font-medium">storyafrika</h1>
+        <article class="story-story-text  mt-5 text-[20px] flex flex-col gap-[25px] " data-story_id="{{story.id}}">
+            <p id="story-text" class="">{{story.text}}</p>
+        </article>
+
+    </section>
+</body>
+</html>
