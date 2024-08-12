@@ -27,9 +27,9 @@ class Comment(BaseModel, Base):
         __tablename__ = 'comments'
         comment = Column(Text, nullable=False)
         story_id = Column('Story', ForeignKey('stories.id', ondelete='CASCADE'), nullable=False)
-        user_id = Column('User', ForeignKey('users.id'), nullable=False)
-        likes = relationship('CommentLike', backref='comment', lazy=True)
-        unlikes = relationship('CommentUnLike', backref='comment', lazy=True)
+        user_id = Column('User', ForeignKey('users.id', ondelete='CASCADE'), nullable=False,)
+        likes = relationship('CommentLike', backref='comment', lazy=True, passive_deletes=True, cascade='all, delete-orphan')
+        unlikes = relationship('CommentUnLike', backref='comment', lazy=True, passive_deletes=True, cascade='all, delete-orphan')
 
     else:
         comment = ''

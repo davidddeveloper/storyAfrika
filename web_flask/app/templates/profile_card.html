@@ -32,7 +32,7 @@
     </form method="post" action="">
     <div class="self-center md:self-start">
         {% if current_user.avatar %}
-        <button class="change-img-button-container border-2 rounded-full w-[130px] h-[130px] relative overflow-hidden"><img class="profile-image w-full h-full rounded-full object-cover" src="{{ url_for('upload', filename=current_user.avatar) }}" alt=""> <div class="image-btn-change hidden text-xs absolute inset-0 p-1 h-[25px] top-[45%] left-[20%] bg-white text-lightgray z-10 cursor-pointer">Change image</div></button>
+        <button class="change-img-button-container border-2 rounded-full w-[130px] h-[130px] relative overflow-hidden"><img class="profile-image w-full h-full rounded-full object-cover" src="{{ url_for('upload', filename=current_user.avatar, user_id=current_user.id) }}" alt=""> <div class="image-btn-change hidden text-xs absolute inset-0 p-1 h-[25px] top-[45%] left-[20%] bg-white text-lightgray z-10 cursor-pointer">Change image</div></button>
         {% else %}
         <button class="change-img-button-container border-2 rounded-full w-[130px] h-[130px] relative overflow-hidden"><img class="profile-image w-full h-full rounded-full object-cover" src="/static/images/default-profile-image.png" alt=""> <div class="image-btn-change hidden text-xs absolute inset-0 p-1 h-[25px] top-[45%] left-[20%] bg-white text-lightgray z-10 cursor-pointer">Change image</div></button>
         {% endif %}

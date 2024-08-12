@@ -7,7 +7,7 @@
         </div>
         <div class="story-image self-center">
             {% if story.image %}
-                <img class='w-full h-full' src="{{ url_for('upload', filename=story.image )}}" alt="" srcset="">
+                <img class='w-full h-full' src={{story.image}} alt="" srcset="">
             {% else %}
                 <img class='w-full h-full' src="https://unsplash.it/500" alt="" srcset="">
             {% endif %}

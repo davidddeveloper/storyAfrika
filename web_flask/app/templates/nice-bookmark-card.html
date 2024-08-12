@@ -1,0 +1,27 @@
+<article class="comment-card rounded-lg p-4 {{ 'bg-mediumpurple text-white' if odd else 'bg-white text-lightgray' }}" data-story_id=story.id>
+    <div class="profile container mx-auto px-5 sm:px-2 ">
+        <div class="mt-[2px] flex gap-[5px] items-center">
+            <p class="text-xs mb-2">posted {{ moment(story.created_at).fromNow()}} by</p>
+        </div>
+        <div class="flex items-center">
+            {% if story.writer.avatar %}
+            <img class="rounded-full h-[40px] w-[40px] object-cover" src="/uploads/{{story.writer.avatar}}/{{story.writer.id}}/" alt="">
+            {% else %}
+            <img class="rounded-full h-[40px] w-[40px] object-cover" src="https://picsum.photos/200/700" alt="">
+            {% endif %}
+            <div class="ml-[15px]">
+                <div class="flex gap-[5px] follow-card" data-user_id="{{story.writer.id}}">
+                    <h3 class="">{{story.writer.username}}</h3>
+                    {% if current_user.is_following(story.writer) %}
+                        <button class="follow flex items-center text-lightblue unfollow"><img src="/static/icons/correct.svg" alt="">Following</button>
+                    {% else %}
+                        <button class="follow flex items-center text-lightblue"><img src="/static/icons/plus.svg" alt="">Follow</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="">
+        <h3 class="comment-text text-base mt-[5px] ml-[50px] h-10"><a href="{{url_for('story', story_id=story.id)}}">{{story.title}}</a></h3>
+    </div>
+</article>

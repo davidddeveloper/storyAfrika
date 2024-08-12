@@ -18,8 +18,8 @@ class CommentUnLike(BaseModel, Base):
 
     if os.getenv('STORAGE') in ['db', 'DB']:
         __tablename__ = 'comment_unlikes'
-        comment_id = Column(String(60), ForeignKey('comments.id'), nullable=False)
-        user_id = Column(String(60), ForeignKey('users.id'), nullable=False)
+        comment_id = Column(String(60), ForeignKey('comments.id', ondelete='CASCADE'), nullable=False)
+        user_id = Column(String(60), ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     else:
         comment_id = ''
         user_id = ''

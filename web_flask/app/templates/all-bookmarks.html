@@ -1,0 +1,24 @@
+<section>
+    <section class="bookmarks-view is-hidden fixed z-50 pt-[100px] bg-offwhite transition-all ease-out -bottom-[100%] w-full h-full overflow-y-scroll px-5 pb-[200px] drop-shadow-lg sm:rounded-2xl sm:px-16 sm:pb-[200px] sm:w-[80%] sm:left-[10%] sm:right-[10%] md:rounded-none md:pb-[50px] md:left-auto md:drop-shadow-lg md:top-0 md:overflow-x-hidden md:-right-[100%] md:w-[400px] lg:w-[500px] md:px-[60px] md:border-2 md:h-screen md:overflow-y-scroll no-scrollbar">
+        <h2 class="text-base font-bold">You have bookmarked {{ current_user.bookmarks | length }} {% if current_user.bookmarks | length > 1 %} stories {% else %} story {% endif %}</h2>
+        <form action="" method="post" class="mt-10 container mx-auto search-bookmark-form mb-3">
+            <input name="search-bookmarks-input" id="search-bookmarks-input" class="search-bookmarks-input resize-y col-auto bg-transparent w-full pb-[10px] pl-[24px] border-0 text-[16px] text-lightgray border-b-2 border-black focus:transition-all focus:border-0 max-h-[200px] focus:outline-0 focus:border-b-2 focus:border-lightblue no-scrollbar" placeholder="find a story..." rows="1" autofocus>
+            {#<input id="csrfToken" name="csrf_token" type="hidden" value="{{ csrf_token() }}">#}
+            <button class="p-1 text-lightblue search-bookmark opacity-0 transition-opacity" type="submit" disabled>Search</button>
+        </form>
+        <section class="bookmarks-container flex flex-col gap-5">
+            {% for bookmark in current_user.bookmarks %}
+            {% set story = bookmark.story%}
+            {% if loop.index < 5 %}
+                {% if loop.index % 2 == 1 %}
+                    {% set odd = true %}
+                    {% include 'nice-bookmark-card.html' %}
+                {% else %}
+                    {% set odd = false %}
+                    {% include 'nice-bookmark-card.html' %}
+                {% endif %}
+            {% endif %}
+            {% endfor %}
+        </section>
+    </section>
+</section>

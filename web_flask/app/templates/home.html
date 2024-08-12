@@ -10,8 +10,10 @@
                 <button class="prev"><img src="/static/icons/lt.svg" alt="" srcset=""></button>
                 <div class="slider-wrapper w-[200px] overflow-x-hidden text-base sm:w-[250px] md:w-[250px] lg:w-[370px]">
                     <ul class="slider topics flex items-center gap-[25px] w-screen transition-all ease-out" data-current_index=0>
+                            <li><button class="for-you flex-shrink py-1 w-[70px] hover:rounded-sm hover:text-white hover:bg-mediumpurple">For you</button></li>
+                            <li><button class="following flex-shrink py-1 w-[80px] bg-mediumpurple text-white hover:rounded-sm hover:text-white hover:bg-mediumpurple">Following</button></li>
                         {% for key,topic in topics.items() %}
-                            <li class="slider-item">{{topic.name}}</li>
+                            <li class="slider-item"><button class="topic-btn px-2 py-1 hover:rounded-sm hover:text-white hover:bg-mediumpurple" data-topic_id={{topic.id}}>{{topic.name}}</button></li>
                         {% endfor %}
                     </ul>
                 </div>
@@ -30,7 +32,7 @@
             <div class="flex items-center justify-center sm:pr-0 lg:pr-2">
                 <button class="hidden mr-5"><img src="/static/icons/search.svg" alt=""></button>
                 {% if current_user.avatar %}
-                <button class="home-profile-img border-2 rounded-full w-[60px] h-[60px] shrink-0"><img class="profile-image w-full h-full rounded-full object-cover" src="{{ url_for('upload', filename=current_user.avatar) }}" alt=""></button>
+                <button class="home-profile-img border-2 rounded-full w-[60px] h-[60px] shrink-0"><img class="profile-image w-full h-full rounded-full object-cover" src="{{ url_for('upload', filename=current_user.avatar, user_id=current_user.id) }}" alt=""></button>
                 {% else %}
                 <button class="home-profile-img border-2 rounded-full w-[60px] h-[60px] shrink-0"><img class="profile-image w-full h-full rounded-full object-cover" src="/static/images/default-profile-image.png" alt=""></button>
                 {% endif %}
@@ -57,22 +59,24 @@
         </div>
 
         <div class="bookmark mt-[40px]">
-            <h3 class="mb-5 text-xs font-medium">From you bookmarks</h3>
+            <h3 class="mb-5 text-sm font-medium">From you bookmarks</h3>
             <div>
                 {% for bookmark in current_user.bookmarks %}
+                    {% set story = bookmark.story %}
                     {% if loop.index <= 3 %}
                     {% include 'bookmark_card.html' %}
                     {% endif %}
                 
                 {% endfor %}
             </div>
-            <a href="" class="block underline text-lightblue text-sm">See all bookmarks</a>
+            <button class="block underline text-lightblue text-sm show-all-bookmarks">See all bookmarks</button>
         </div>
-        <hr class="divider my-[50px]">
+        <hr class=" my-[50px]">
         <div class="likes">
-            <h3 class="mb-5 text-xs font-medium">You recently liked</h3>
+            <h3 class="mb-5 text-sm font-medium">You recently liked</h3>
             <div>
                 {% for like in current_user.likes %}
+                    {% set story = like.story %}
                     {% if loop.index <= 3 %}
                     {% include 'bookmark_card.html' %}
                     {% endif %}
@@ -81,7 +85,7 @@
             </div>
         </div>
         <div class="who-to-follow">
-            <h3 class="mt-[30px] mb-5 text-xs font-medium">Who to follow?</h3>
+            <h3 class="mt-[30px] mb-5 text-sm font-medium">Who to follow?</h3>
             <div class="slider-wrapper overflow-x-hidden">
                 <div class="slider follow-slider flex items-center justify-between w-full gap-10 transition-transform ease-out" data-current_index=0>
                     {% for the_user in users.values() %}
@@ -91,7 +95,7 @@
                         <div class="follow-card slider-item flex flex-shrink-0 items-center gap-[15px]" data-user_id={{the_user.id}}>
                             {% if the_user.avatar %}
                             <div class="h-[50px] w-[50px] flex-shrink-0">
-                                <img class="h-full w-full rounded-full border-2" src="{{ url_for('upload', filename=the_user.avatar) }}" alt="">
+                                <img class="h-full w-full rounded-full border-2" src="{{ url_for('upload', filename=the_user.avatar, user_id=the_user.id) }}" alt="">
                             </div>
                             {% else %}
                             <div class="h-[50px] w-[50px] flex-shrink-0">
@@ -113,8 +117,11 @@
                         
                 </div>
             </div>
-            <a href="" class="block underline text-lightblue text-sm">More suggestions</a>
+            {#show-who-to-follow#}
+            <button class="block underline text-lightblue text-sm">More suggestions</button>
         </div>
     </aside>
 </div>
+{% include 'all-bookmarks.html' %}
+<div class="divider inset-0 w-full h-full fixed hidden"></div>
 {% endblock %}

@@ -17,8 +17,8 @@ class Follower(BaseModel, Base):
 
     if os.getenv('STORAGE') in ['db', 'DB']:
         __tablename__ = 'followers'
-        follower_id = Column(String(60), ForeignKey('users.id'), nullable=False, primary_key=True)
-        followed_id = Column(String(60), ForeignKey('users.id'), nullable=False, primary_key=True)
+        follower_id = Column(String(60), ForeignKey('users.id', ondelete='CASCADE'), nullable=False, primary_key=True)
+        followed_id = Column(String(60), ForeignKey('users.id', ondelete='CASCADE'), nullable=False, primary_key=True)
     else:
         follower_id = ''
         followed_id = ''

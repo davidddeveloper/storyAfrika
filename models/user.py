@@ -10,6 +10,7 @@ from sqlalchemy.orm import WriteOnlyMapped
 from models.imports import *
 from models.base_model import Base, BaseModel
 from models.story import Story
+from models.bookmark import Bookmark
 from models.image_upload import ImageUpload
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -38,12 +39,12 @@ class User(BaseModel, ImageUpload, Base):
         first_name = Column(String(50), nullable=True)
         last_name = Column(String(50), nullable=True)
         full_name = Column(String(50), nullable=True, default=(first_name + ' ' + last_name))
-        stories = relationship('Story', backref='writer', lazy=True)
-        comments = relationship('Comment', backref='commenter', lazy=True)
-        likes = relationship('Like', backref='liker', lazy=True)
-        bookmarks = relationship('Bookmark', backref='bookmarker', lazy=True)
-        comment_likes = relationship('CommentLike', backref='liker', lazy=True)
-        comment_unlikes = relationship('CommentUnLike', backref='unliker', lazy=True)
+        stories = relationship('Story', backref='writer', lazy=True, passive_deletes=True, cascade='all, delete-orphan')
+        comments = relationship('Comment', backref='commenter', lazy=True, passive_deletes=True, cascade='all, delete-orphan')
+        likes = relationship('Like', backref='liker', lazy=True, passive_deletes=True, cascade='all, delete-orphan')
+        bookmarks = relationship('Bookmark', backref='bookmarker', lazy=True, passive_deletes=True, cascade='all, delete-orphan')
+        comment_likes = relationship('CommentLike', backref='liker', lazy=True, passive_deletes=True, cascade='all, delete-orphan')
+        comment_unlikes = relationship('CommentUnLike', backref='unliker', lazy=True, passive_deletes=True, cascade='all, delete-orphan')
         followers:  WriteOnlyMapped['User'] = relationship(
             secondary=Follower.__table__,
             primaryjoin='followers.c.followed_id == User.id',
@@ -212,6 +213,27 @@ class User(BaseModel, ImageUpload, Base):
             .group_by(Story)
             .order_by(Story.created_at.desc())
         )
+
+    @property
+    def stories_bookmarked(self):
+        """ get all the stories bookmarked by the user """
+        from models.engine import storage
+    
+        return (
+            storage._session.query(Story).join(Bookmark).where(sa.and_(
+                Bookmark.user_id == self.id,
+                Bookmark.story_id == Story.id
+            )).order_by(Story.created_at.asc())
+        )
+
+    def search_stories_bookmarked(self, data):
+        """ """
+        return (
+            self.stories_bookmarked
+            .where(Story.title.contains(data))
+            .order_by(Bookmark.created_at.asc())
+        )
+
 
     @property
     def following_topics(self):

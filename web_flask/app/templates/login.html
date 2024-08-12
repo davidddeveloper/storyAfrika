@@ -6,7 +6,7 @@
             {{form.hidden_tag()}}
     
             {#{{ form.username.label }}#}
-            {{ form.username(class="bg-white text-lightgray border-2 p-1 rounded-lg focus:outline-lightblue w-full sm:w-[290px]", placeholder="Username", size=32) }}
+            {{ form.username(class="bg-white text-lightgray border-2 p-1 rounded-lg focus:outline-lightblue w-full sm:w-[290px]", placeholder="Username", size=32, autofocus=True) }}
             {% for error in form.username.errors %}
             <p style="color: rgb(228, 142, 36);">{{error}}</p>
             {% endfor %}</br></br>

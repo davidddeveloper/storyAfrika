@@ -15,6 +15,7 @@ from models.user import User
 from models.comment import Comment
 from models.like import Like
 from models.bookmark import Bookmark
+from models.topic import Topic
 from web_flask.api.v1 import storage
 
 
@@ -102,10 +103,12 @@ def following_stories(user_id=None):
                 story['liked'] = user.liked_story(story['id'])
                 story['bookmarked'] = user.bookmarked_story(story['id'])
                 writer = storage.get(User, story['writer']['id'])
-                story_dictionary['user_is_following_writer'] = user.is_following(writer)
+                story['user_is_following_writer'] = user.is_following(writer)
                 stories.append(story)
             except Exception:
                 pass
+        pagination = Story.paginate_list(stories)
+        stories = pagination['items']
     
     return jsonify(
         {
@@ -175,9 +178,16 @@ def get_story(story_id=None):
             return jsonify({"Error": 'not a valid json'}), 400
 
         else:
+            print(story_json.items(), 'xyz')
             for key, val in story_json.items():
-                if key in ['text', 'title']:
-                    setattr(story, key, val)
+                if key in ['text', 'title', 'topics', 'image']:
+                    if key == 'topics' and val != []:
+                        for topic in val:
+                            topic_obj = storage._session.query(Topic).where(Topic.name == topic).first()
+                            if topic_obj is not None:
+                                story.topics.append(topic_obj)
+                    else:
+                        setattr(story, key, val)
 
             storage.save()
 
@@ -199,7 +209,7 @@ def delete_story(story_id=None):
 
     story.delete()
     storage.save()
-    return jsonify({"Deleted": story.to_dict()})
+    return jsonify({"status": "Deleted"})
 
 
 @views.route(
@@ -351,6 +361,7 @@ def get_relevant_comments_for_story(story_id=None, user_id=None):
     for comment in comments_obj:
         temp = comment.to_dict()
         temp['is_liked_by'] = comment.is_liked_by(user_id)
+        temp['user_is_following_commenter'] = user.is_following(comment.commenter)
         comments.append(temp)
     
     #  print(comments, '-----------------><>--------------')
@@ -389,6 +400,7 @@ def get_newest_comments_for_story(story_id=None, user_id=None):
     for comment in comments_obj:
         temp = comment.to_dict()
         temp['is_liked_by'] = comment.is_liked_by(user_id)
+        temp['user_is_following_commenter'] = user.is_following(comment.commenter)
         comments.append(temp)
     
     print(comments, '-----------------><>--------------')
@@ -425,6 +437,7 @@ def get_comments_for_story(story_id=None, user_id=None):
     for comment in comments_obj:
         temp = comment.to_dict()
         temp['is_liked_by'] = comment.is_liked_by(user_id)
+        temp['user_is_following_commenter'] = user.is_following(comment.commenter)
         comments.append(temp)
     
     print(comments, '-----------------><>--------------')

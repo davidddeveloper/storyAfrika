@@ -1,3 +1,9 @@
-import getBudgetForCurrentYear from './8-getBudgetCurrentYear.js';
+import ClassRoom from "./4-rectangle";
 
-console.log(getBudgetForCurrentYear(2100, 5200, 1090));
+export default function initializeRooms () {
+	return [
+		new ClassRoom(19),
+		new ClassRoom(20),
+		new ClassRoom(34)
+	];
+}

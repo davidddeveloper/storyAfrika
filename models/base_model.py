@@ -108,6 +108,26 @@ class BaseModel:
             'items': items
         }
 
+    def paginate_list(stories=[], page=1, per_page=4):
+        """ Paginate an list
+
+            - page: the current page
+            - per_page: the number of items to get for that page
+
+        """
+
+        total_items = len(stories)
+        total_pages = (total_items // per_page) + (1 if total_items % per_page > 0 else 0)
+        paginated_result = [item for idx, item in enumerate(stories[((page - 1) * per_page):]) if idx < per_page]
+
+        return {
+            'total_items': total_items,
+            'total_pages': total_pages,
+            'page': page,
+            'per_page': per_page,
+            'items': paginated_result
+        }
+
     def __str__(self) -> str:
         return f"[{self.__class__.__name__}.{self.id}] {self.to_dict()}"
 

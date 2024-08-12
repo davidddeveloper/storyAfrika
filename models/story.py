@@ -52,7 +52,7 @@ class Story(BaseModel, ImageUpload, Base):
 
     @property
     def read_time(self):
-        num_of_words = len(self.text.split())
+        num_of_words = len(self.plain_text.split())
         read_time_in_minutes = int(num_of_words / 225)
 
         return read_time_in_minutes
@@ -103,6 +103,37 @@ class Story(BaseModel, ImageUpload, Base):
         )
 
 
+    @staticmethod
+    def search_title(cls, data):
+        """ Search story by searching in it title"""
+        from models.engine import storage
+
+        return storage.query(cls).where(cls.title.contains(data))
+    
+    @staticmethod
+    def search_text(cls, data):
+        """ search story by searching in it text"""
+        from models.engine import storage
+
+        return storage.query(cls).where(cls.text.contains(data))
+
+
+    @staticmethod
+    def search(cls, data):
+        """ search in title and text """
+        from models.engine import storage
+        return (
+            storage.query(Story)
+            .where(
+                sa.or_(
+                    Story.title.contains(data),
+                    Story.text.contains(data)
+                )
+            ).order_by(Story.created_at.asc()),
+            
+        )
+
+        
     def __init__(self, title, text, user_id, **kwargs):
         super().__init__(**kwargs)
 

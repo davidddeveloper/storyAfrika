@@ -24,7 +24,7 @@
     </div>
     <div class="rounded-full w-[60px] h-[60px] border">
         {% if current_user.avatar %}
-        <img class="rounded-full w-full h-full object-cover" src="{{ url_for('upload', filename=current_user.avatar) }}" alt="" srcset="">
+        <img class="rounded-full w-full h-full object-cover" src="{{ url_for('upload', filename=current_user.avatar, user_id=current_user.id) }}" alt="" srcset="">
         {% else %}
         <img class="rounded-full w-full h-full object-cover" src="/static/images/default-profile-image.png" alt="" srcset="">
         {% endif %}
@@ -33,17 +33,41 @@
 <main class="container mx-auto relative">
     {% include 'text-editor.html' %}
 </main>
-<div class="hidden bg-shadow absolute inset-0 h-screen opacity-[45%] bg-lightblue z-10"></div>
-<div class="hidden title-form fixed -mt-[10%] justify-center items-center top-[50%] left-0 right-0 w-full z-30">
+<div class="hidden bg-shadow inset-0 h-screen fixed opacity-[45%] bg-lightblue z-10"></div>
+<div class="hidden container mx-auto title-form fixed sm:-mt-[20%] justify-center items-center bottom-0 sm:top-[50%] left-0 right-0 w-full sm:w-[80%] md:w-full z-30">
     <div class="enter-title p-5 rounded-md bg-white w-full md:w-[500px]">
         <h3 class="text-lightgray mb-5">Enter a title for you Story</h3>
         <form action="" class="flex flex-col gap-5">
             <input id="title" type="text" class="border story-title-input pl-1 py-1 border-lightblue focus:outline-lightblue" autofocus>
+            <div class="w-full h-full">
+                <h3 class="text-lightgray my-5">Select Topics</h3>
+                <select class="select-topics border w-full no-scrollbar pl-1 py-1 border-lightblue focus:outline-lightblue" name="topics-selected" id="topics-selected" multiple>
+                    {% for topic in topics.values() %}
+                    <option value="{{topic.name}}">{{topic.name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
             <div class="self-end flex items-center gap-3">
                 <p class="text-sm continue-editing hover:cursor-pointer">continue editing</p>
                 <button class="publish opacity-55 self-end bg-lightblue py-[5px] px-[10px] rounded-md text-white" type="submit" value="Publish" disabled>Publish</button>
             </div>
         </form>
     </div>
+
+    {#<div class="enter-title p-5 rounded-md bg-white w-full md:w-[500px]">
+        <h3 class="text-lightgray mb-5">Select topics</h3>
+        <form action="" class="flex flex-col gap-5">
+            <input id="title" type="text" class="border story-title-input pl-1 py-1 border-lightblue focus:outline-lightblue" autofocus>
+            <select class="border pl-1 py-1 border-lightblue focus:outline-lightblue" name="topic" id="" multiple>
+                {% for topic in topics.values() %}
+                <option value="{{topic.name}}">{{topic.name}}</option>
+                {% endfor %}
+            </select>
+            <div class="self-end flex items-center gap-3">
+                <p class="text-sm continue-editing hover:cursor-pointer">continue editing</p>
+                <button class="publish opacity-55 self-end bg-lightblue py-[5px] px-[10px] rounded-md text-white" type="submit" value="Publish" disabled>Continue</button>
+            </div>
+        </form>
+    </div>#}
 </div>
 {% endblock %}

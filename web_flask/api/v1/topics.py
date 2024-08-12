@@ -9,6 +9,7 @@ from web_flask.api.v1 import views
 from web_flask.api.v1.helper_func import create_uri, check_for_valid_json
 from web_flask.api.v1.helper_func import custom_login_required
 from models.topic import Topic
+from models.user import User
 from models.topic_follower import TopicFollower
 from web_flask.api.v1 import storage
 
@@ -142,11 +143,11 @@ def delete_topic(topic_id=None):
 
 
 @views.route(
-    '/topics/<string:topic_id>/stories',
+    '/topics/<string:topic_id>/<string:user_id>/stories',
     methods=['GET'],
     strict_slashes=False
 )
-def get_stories_for_topic(topic_id=None):
+def get_stories_for_topic(topic_id=None, user_id=None):
     """ all stories under a particular topic
 
         Attributes:
@@ -154,15 +155,36 @@ def get_stories_for_topic(topic_id=None):
 
     """
     topic = storage.get(Topic, topic_id)
-
-    if topic is None:
+    user = storage.get(User, user_id)
+    if topic is None or user is None:
         abort(404)
 
-    stories = topic.stories
+    per_page = request.args.get('per_page', 10, type=int)
+    page = request.args.get('page', 1, type=int)
 
-    return jsonify([
-        story.to_dict() for story in stories
-    ])
+    stories = [st.to_dict() for st in topic.stories]
+
+    for story in stories:
+        try:
+            story['liked'] = user.liked_story(story['id'])
+            story['bookmarked'] = user.bookmarked_story(story['id'])
+            writer = storage.get(User, story['writer']['id'])
+            story['user_is_following_writer'] = user.is_following(writer)
+        except Exception:
+            pass
+
+    pagination = Topic.paginate_list(stories)
+    stories = pagination['items']
+    
+    return jsonify(
+        {
+            'total_items': pagination['total_items'],
+            'total_pages': pagination['total_pages'],
+            'page': pagination['page'],
+            'per_page': pagination['per_page'],
+            'stories': stories
+        }
+    ), 200
 
 
 @views.route(

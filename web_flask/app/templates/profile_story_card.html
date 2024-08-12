@@ -1,28 +1,21 @@
 <div class="flex w-[200px] md:w-[250px] lg:w-[300px] items-center">
     <div class="profile flex items-center">
-        {% if current_user.avatar %}
-        <img class=" w-[40px] h-[40px] object-cover border-2 rounded-full" src="{{ url_for('upload', filename=current_user.avatar) }}" alt="">
+       
+        {% if story.writer.avatar %}
+        <img class=" w-[40px] h-[40px] object-cover border-2 rounded-full" src="{{ url_for('upload', filename=story.writer.avatar, user_id=story.writer.id) }}" alt="">
         {% else %}
         <img class=" w-[40px] h-[40px] object-cover border-2 rounded-full" src="https://picsum.photos/200/400" alt="">
         {% endif %}
         {% if story %}
-        <h2 class="md:ml-2 lg:ml-5 text-sm">{{story.writer.username}}</h2>
-        {% elif bookmark %}
-        <h2 class="md:ml-2 lg:ml-5 text-sm">{{bookmark.story.writer.username}}</h2>
-        {% elif like %}
-        <h2 class="md:ml-2 lg:ml-5 text-sm">{{like.story.writer.username}}</h2>
+        <h2 class="md:ml-5 lg:ml-5 text-sm">{{story.writer.username}}</h2>
         {% endif %}
     </div>
-    <div class="w-[10px] h-4 border-lightgray border-l ml-[15px] mr-[15px]"></div>
+    <div class="w-[5px] h-[5px] rounded-full bg-black mx-[5px]"></div>
     <div class="time text-xs">
         {% if other_story %}
         {{moment(other_story.created_at).fromNow()}}
         {% elif story %}
         {{moment(story.created_at).fromNow()}}
-        {% elif bookmark %}
-        {{moment(bookmark.story.created_at).fromNow()}}
-        {% elif like %}
-        {{moment(like.story.created_at).fromNow()}}
         {% endif %}
     </div>
 </div>

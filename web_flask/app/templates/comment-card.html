@@ -2,12 +2,12 @@
     <div class="profile container mx-auto px-5 sm:px-2 ">
         <div class="flex items-center">
             {% if comment.commenter.avatar %}
-            <img class="rounded-full h-[40px] w-[40px] object-cover" src="{{ url_for('upload', filename=current_user.avatar) }}" alt="">
+                <img class="rounded-full h-[40px] w-[40px] object-cover" src="{{ url_for('upload', filename=comment.commenter.avatar, user_id=comment.commenter.id) }}" alt="">
             {% else %}
             <img class="rounded-full h-[40px] w-[40px] object-cover" src="https://picsum.photos/200/700" alt="">
             {% endif %}
             <div class="ml-[15px]">
-                <div class="flex gap-[5px] follow-card" data-user_id={{current_user.id}}>
+                <div class="flex gap-[5px] follow-card" data-user_id="{{comment.commenter.id}}">
                     <h3 class="">{{comment.commenter.username}}</h3>
                     <button class="follow flex items-center text-lightblue"><img src="/static/icons/plus.svg" alt="">Follow</button>
                 </div>

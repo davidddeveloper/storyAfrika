@@ -1,9 +1,12 @@
 <article id="">
     <div class="story-image container mx-auto w-full h-[200px] border-2 rounded-lg my-5 change-img-button-container flex justify-center items-center relative overflow-hidden md:w-[95%] lg:w-[80%] lg:h-[300px]">
-        <div class="image-btn-change hidden text-xs absolute p-1 bg-white text-lightgray z-20 cursor-pointer">Choose image</div>
-        <img id="story-image" class="w-full h-full object-cover" src="https://picsum.photos/700/200" alt="">
+        <div class="absolute">
+            <button class="image-btn-change hidden text-xs absolute p-1 bg-white text-lightgray z-20 cursor-pointer -mt-10">Choose image</button>
+            <button class="generate-random-image hidden text-white">Generate a random image</button>
+
+        </div>
+        <img id="story-image" class="w-full h-full object-cover" src="" alt="">
         <input id="file-input-field" class="hidden" type="file" accept="image/*">
-        <a href="https://picsum.photos/800/500" download>download image</a>
         {#<input id="csrfToken" name="csrf_token" type="hidden" value="{{ csrf_token() }}">#}
     </div>
     <div id="blocks-container">

@@ -20,7 +20,7 @@ class Like(BaseModel, Base):
     if os.getenv('STORAGE') in ['db', 'DB']:
         __tablename__ = 'likes'
         story_id = Column(String(60), ForeignKey('stories.id', ondelete='CASCADE'), nullable=False)
-        user_id = Column(String(60), ForeignKey('users.id'), nullable=False)
+        user_id = Column(String(60), ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     else:
         story_id = ''
         user_id = ''

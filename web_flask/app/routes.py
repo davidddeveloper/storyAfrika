@@ -115,7 +115,7 @@ def write():
                 return url_for('write')
             return url_for('write', story=story)
 
-    return render_template('write.html')
+    return render_template('write.html', topics=storage.all(Topic))
 
 
 @app.route(
@@ -274,12 +274,14 @@ def follow_or_unfollow(user_id=None):
 
     if current_user.is_following(user):
         current_user.unfollow(user)
+        status = 'unfollowed'
     else:
         current_user.follow(user)
+        status = 'follow'
 
     storage.save()
 
-    return jsonify({}), 201
+    return jsonify({status: status}), 201
 
 
 @app.route(
@@ -349,6 +351,24 @@ def like_or_unlike_comment(comment_id=None):
         return jsonify({'status': 'unliked', 'likes_count': comment.to_dict().get('likes_count')}), 201
 
 
+@app.route('/search_bookmarked_stories/<string:data>', strict_slashes=False)
+def search_bookmarked_stories(data=None):
+    if data == None or data == '':
+        abort(404)
+
+    stories = [ story.to_dict() for story in current_user.search_stories_bookmarked(data).all() ]
+
+    for story in stories:
+        try:
+            story['liked'] = current_user.liked_story(story['id'])
+            story['bookmarked'] = current_user.bookmarked_story(story['id'])
+            writer = storage.get(User, story['writer']['id'])
+            story['user_is_following_writer'] = current_user.is_following(writer)
+        except Exception:
+            pass
+
+    return stories, 200
+
 @app.route('/dummy', methods=['GET', 'POST'])
 @login_required
 def dummy_view():
@@ -374,10 +394,18 @@ def dummy_view():
     print(files)
     return render_template('dummy.html', files=files)
 
-@app.route('/uploads/<string:filename>')
-def upload(filename):
+@app.route(
+    '/uploads/<string:filename>/<string:user_id>/',
+    methods=['GET'],
+    strict_slashes=False
+)
+def upload(filename, user_id):
     # user_dir = os.path.join(app.config['UPLOAD_PATH'], current_user.get_id())
-    user_dir = os.path.join(app.config['UPLOAD_PATH'])
+    user = storage.get(User, user_id)
+    if user is None:
+        abort(404)
+
+    user_dir = os.path.join(app.config['UPLOAD_PATH'], user.get_id())
     return send_from_directory(user_dir, filename)
 
 def validate_image(stream):
