@@ -9,46 +9,61 @@ $(function () {
         $.ajax({
             type: 'POST',
             url: 'http://127.0.0.1:4000/api/v1/stories/',
-            data: JSON.stringify({"title": " ", "text": '[{"content":"xyzzzzzz"}]', "user_id": $body.data('current_user_id')}),
+            data: JSON.stringify({"title": " ", "text": '[{"content":"<div class=\'block\' contenteditable=\'true\'><span class=\'handle\' style=\'display: none;\'>⇅</span></div>"}]', "user_id": $body.data('current_user_id')}),
             dataType: 'json',
             contentType: 'application/json',
             success: function (response) {
                 localStorage.setItem('story_id', response.id)
                 $story = response;
+
+                // initially set a random image
+                setRandomStoryImage($('#story-image'))
             }
+        })
+    }
+    console.log($story, 'this is the temp story')
+
+    // generate random image
+    const generateImage = () => {
+        // generage random image from unsplash
+        return fetch('https://picsum.photos/800/500')
+    }
+
+    const setRandomStoryImage = (img) => {
+        generateImage().then((response) => {
+            img.attr('src', response.url)
+            saveBlocks()
         })
     }
 
-    // function to delete a story
-    const delete_story = () => {
-        const story_id = localStorage.getItem('story_id')
-        $.ajax({
-            type: 'DELETE',
-            url: `http://127.0.0.1:4000/api/v1/stories/${story_id}/`,
-            success: function (response) {
-                console.log(response)
-            }
-        })
-    }
+    // set a random image when a random image button is clicked
+    $('.generate-random-image').on('click', () => {
+        setRandomStoryImage($('#story-image'))
+        saveBlocks()
+    })
 
     // save state of block
     const saveBlocks = () => {
         const blocks = [];
+        const topics = $('#topics-selected').val()
+        const image = $('#story-image').attr('src')
+
         $('.block').each(function() {
             console.log((this).innerText)
-          if ($(this).val() == '' || $(this).val() == undefined) {
+            let text = $(this).text().replaceAll(' ', '').replaceAll('⇅', '')
+          if (text === '') {
             blocks.push({ content: '<br />'})
-          }
-          console.log($(this)[0])
-          blocks.push({ content: `${$(this)[0].outerHTML}` });
+          } else blocks.push({ content: `${$(this)[0].outerHTML}` });
         });
-
+        
         //localStorage.setItem('blocks', JSON.stringify(blocks));
         let $story_id = localStorage.getItem('story_id')
         // get the story
         console.log($story)
         $story.title = $('#title').val() === '' ? 'random title' : $('#title').val()
         $story.text = JSON.stringify(blocks)
+        $story.topics = topics
+        $story.image = image
         $.ajax({
             type: "PUT",
             url: `http://127.0.0.1:4000/api/v1/stories/${$story_id}/`,
@@ -61,7 +76,7 @@ $(function () {
         });
     }
 
-    // Load blocks from local storage - ! not using it at the moment
+    // Load blocks from db
     const loadBlocks = () => {
         let $story_id = localStorage.getItem('story_id')
 
@@ -70,6 +85,9 @@ $(function () {
             if (status == 'success') {
                 const blocks = JSON.parse(response.text) || [];
                 const $container = $('#blocks-container');
+
+                // update the story image
+                $('#story-image').attr('src', response.image)
                 console.log(blocks, 'alx')
                 $container.empty();
                 blocks.forEach(block => {
@@ -336,7 +354,10 @@ $(function () {
         saveBlocks()
         localStorage.removeItem('story_id');
         isSubmitting = true
-        window.location.replace(`/story/${story_id}`);
+        setTimeout(() => {
+            window.location.replace(`/story/${story_id}`);
+            
+        }, 1000);
 
     })
 

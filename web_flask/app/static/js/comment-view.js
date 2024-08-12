@@ -1,13 +1,13 @@
 $(function () {
 
-    let showCommentViewBtn = $('.show-comment-view')
-    let commentView = $('.comments-view')
+    let showCommentViewBtn = $('.show-comment-view, .show-all-bookmarks, .show-who-to-follow')
+    let commentView = $('.comments-view, .bookmarks-view, .who-to-follow')
 
     const checkElementOverflowing = (el) => {
 
     }
 
-    $('body').on('click', '.show-comment-view', () => {
+    $('body').on('click', '.show-comment-view, .show-all-bookmarks, .show-who-to-follow', () => {
         if (commentView.hasClass('is-hidden')) {
             $('.divider').addClass('bg-lightblue opacity-45').show()
             commentView.removeClass('md:-right-[100%] is-hidden -bottom-[100%]').addClass('-bottom-[20%] md:right-0')
@@ -23,9 +23,9 @@ $(function () {
         $('.divider').hide()
     })
 
-    $('.comment-textarea').on('input', function () {
-        if ($(this).val().length > 8) $('.share-comment').removeAttr('disabled').removeClass('opacity-0')
-        else $('.share-comment').addClass('opacity-0').attr('disabled')
+    $('.comment-textarea, .search-bookmarks-input').on('input', function () {
+        if ($(this).val().length > 8) $('.share-comment, .search-bookmark ').removeAttr('disabled').removeClass('opacity-0')
+        else $('.share-comment, .search-bookmark ').addClass('opacity-0').attr('disabled')
     })
 
     $('body').delegate('.view-more', 'click', function () {
@@ -120,15 +120,29 @@ $(function () {
             <div class="flex items-center">
                 ${ 
                     comment.commenter.avatar == null
-                    ? `<img class="rounded-full h-[40px] w-[40px] object-cover" src="/uploads/${comment.commenter.avatar}" alt="">`
-                    : `<img class="rounded-full h-[40px] w-[40px] object-cover" src="https://picsum.photos/200/700" alt="">`
+                    ? `<img class="rounded-full h-[40px] w-[40px] object-cover" src="https://picsum.photos/200/700" alt="">`
+                    : `<img class="rounded-full h-[40px] w-[40px] object-cover" src="/uploads/${comment.commenter.avatar}/${comment.commenter.id}" alt="">`
  
                 }
                 <div class="ml-[15px]">
-                    <div class="flex gap-[5px] follow-card" data-user_id=${comment.commenter.id}}>
-                        <h3 class="">${comment.commenter.username}</h3>
-                        <button class="follow flex items-center text-lightblue"><img src="/static/icons/plus.svg" alt="">Follow</button>
-                    </div>
+                    ${
+                        $current_user_id != comment.commenter.id
+                        ?`
+                        <div class="flex gap-[5px] follow-card" data-user_id=${comment.commenter.id}>
+                            <h3 class="">${comment.commenter.username}</h3>
+                            ${console.log(comment.user_is_following_commenter),
+                                comment.user_is_following_commenter == true
+                                ? `<button class="follow flex items-center text-lightblue unfollow"><img src="/static/icons/correct.svg" alt="">Following</button>`
+                                : `<button class="follow flex items-center text-lightblue"><img src="/static/icons/plus.svg" alt="">Follow</button>`
+                            }
+                        </div>
+                        ` : `
+                            <div class="flex gap-[5px] follow-card" data-user_id=${comment.commenter.id}>
+                                <h3 class="">${comment.commenter.username}</h3>
+                            </div>
+                        `
+                    }
+                    
                     <div class="mt-[2px] flex gap-[5px] items-center">
                         <p class="text-xs">posted ${ moment(comment.created_at).fromNow()}</p>
                     </div>
@@ -187,5 +201,6 @@ $(function () {
         
     })
 
+    // initially fetch the comments
     fetchComments()
 })

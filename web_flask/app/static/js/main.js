@@ -11,11 +11,24 @@ $(function(){
     }
 
 
-    get_current_user().then(response => {
-        console.log(response.username, 'me')
-        return response
-    })
-    console.log(`${get_current_user()}`, 'xyzasdf')
+    // delete temporary story
+    // function to delete a story
+    const delete_story = () => {
+        if (localStorage.getItem('status') == 'updating') {
+            localStorage.removeItem('story_id')
+            localStorage.removeItem('status')
+            return Promise.resolve()
+        }
+        const story_id = localStorage.getItem('story_id')
+        return $.ajax({
+            type: 'DELETE',
+            url: `http://127.0.0.1:4000/api/v1/stories/${story_id}/`,
+            success: function (response) {
+                localStorage.removeItem('story_id')
+            }
+        })
+    }
+
     // creating the carousel
     const slider = $('.slider');
     const sliderItems = $('.slider-item');
@@ -160,16 +173,20 @@ $(function(){
             return $jtext
         }
     }
+    /*const getImage = (image, other_uri) => {
+        if (image.includes('fastly.picsum.photos')) return image
+        return image
+    }*/
     let $stories_container = $('.stories-container')
     let $story = (story) => {
         return (`
         <article class="shrink-0 story-card fade-in max-h-[350px] relative" data-story_id="${story.id}">
             <div class="flex w-[300px] items-center">
             <div class="profile flex items-center">
-                <img class=" w-[40px] h-[40px] object-cover border-2 rounded-full" src="/uploads/${story.writer.avatar}" alt="">
+                <img class=" w-[40px] h-[40px] object-cover border-2 rounded-full" src="/uploads/${story.writer.avatar}/${story.writer.id}" alt="">
                 <h2 class="ml-5 text-sm">${story.writer.username}</h2>
             </div>
-            <div class="w-[10px] h-4 border-lightgray border-l ml-[15px] mr-[15px]"></div>
+            <div class="w-[10px] h-3 border-lightgray border-l ml-[14px] mr-[8px]"></div>
             <div class="time text-xs">
                 ${
                     moment !== undefined ? moment(story.created_at).fromNow() : story.created_at
@@ -182,7 +199,7 @@ $(function(){
                     <p class="shrink-0 mt-[10px] w-full max-w-[400px] overflow-x-hidden whitespace-normal overflow-ellipsis line-clamp-2 sm:w-[250px] md:w-[400px]">${loadTextFormat(story.text)}</p>
                 </div>
                 <div class="story-image self-center w-1/4">
-                    <img class='w-full h-3/4 object-cover max-h-[130px]' src="/uploads/${story.image}" alt="" srcset="">
+                    <img class='w-full h-3/4 object-cover max-h-[130px]' src="${story.image}" alt="" srcset="">
                 </div>
             </div>
             <div class="px-3 mt-[15px] flex items-center justify-between">
@@ -225,7 +242,7 @@ $(function(){
                                     </div>`
                                 : ''
                             }
-                            <button class="text-lightgray block cursor-pointer hover:underline"><a href="/immersive_read/${story.id}">Read in immersive mode</a></button>
+                            <button class="text-lightgray block cursor-pointer hover:underline"><a href="/immersive_read/${story.id}" target="_blank">Read in immersive mode</a></button>
                         </div>
                         <hr class="border-black"/>
                         <div class="p-3 pt-4 login-user-actions-container">
@@ -260,22 +277,23 @@ $(function(){
 
     // load data when the user scrolls to the bottom
     let page = 1;
-    const perPage = 2;
+    const perPage = 5;
     let loading = false;
 
-    function fetchStories() {
+    function fetchStories(url, status) {
         if (loading) return
         loading = true
-
         let $url = `http://127.0.0.1:4000/api/v1/users/${$current_user_id}/following_stories?page=${page}&per_page=${perPage}`
+        if (url) $url = url
         $.get($url, function ($response, $status, $error) {
             if ($status == 'success') {
-                console.log($response,'apc')
+                if (status == 'topic') $stories_container.empty()
                 $response.stories.forEach($story_data => {
                     $stories_container.append($story($story_data))
                 })
                 if ($response.stories.length === 0) {
                     $stories_container.html('<h1>Try following some people to see their post here</h1>')
+                    if (status == 'topic') $stories_container.html("<h1>There aren't any story yet for this topic</h1>")
                 }
                 if (page < $response.total_pages) {
                     page++;
@@ -301,20 +319,29 @@ $(function(){
     }
 
     $('.stories-container').scroll(handleScroll);
-    if (window.location.pathname === '/') fetchStories();  // only on home
-
-    // delete temporary story
-    // function to delete a story
-    const delete_story = () => {
-        const story_id = localStorage.getItem('story_id')
-        return $.ajax({
-            type: 'DELETE',
-            url: `http://127.0.0.1:4000/api/v1/stories/${story_id}/`,
-            success: function (response) {
-                localStorage.removeItem('story_id')
-            }
-        })
+    if (window.location.pathname === '/') {
+        if (localStorage.getItem('story_id')) delete_story().then(() => fetchStories());  // only on home
+        else fetchStories()
     }
+
+    // get stories for a particular topic
+    $('.topic-btn').on('click', function () {
+        let topic_id = $(this).data('topic_id')
+        console.log(topic_id)
+
+        $('.topic-btn, .for-you, .following').removeClass('rounded-sm text-white bg-mediumpurple')
+        $(this).addClass('rounded-sm text-white bg-mediumpurple')
+        loading = false;
+        fetchStories(`http://127.0.0.1:4000/api/v1/topics/${topic_id}/${$current_user_id}/stories?page=${page}&per_page=${perPage}`, 'topic')
+    })
+
+    $('.following').on('click', function () {
+        loading = false;
+        $('.topic-btn').removeClass('rounded-sm text-white bg-mediumpurple')
+        $stories_container.empty()
+        $(this).addClass('rounded-sm text-white bg-mediumpurple')
+        fetchStories()
+    })
 
     const replaceButton = ($target, $value) => {
         if (window.location.pathname.includes('/story') === true) {
@@ -366,6 +393,7 @@ $(function(){
         let user_id = $target.closest('.follow-card').data('user_id')
         $.get(`/users/${user_id}/follow/`, function (response, status) {
             if (status == 'success') {
+                console.log(response)
                 if ($target.hasClass('unfollow')) $target.html('<img src="/static/icons/plus.svg" alt="">Follow').removeClass('unfollow')
                 else $target.html('<img src="/static/icons/correct.svg" alt="">Following').addClass('unfollow')
             }
@@ -395,13 +423,73 @@ $(function(){
         })
     })
 
+    // search stories in bookmark
+    let bookmarkSearchInput = $('.search-bookmarks-input')
+    let bookmarksContainer = $('.bookmarks-container')
+    $('.show-all-bookmarks').on('click', function () {
+        bookmarkSearchInput.focus()
+    })
+
+    let bookmarkCard = (story, idx) => {
+        return `
+            <article class="comment-card rounded-lg p-4 ${idx % 2 == 0 ? 'bg-mediumpurple text-white' : 'bg-white text-lightgray' }" data-story_id=${story.id}>
+                <div class="profile container mx-auto px-5 sm:px-2 ">
+                    <div class="mt-[2px] flex gap-[5px] items-center">
+                        <p class="text-xs mb-2">posted ${ moment(story.created_at).fromNow()} by</p>
+                    </div>
+                    <div class="flex items-center">
+                        ${ story.writer.avatar
+                            ? `<img class="rounded-full h-[40px] w-[40px] object-cover" src="/uploads/${story.writer.avatar}/{{story.writer.id}}/" alt="">`
+                            : `<img class="rounded-full h-[40px] w-[40px] object-cover" src="https://picsum.photos/200/700" alt="">`
+                        }
+
+                        <div class="ml-[15px]">
+                            <div class="flex gap-[5px] follow-card" data-user_id="${story.writer.id}">
+                                <h3 class="">${story.writer.username}</h3>
+                                ${ story.user_is_following_writer == true 
+                                    ? `<button class="follow flex items-center text-lightblue unfollow"><img src="/static/icons/correct.svg" alt="">Following</button>`
+                                    : `<button class="follow flex items-center text-lightblue"><img src="/static/icons/plus.svg" alt="">Follow</button>`
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="">
+                    <h3 class="comment-text text-base mt-[5px] ml-[50px] h-10"><a href="/story/${story.id}">${story.title}</a></h3>
+                </div>
+            </article>
+        `
+    }
+
+    $('.search-bookmark-form').on('submit', function (e) {
+        e.preventDefault()
+        let searchData = bookmarkSearchInput.val()
+
+        $.get(`/search_bookmarked_stories/${searchData}`, function (response, status) {
+            if (status == 'success') {
+                console.log(response)
+                bookmarksContainer.empty()
+                response.forEach((story, idx) => {
+                    bookmarksContainer.append(bookmarkCard(story, idx))
+                })
+
+                if (response.length == 0) {
+                    bookmarksContainer.append(`<article class="rounded-lg p-4 bg-mediumpurple text-white">Oh oh, looks like you haven\'t bookmarked that yet.</article>`)
+                }
+            }
+        })
+    })
+
 
     //login user profile card functionality - change avatar/image
+    // also used by text-editor
     let $profile_image_container = $('.change-img-button-container');
     $profile_image_container.on('mouseenter', () => {
-        $(this).find('.image-btn-change').show(300)
+        $(this).find('.image-btn-change').show(100)
+        $(this).find('.generate-random-image').show()
     }).on('mouseleave', () => {
-        $(this).find('.image-btn-change').hide(300)
+        $(this).find('.image-btn-change').hide()
+        $(this).find('.generate-random-image').hide()
     })
 
     let $change_profile_image_btn = $('.image-btn-change')
@@ -428,10 +516,10 @@ $(function(){
                     if (window.location.pathname == '/story/write/' ||
                         window.location.pathname == '/story/write'
                     ) {
-                        $('#story-image').attr('src', `/uploads/${file.name.replaceAll(" ", "_")}`)
+                        $('#story-image').attr('src', `/uploads/${file.name.replaceAll(" ", "_")}/${$current_user_id}`)
 
                     } else if (window.location.pathname == '/') {
-                        $('.profile-image').attr('src', `/uploads/${file.name.replaceAll(" ", "_")}`)
+                        $('.profile-image').attr('src', `/uploads/${file.name.replaceAll(" ", "_")}/${$current_user_id}`)
                         //$('.home-profile-img').attr('src', `/uploads/${file.name.replaceAll(" ", "_")}`)
 
                     }
@@ -516,7 +604,8 @@ $(function(){
             localStorage.setItem('story_id', story_id) // add story_id to localstorage so delete_story would work
             // get the id of story previously added to localstorage
             if (localStorage.getItem('story_id')) delete_story().then(response => {
-                if (response.title) window.location.reload();
+                localStorage.removeItem('story_id')
+                if (response.status === 'Deleted') window.location.reload();
             });
         })
 
@@ -524,6 +613,7 @@ $(function(){
         $('body').delegate('.update-story-btn', 'click', function () {
             story_id = $(this).closest('.story-card').data('story_id') // get story id
             localStorage.setItem('story_id', story_id)
+            localStorage.setItem('status', 'updating')
             // if story_id was added successfully to localstorage redirect to update page
             if (localStorage.getItem('story_id')) window.location.assign('/story/write/');
         })
