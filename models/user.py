@@ -11,6 +11,7 @@ from models.imports import *
 from models.base_model import Base, BaseModel
 from models.story import Story
 from models.bookmark import Bookmark
+from models.like import Like
 from models.image_upload import ImageUpload
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -213,6 +214,28 @@ class User(BaseModel, ImageUpload, Base):
             .group_by(Story)
             .order_by(Story.created_at.desc())
         )
+
+    @property
+    def foryou_stories(self):
+        """ gets the stories that self has not liked or bookmarked
+
+        """
+        from models.engine import storage
+
+        return (
+            sa.select(Story)
+            .join(User, Story.user_id == User.id)
+            .join(Bookmark, Bookmark.story_id == Story.id )
+            .join(Like, Bookmark.story_id == Story.id)
+            .where(Story.user_id != self.id)
+            .where(sa.or_(
+                Like.user_id != self.id,
+                Bookmark.user_id != self.id
+            ))
+            .group_by(Story.id)
+            .order_by(Story.created_at.desc())
+        )
+
 
     @property
     def stories_bookmarked(self):
