@@ -839,6 +839,10 @@ video {
   margin-bottom: 5rem;
 }
 
+.mb-3 {
+  margin-bottom: 0.75rem;
+}
+
 .mb-4 {
   margin-bottom: 1rem;
 }
@@ -867,12 +871,20 @@ video {
   margin-left: 1.25rem;
 }
 
+.ml-\[14px\] {
+  margin-left: 14px;
+}
+
 .ml-\[15px\] {
   margin-left: 15px;
 }
 
 .ml-\[50px\] {
   margin-left: 50px;
+}
+
+.ml-\[60px\] {
+  margin-left: 60px;
 }
 
 .mr-2 {
@@ -883,16 +895,8 @@ video {
   margin-right: 1.25rem;
 }
 
-.mr-\[15px\] {
-  margin-right: 15px;
-}
-
-.mr-\[5px\] {
-  margin-right: 5px;
-}
-
-.mt-1 {
-  margin-top: 0.25rem;
+.mr-\[8px\] {
+  margin-right: 8px;
 }
 
 .mt-10 {
@@ -971,54 +975,6 @@ video {
   margin-top: 80px;
 }
 
-.ml-\[5px\] {
-  margin-left: 5px;
-}
-
-.ml-\[8px\] {
-  margin-left: 8px;
-}
-
-.mr-\[8px\] {
-  margin-right: 8px;
-}
-
-.ml-\[10px\] {
-  margin-left: 10px;
-}
-
-.ml-\[12px\] {
-  margin-left: 12px;
-}
-
-.ml-\[14px\] {
-  margin-left: 14px;
-}
-
-.ml-2 {
-  margin-left: 0.5rem;
-}
-
-.ml-10 {
-  margin-left: 2.5rem;
-}
-
-.ml-14 {
-  margin-left: 3.5rem;
-}
-
-.ml-16 {
-  margin-left: 4rem;
-}
-
-.ml-\[60px\] {
-  margin-left: 60px;
-}
-
-.mb-3 {
-  margin-bottom: 0.75rem;
-}
-
 .line-clamp-2 {
   overflow: hidden;
   display: -webkit-box;
@@ -1078,6 +1034,10 @@ video {
   height: 0.5rem;
 }
 
+.h-3 {
+  height: 0.75rem;
+}
+
 .h-3\/4 {
   height: 75%;
 }
@@ -1118,6 +1078,10 @@ video {
   height: 50px;
 }
 
+.h-\[5px\] {
+  height: 5px;
+}
+
 .h-\[60px\] {
   height: 60px;
 }
@@ -1128,30 +1092,6 @@ video {
 
 .h-screen {
   height: 100vh;
-}
-
-.h-\[10px\] {
-  height: 10px;
-}
-
-.h-\[5px\] {
-  height: 5px;
-}
-
-.h-\[8px\] {
-  height: 8px;
-}
-
-.h-\[9px\] {
-  height: 9px;
-}
-
-.h-\[6px\] {
-  height: 6px;
-}
-
-.h-3 {
-  height: 0.75rem;
 }
 
 .max-h-\[130px\] {
@@ -1234,6 +1174,10 @@ video {
   width: 50px;
 }
 
+.w-\[5px\] {
+  width: 5px;
+}
+
 .w-\[60px\] {
   width: 60px;
 }
@@ -1256,22 +1200,6 @@ video {
 
 .w-screen {
   width: 100vw;
-}
-
-.w-\[5px\] {
-  width: 5px;
-}
-
-.w-\[8px\] {
-  width: 8px;
-}
-
-.w-\[9px\] {
-  width: 9px;
-}
-
-.w-\[6px\] {
-  width: 6px;
 }
 
 .min-w-\[200px\] {
@@ -1755,6 +1683,10 @@ video {
 
 .font-medium {
   font-weight: 500;
+}
+
+.font-normal {
+  font-weight: 400;
 }
 
 .italic {
@@ -2335,14 +2267,6 @@ video {
     top: 0px;
   }
 
-  .md\:ml-2 {
-    margin-left: 0.5rem;
-  }
-
-  .md\:ml-1 {
-    margin-left: 0.25rem;
-  }
-
   .md\:ml-5 {
     margin-left: 1.25rem;
   }
@@ -2495,10 +2419,6 @@ video {
 @media (min-width: 960px) {
   .lg\:ml-5 {
     margin-left: 1.25rem;
-  }
-
-  .lg\:ml-10 {
-    margin-left: 2.5rem;
   }
 
   .lg\:h-\[300px\] {
