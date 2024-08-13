@@ -16,6 +16,6 @@ class Config:
     #SESSION_USE_SIGNER = True
     #SESSION_REDIS = redis.from_url('redis://localhost:6379')
     # FOR FILE UPLOAD
-    MAX_CONTENT_LENGTH = 20 * 1024 * 1024
+    MAX_CONTENT_LENGTH = 40 * 1024 * 1024
     UPLOAD_EXTENSIONS = ['.jpg', '.png', '.jpeg', '.gif', '.svg', '.webp', '.heif', '.heic', '.jfif']
     UPLOAD_PATH = os.path.join(os.path.dirname(__file__), '..', 'uploads')
