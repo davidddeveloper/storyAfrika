@@ -173,10 +173,11 @@ $(function(){
             return $jtext
         }
     }
-    /*const getImage = (image, other_uri) => {
+    const getImage = (image, other_uri) => {
+        if (!image) return image
         if (image.includes('fastly.picsum.photos')) return image
         return image
-    }*/
+    }
     let $stories_container = $('.stories-container')
     let $story = (story) => {
         return (`
@@ -199,7 +200,7 @@ $(function(){
                     <p class="shrink-0 mt-[10px] w-full max-w-[400px] overflow-x-hidden whitespace-normal overflow-ellipsis line-clamp-2 sm:w-[250px] md:w-[400px]">${loadTextFormat(story.text)}</p>
                 </div>
                 <div class="story-image self-center w-1/4">
-                    <img class='w-full h-3/4 object-cover max-h-[130px]' src="${story.image}" alt="" srcset="">
+                    <img class='w-full h-3/4 object-cover max-h-[130px]' src="${getImage(story.image, story.writer.id)}" alt="" srcset="">
                 </div>
             </div>
             <div class="px-3 mt-[15px] flex items-center justify-between">
@@ -283,9 +284,12 @@ $(function(){
     function fetchStories(url, status) {
         if (loading) return
         loading = true
-        let $url = `http://127.0.0.1:4000/api/v1/users/${$current_user_id}/following_stories?page=${page}&per_page=${perPage}`
-        if (url) $url = url
+        let $url = `http://127.0.0.1:4000/api/v1/topics/${$current_user_id}/foryou_stories?page=${page}&per_page=${perPage}`
+        if (url) {
+            $url = url
+        }
         $.get($url, function ($response, $status, $error) {
+            console.log($response)
             if ($status == 'success') {
                 if (status == 'topic') $stories_container.empty()
                 $response.stories.forEach($story_data => {
@@ -336,8 +340,20 @@ $(function(){
     })
 
     $('.following').on('click', function () {
+        page = 1 // reset page
+    
         loading = false;
-        $('.topic-btn').removeClass('rounded-sm text-white bg-mediumpurple')
+        $('.topic-btn, .for-you').removeClass('rounded-sm text-white bg-mediumpurple')
+        $stories_container.empty()
+        $(this).addClass('rounded-sm text-white bg-mediumpurple')
+        fetchStories(`http://127.0.0.1:4000/api/v1/users/${$current_user_id}/following_stories?page=${page}&per_page=${perPage}`)
+    })
+
+    $('.for-you').on('click', function () {
+        page = 1 // reset page
+
+        loading = false;
+        $('.topic-btn, .following').removeClass('rounded-sm text-white bg-mediumpurple')
         $stories_container.empty()
         $(this).addClass('rounded-sm text-white bg-mediumpurple')
         fetchStories()

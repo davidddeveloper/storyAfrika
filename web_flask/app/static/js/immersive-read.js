@@ -138,6 +138,7 @@ $(function () {
 		let theme = $(themeHtml);
 		theme.removeClass('active-column');
 		theme.on('click', (e) => {
+			$('.theme').removeClass('active-column')
 			$('body').removeClass('text-black text-darkGrayForeground text-white text-lightgray');
 			$('body').removeClass('bg-black bg-grey bg-sepia bg-darkGrey bg-white')
 			theme.addClass('active-column');
