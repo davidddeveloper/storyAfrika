@@ -10,8 +10,8 @@
                 <button class="prev"><img src="/static/icons/lt.svg" alt="" srcset=""></button>
                 <div class="slider-wrapper w-[200px] overflow-x-hidden text-base sm:w-[250px] md:w-[250px] lg:w-[370px]">
                     <ul class="slider topics flex items-center gap-[25px] w-screen transition-all ease-out" data-current_index=0>
-                            <li><button class="for-you flex-shrink py-1 w-[70px] hover:rounded-sm hover:text-white hover:bg-mediumpurple">For you</button></li>
-                            <li><button class="following flex-shrink py-1 w-[80px] bg-mediumpurple text-white hover:rounded-sm hover:text-white hover:bg-mediumpurple">Following</button></li>
+                            <li><button class="for-you flex-shrink py-1 w-[70px] bg-mediumpurple text-white hover:rounded-sm hover:text-white hover:bg-mediumpurple">For you</button></li>
+                            <li><button class="following flex-shrink py-1 w-[80px] hover:rounded-sm hover:text-white hover:bg-mediumpurple">Following</button></li>
                         {% for key,topic in topics.items() %}
                             <li class="slider-item"><button class="topic-btn px-2 py-1 hover:rounded-sm hover:text-white hover:bg-mediumpurple" data-topic_id={{topic.id}}>{{topic.name}}</button></li>
                         {% endfor %}
@@ -26,8 +26,8 @@
         </div>
 
         <div class="flex justify-between items-center gap-4 -mt-10 mb-5 sm:block sm:mb-0 sm:gap-0 sm:-mt-0">
-            <h1 class="flex sm:hidden text-2xl font-medium shrink-0 flex-row items-center"><img src="/static/images/storyafrika.png" class="" alt="" srcset=""><span class="z-20">storyafrika</span></h1>
-            <h1 class="absolute container mx-auto left-0 -mt-14 hidden sm:flex md:hidden text-2xl font-medium shrink-0 flex-row items-center"><img src="/static/images/storyafrika.png" class="" alt="" srcset=""><span class="z-20">storyafrika</span></h1>
+            <h1 class="flex sm:hidden text-xl font-normal shrink-0 flex-row items-center"><!--<img src="/static/images/storyafrika.png" class="" alt="" srcset="">--><span class="z-20">storyafrika</span></h1>
+            <h1 class="absolute container mx-auto left-0 -mt-14 hidden sm:flex md:hidden text-xl font-normal shrink-0 flex-row items-center"><!--<img src="/static/images/storyafrika.png" class="" alt="" srcset="">--><span class="z-20">storyafrika</span></h1>
 
             <div class="flex items-center justify-center sm:pr-0 lg:pr-2">
                 <button class="hidden mr-5"><img src="/static/icons/search.svg" alt=""></button>
@@ -51,7 +51,7 @@
     </div>
     <aside class="container right-0 overflow-y-scroll no-scrollbar shrink-1 mx-auto h-screen py-[80px] min-w-[200px] w-[400px] max-w-[700px] hidden md:block md:px-[20px] lg:px-[20px]">
         <div class="flex justify-between">
-            <h1 class="text-2xl font-medium shrink-0 flex flex-row items-center"><img src="/static/images/storyafrika.png" class="" alt="" srcset="">storyafrika</h1>
+            <h1 class="text-xl font-normal shrink-0 flex flex-row items-center"><!--<img src="/static/images/storyafrika.png" class="" alt="" srcset="">-->storyafrika</h1>
             <div class="flex items-center gap-5">
                 <button><img src="/static/icons/search.svg" alt=""></button>
                 <button><a href="{{ url_for('write')}}"><img src="/static/icons/write.svg" alt="" srcset=""></a></button>
@@ -59,7 +59,7 @@
         </div>
 
         <div class="bookmark mt-[40px]">
-            <h3 class="mb-5 text-sm font-medium">From you bookmarks</h3>
+            <h3 class="mb-5 text-xs font-medium">From you bookmarks</h3>
             <div>
                 {% for bookmark in current_user.bookmarks %}
                     {% set story = bookmark.story %}
@@ -73,7 +73,7 @@
         </div>
         <hr class=" my-[50px]">
         <div class="likes">
-            <h3 class="mb-5 text-sm font-medium">You recently liked</h3>
+            <h3 class="mb-5 text-xs font-medium">You recently liked</h3>
             <div>
                 {% for like in current_user.likes %}
                     {% set story = like.story %}
@@ -85,7 +85,7 @@
             </div>
         </div>
         <div class="who-to-follow">
-            <h3 class="mt-[30px] mb-5 text-sm font-medium">Who to follow?</h3>
+            <h3 class="mt-[30px] mb-5 text-xs font-medium">Who to follow?</h3>
             <div class="slider-wrapper overflow-x-hidden">
                 <div class="slider follow-slider flex items-center justify-between w-full gap-10 transition-transform ease-out" data-current_index=0>
                     {% for the_user in users.values() %}
