@@ -1631,6 +1631,14 @@ video {
   font-family: comic, sans-serif;
 }
 
+.font-sitka-medium {
+  font-family: sitka-medium, serif;
+}
+
+.font-sitka-large {
+  font-family: sitka-large, serif;
+}
+
 .text-2xl {
   font-size: 1.5rem;
   line-height: 2rem;
@@ -2271,6 +2279,14 @@ video {
     margin-left: 1.25rem;
   }
 
+  .md\:ml-\[\] {
+    margin-left: ;
+  }
+
+  .md\:ml-\[60px\] {
+    margin-left: 60px;
+  }
+
   .md\:block {
     display: block;
   }
@@ -2419,6 +2435,10 @@ video {
 @media (min-width: 960px) {
   .lg\:ml-5 {
     margin-left: 1.25rem;
+  }
+
+  .lg\:ml-0 {
+    margin-left: 0px;
   }
 
   .lg\:h-\[300px\] {
