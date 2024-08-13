@@ -10,6 +10,7 @@ from web_flask.api.v1.helper_func import create_uri, check_for_valid_json
 from web_flask.api.v1.helper_func import custom_login_required
 from models.topic import Topic
 from models.user import User
+from models.story import Story
 from models.topic_follower import TopicFollower
 from web_flask.api.v1 import storage
 
@@ -175,6 +176,49 @@ def get_stories_for_topic(topic_id=None, user_id=None):
 
     pagination = Topic.paginate_list(stories)
     stories = pagination['items']
+    
+    return jsonify(
+        {
+            'total_items': pagination['total_items'],
+            'total_pages': pagination['total_pages'],
+            'page': pagination['page'],
+            'per_page': pagination['per_page'],
+            'stories': stories
+        }
+    ), 200
+
+
+@views.route(
+        '/topics/<string:user_id>/foryou_stories/',
+        methods=['GET'],
+        strict_slashes=False
+)
+#login_required
+def foryou_stories(user_id=None):
+    """ gets the stories from all the users self is following
+        and own stories
+
+    """
+    user = storage.get(User, user_id)
+    if user is None:
+        abort(404)
+
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
+    
+    # query = storage._session.query(Story).where(Story.user_id == user.id)
+    query = user.foryou_stories
+    
+    pagination = Story.paginate(query, page, per_page)
+
+    stories = []
+    for story in pagination['items']:
+        story_dictionary = story.to_dict()
+        story_dictionary['liked'] = user.liked_story(story.id)
+        story_dictionary['bookmarked'] = user.bookmarked_story(story.id)
+        story_dictionary['user_is_following_writer'] = user.is_following(story.writer)
+
+        stories.append(story_dictionary)
     
     return jsonify(
         {
