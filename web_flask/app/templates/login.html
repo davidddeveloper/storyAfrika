@@ -1,7 +1,8 @@
 {% extends 'root.html' %}
 {% block miscellaneous %}
 <section class="relative h-screen w-full flex items-center before:block before:absolute before:inset-0 before:w-full before:h-full before:bg-[url('../static/images/write.webp')] md:before:hidden">
-    <div class="container mx-auto w-full md:w-[60%] lg:w-[55%] flex justify-center z-10">
+    <div class="container mx-auto w-full md:w-[60%] lg:w-[55%] flex flex-col justify-center z-10 items-center">
+        <h1 class="text-xl font-medium -mt-20 mb-20 text-white sm:text-black bg-clip-text flex flex-col items-center"><img src="/static/images/storyafrika.png" alt="" srcset=""><mark class="p-2 bg-white ">storyafrika</mark></h1>
         <form action="" class="" method="post" novalidate>
             {{form.hidden_tag()}}
     
@@ -33,5 +34,6 @@
     <div class="h-screen hidden md:block md:w-[40%] lg:w-[45%]">
         <img class="w-full h-full object-cover" src="../static/images/write.webp" alt="">
     </div>
+    
 </section>
 {% endblock %}
