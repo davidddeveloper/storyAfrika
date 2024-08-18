@@ -317,7 +317,7 @@ $(function(){
     }
 
     function handleScroll() {
-        if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+        if (window.innerHeight + window.scrollY >= (document.body.offsetHeight - 5)) {
             if (localStorage.getItem('story_id')) delete_story()
             if (window.location.pathname === '/') fetchStories();  // only on home
         }
