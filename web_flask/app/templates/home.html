@@ -5,10 +5,11 @@
 <div class="flex relative overflow-hidden">
     <div class='px-5 sm:px-0 md:min-w-[300px] md:max-w-[800px] md:w-[568px] lg:min-w-[400px] lg:max-w-[900px] lg:w-[768px] container left-0 shrink-1 overflow-y-hidden mx-auto md:border-r-[1px] md:border-r-black md:px-10 lg:px-20 xl:w-[768px]'>
     <header class="container relative px-2 mx-auto flex flex-col-reverse sm:px-0 sm:flex sm:flex-row sm:justify-between sm:items-center mt-[72px] shrink-1">
-        <div class="flex gap-[25px] items-center">
-            <div class="slider-container flex items-center justify-between shrink-0 px-1 sm:gap-2">
-                <button class="prev"><img src="/static/icons/lt.svg" alt="" srcset=""></button>
-                <div class="slider-wrapper w-[200px] overflow-x-hidden text-base sm:w-[250px] md:w-[250px] lg:w-[370px]">
+        <div class="flex gap-[25px] items-center justify-center">
+            <div class="slider-container w-[80%] sm:w-auto flex items-center justify-between shrink-0 px-1 sm:gap-2">
+                <button class="prev flex-shrink-0"><img src="/static/icons/lt.svg" alt="" srcset=""></button>
+                <!-- w-[200px] -->
+                <div class="slider-wrapper px-2 overflow-x-hidden text-base sm:w-[250px] md:w-[250px] lg:w-[370px]">
                     <ul class="slider topics flex items-center gap-[25px] w-screen transition-all ease-out" data-current_index=0>
                             <li><button class="for-you flex-shrink py-1 w-[70px] bg-mediumpurple text-white hover:rounded-sm hover:text-white hover:bg-mediumpurple">For you</button></li>
                             <li><button class="following flex-shrink py-1 w-[80px] hover:rounded-sm hover:text-white hover:bg-mediumpurple">Following</button></li>
@@ -17,11 +18,69 @@
                         {% endfor %}
                     </ul>
                 </div>
-                <button class="next"><img src="/static/icons/gt.svg" alt="" srcset=""></button>
+                <button class="next flex-shrink-0"><img src="/static/icons/gt.svg" alt="" srcset=""></button>
             </div>
-            <div class="shrink-0 flex self-end gap-3 md:hidden">
+            <div class="shrink-0 hidden sm:flex self-end gap-3 md:hidden">
                 <button><img src="/static/icons/search.svg" alt=""></button>
                 <button><a href="{{ url_for('write')}}"><img src="/static/icons/write.svg" alt="" srcset=""></a></button>
+            </div>
+            <div class="menu-container w-[20%] sm:hidden overflow-y-scroll no-scrollbar">
+                <button class="flex flex-col gap-[6px] show-menu-on-mobile">
+                    <span class="p-[1px] w-[30px] bg-black"></span>
+                    <span class="p-[1px] w-5 bg-black self-end"></span>
+                    <span class="p-[1px] w-[30px] bg-black"></span>
+                </button>
+                <div class="first-divider fixed top-0 z-40 h-full w-full bg-lightblue -left-[100%] opacity-25 transition-all"></div>
+                <div class="menu fixed top-0 z-40 h-full w-[80%] bg-mediumpurple -left-[100%] overflow-y-scroll overflow-x-hidden no-scrollbar pb-20 opacity-1 transition-all duration-1000">
+                    <div class="mt-10 flex flex-col items-center justify-center sm:pr-0 lg:pr-2">
+                        <button class="hidden mr-5"><img src="/static/icons/search.svg" alt=""></button>
+                        {% if current_user.avatar %}
+                        <button class="change-img-button-container border-2 rounded-full w-[60px] h-[60px]  relative overflow-hidden"><img class="profile-image w-full h-full rounded-full object-cover" src="{{ url_for('upload', filename=current_user.avatar, user_id=current_user.id) }}" alt=""> <div class="image-btn-change hidden text-xs absolute inset-0 p-1 h-full w-full top-0 left-0 bg-white text-lightgray z-10 cursor-pointer">Change</div></button>
+                        {% else %}
+                        <button class="change-img-button-container border-2 rounded-full w-[60px] h-[60px] relative overflow-hidden"><img class="profile-image w-full h-full rounded-full object-cover" src="/static/images/default-profile-image.png" alt=""> <div class="image-btn-change hidden text-xs absolute inset-0 p-1 h-full w-full top-[45%] left-0 bg-white text-lightgray z-10 cursor-pointer">Change</div></button>
+                        {% endif %}
+                        <h2 class="username text-white mt-2">{{current_user.username}}</h2>
+                    </div>
+
+                    <article class="bookmark text-lightgray mt-[40px] container mx-auto w-full px-5">
+                        <h3 class="mb-5 text-xs font-medium text-center">From your bookmarks</h3>
+                        <div class="slider-wrapper overflow-x-hidden">
+                            <div class="slider follow-slider flex items-center justify-between w-full gap-8 transition-transform ease-out" data-current_index=0>
+                                {% for bookmark in current_user.bookmarks %}
+                                    {% set story = bookmark.story %}
+                                    {% if loop.index <= 3 %}
+                                    {% include 'bookmark_card.html' %}
+                                    {% endif %}
+                                
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <button class="block underline text-lightblue text-sm show-all-bookmarks container mx-auto">See all bookmarks</button>
+                    </article>
+
+                    <article class="likes text-lightgray mt-[40px] container mx-auto w-full px-5">
+                        <h3 class="mb-5 text-xs font-medium text-center">You recently liked</h3>
+                        <div class="slider-wrapper overflow-x-hidden">
+                            <div class="slider follow-slider flex items-center justify-between w-full gap-8 transition-transform ease-out" data-current_index=0>
+                                {% for like in current_user.likes %}
+                                    {% set story = like.story %}
+                                    
+                                    {% if loop.index <= 3 %}
+                                    {% include 'bookmark_card.html' %}
+                                    {% endif %}
+                                
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </article>
+
+                    {% include 'who-to-follow-corousel.html' %}
+
+                    <article class="update-information mt-[40px]">
+                        <h3 class="text-white text-center">Update Your information</h3>
+                        {% include 'profile_card_mobile.html' %}
+                    </article>
+                </div>
             </div>
         </div>
 
@@ -29,7 +88,8 @@
             <h1 class="flex sm:hidden text-xl font-normal shrink-0 flex-row items-center"><!--<img src="/static/images/storyafrika.png" class="" alt="" srcset="">--><span class="z-20">storyafrika</span></h1>
             <h1 class="absolute container mx-auto left-0 -mt-14 hidden sm:flex md:hidden text-xl font-normal shrink-0 flex-row items-center"><!--<img src="/static/images/storyafrika.png" class="" alt="" srcset="">--><span class="z-20">storyafrika</span></h1>
 
-            <div class="flex items-center justify-center sm:pr-0 lg:pr-2">
+            <!-- profile image on the right -->
+            <div class="hidden sm:flex items-center justify-center sm:pr-0 lg:pr-2">
                 <button class="hidden mr-5"><img src="/static/icons/search.svg" alt=""></button>
                 {% if current_user.avatar %}
                 <button class="home-profile-img border-2 rounded-full w-[60px] h-[60px] shrink-0"><img class="profile-image w-full h-full rounded-full object-cover" src="{{ url_for('upload', filename=current_user.avatar, user_id=current_user.id) }}" alt=""></button>
@@ -59,7 +119,7 @@
         </div>
 
         <div class="bookmark mt-[40px]">
-            <h3 class="mb-5 text-xs font-medium">From you bookmarks</h3>
+            <h3 class="mb-5 text-xs font-medium">From your bookmarks</h3>
             <div>
                 {% for bookmark in current_user.bookmarks %}
                     {% set story = bookmark.story %}
@@ -84,44 +144,9 @@
                 {% endfor %}
             </div>
         </div>
-        <div class="who-to-follow">
-            <h3 class="mt-[30px] mb-5 text-xs font-medium">Who to follow?</h3>
-            <div class="slider-wrapper overflow-x-hidden">
-                <div class="slider follow-slider flex items-center justify-between w-full gap-10 transition-transform ease-out" data-current_index=0>
-                    {% for the_user in users.values() %}
-                    {% if the_user != current_user %}
-                    {% if not current_user.is_following(the_user) %}
-                    {% if loop.index <= 6 %}
-                        <div class="follow-card slider-item flex flex-shrink-0 items-center gap-[15px]" data-user_id={{the_user.id}}>
-                            {% if the_user.avatar %}
-                            <div class="h-[50px] w-[50px] flex-shrink-0">
-                                <img class="h-full w-full rounded-full border-2" src="{{ url_for('upload', filename=the_user.avatar, user_id=the_user.id) }}" alt="">
-                            </div>
-                            {% else %}
-                            <div class="h-[50px] w-[50px] flex-shrink-0">
-                                <img class="h-full w-full rounded-full border-2" src="https://picsum.photos/200/300" alt="">
-                            </div>
-                            {% endif %}
-                            <div>
-                                <div class="flex gap-2 items-center">
-                                    <h3 class="">{{the_user.username}}</h3>
-                                    <button class="flex items-center follow text-sm text-lightblue"><img src="/static/icons/plus.svg" alt="">Follow</button>
-                                </div>
-                                <p class="text-xs text-lightgray">{{the_user.short_bio}}</p>
-                            </div>
-                        </div>
-                    {% endif %}
-                    {% endif %}
-                    {% endif %}
-                    {% endfor %}
-                        
-                </div>
-            </div>
-            {#show-who-to-follow#}
-            <button class="block underline text-lightblue text-sm">More suggestions</button>
-        </div>
+        {% include 'who-to-follow-corousel.html' %}
     </aside>
 </div>
 {% include 'all-bookmarks.html' %}
-<div class="divider inset-0 w-full h-full fixed hidden"></div>
+<div class="divider inset-0 w-full h-full fixed hidden z-40"></div>
 {% endblock %}

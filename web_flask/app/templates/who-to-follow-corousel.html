@@ -1,0 +1,36 @@
+<div class="who-to-follow mx-auto w-[80%] text-white sm:text-lightgray sm:w-auto">
+    <h3 class="mt-[30px] mb-5 text-xs font-medium">Who to follow?</h3>
+    <div class="slider-wrapper overflow-x-hidden">
+        <div class="slider follow-slider flex items-center justify-between w-full gap-10 transition-transform ease-out" data-current_index=0>
+            {% for the_user in users.values() %}
+            {% if the_user != current_user %}
+            {% if not current_user.is_following(the_user) %}
+            {% if loop.index <= 6 %}
+                <div class="follow-card slider-item flex flex-shrink-0 items-center gap-[15px]" data-user_id={{the_user.id}}>
+                    {% if the_user.avatar %}
+                    <div class="h-[50px] w-[50px] flex-shrink-0">
+                        <img class="h-full w-full rounded-full border-2" src="{{ url_for('upload', filename=the_user.avatar, user_id=the_user.id) }}" alt="">
+                    </div>
+                    {% else %}
+                    <div class="h-[50px] w-[50px] flex-shrink-0">
+                        <img class="h-full w-full rounded-full border-2" src="https://picsum.photos/200/300" alt="">
+                    </div>
+                    {% endif %}
+                    <div>
+                        <div class="flex gap-2 items-center">
+                            <h3 class="">{{the_user.username}}</h3>
+                            <button class="flex items-center follow text-sm text-lightblue"><img src="/static/icons/plus.svg" alt="">Follow</button>
+                        </div>
+                        <p class="text-xs text-lightgray">{{the_user.short_bio}}</p>
+                    </div>
+                </div>
+            {% endif %}
+            {% endif %}
+            {% endif %}
+            {% endfor %}
+                
+        </div>
+    </div>
+    {#show-who-to-follow#}
+    <button class="block mt-5 underline text-lightblue text-sm">More suggestions</button>
+</div>
