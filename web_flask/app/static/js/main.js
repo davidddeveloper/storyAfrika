@@ -1,7 +1,7 @@
 $(function(){
     let get_current_user = () => {
         let $current_user_id = $('body').data('current_user_id')
-        return $.get(`http://127.0.0.1:4000/api/v1/users/${$current_user_id}/`)
+        return $.get(`/api/v1/users/${$current_user_id}/`)
             .done(function (response, statusText, jqXHR) {
                 if (statusText === 'success') return response;
             })
@@ -22,7 +22,7 @@ $(function(){
         const story_id = localStorage.getItem('story_id')
         return $.ajax({
             type: 'DELETE',
-            url: `http://127.0.0.1:4000/api/v1/stories/${story_id}/`,
+            url: `/api/v1/stories/${story_id}/`,
             success: function (response) {
                 localStorage.removeItem('story_id')
             }
@@ -138,7 +138,7 @@ $(function(){
     let $story_text_container = $('.story-story-text')
     const $story_id = $story_text_container.data('story_id')
     
-    $.get(`http://127.0.0.1:4000/api/v1/stories/${$story_id}`, function (response, status) {
+    $.get(`/api/v1/stories/${$story_id}`, function (response, status) {
         if (status == 'success') {
             let content = ''
             console.log('asdf4134', JSON.parse(response.text))
@@ -191,6 +191,7 @@ $(function(){
             <div class="time text-xs">
                 ${
                     moment !== undefined ? moment(story.created_at).fromNow() : story.created_at
+                    
                 }
             </div>
             </div>
@@ -265,7 +266,7 @@ $(function(){
         <hr class="border-black">
     `)}
 
-    /*$.get(`http://127.0.0.1:4000/api/v1/users/${$current_user_id}/following_stories/`, function ($response, $status) {
+    /*$.get(`/api/v1/users/${$current_user_id}/following_stories/`, function ($response, $status) {
         if ($status == 'success') {
             $response.forEach(story_data => {
                 $stories_container.append($story(story_data))
@@ -284,7 +285,7 @@ $(function(){
     function fetchStories(url, status) {
         if (loading) return
         loading = true
-        let $url = `http://127.0.0.1:4000/api/v1/topics/${$current_user_id}/foryou_stories?page=${page}&per_page=${perPage}`
+        let $url = `/api/v1/topics/${$current_user_id}/foryou_stories?page=${page}&per_page=${perPage}`
         if (url) {
             $url = url
         }
@@ -336,7 +337,7 @@ $(function(){
         $('.topic-btn, .for-you, .following').removeClass('rounded-sm text-white bg-mediumpurple')
         $(this).addClass('rounded-sm text-white bg-mediumpurple')
         loading = false;
-        fetchStories(`http://127.0.0.1:4000/api/v1/topics/${topic_id}/${$current_user_id}/stories?page=${page}&per_page=${perPage}`, 'topic')
+        fetchStories(`/api/v1/topics/${topic_id}/${$current_user_id}/stories?page=${page}&per_page=${perPage}`, 'topic')
     })
 
     $('.following').on('click', function () {
@@ -346,7 +347,7 @@ $(function(){
         $('.topic-btn, .for-you').removeClass('rounded-sm text-white bg-mediumpurple')
         $stories_container.empty()
         $(this).addClass('rounded-sm text-white bg-mediumpurple')
-        fetchStories(`http://127.0.0.1:4000/api/v1/users/${$current_user_id}/following_stories?page=${page}&per_page=${perPage}`)
+        fetchStories(`/api/v1/users/${$current_user_id}/following_stories?page=${page}&per_page=${perPage}`)
     })
 
     $('.for-you').on('click', function () {
@@ -643,6 +644,18 @@ $(function(){
     const showDivider = () => {
         
     }
+
+    // show menu on mobile
+    const showMenuBtn = $('.show-menu-on-mobile')
+    showMenuBtn.on('click', () => {
+        // show and also add eventlistener to hide
+        $('.first-divider').removeClass('-left-[100%]').addClass('left-0').on('click', function () {
+            $(this).removeClass('left-0').addClass('-left-[100%]')
+            $('.menu').removeClass('left-0').addClass('-left-[100%]')
+        })
+
+        $('.menu').removeClass('-left-[100%]').addClass('left-0')
+    })
 
     let viewImages = $('.view-image');
     viewImages.each((idx, img) => {
