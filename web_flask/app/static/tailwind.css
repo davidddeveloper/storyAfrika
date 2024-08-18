@@ -740,6 +740,10 @@ video {
   right: 0px;
 }
 
+.right-\[200\%\] {
+  right: 200%;
+}
+
 .right-\[5\%\] {
   right: 5%;
 }
@@ -756,6 +760,18 @@ video {
   top: 45%;
 }
 
+.right-\[100\%\] {
+  right: 100%;
+}
+
+.left-\[100\%\] {
+  left: 100%;
+}
+
+.-left-\[100\%\] {
+  left: -100%;
+}
+
 .isolate {
   isolation: isolate;
 }
@@ -770,6 +786,10 @@ video {
 
 .z-30 {
   z-index: 30;
+}
+
+.z-40 {
+  z-index: 40;
 }
 
 .z-50 {
@@ -881,10 +901,6 @@ video {
 
 .ml-\[50px\] {
   margin-left: 50px;
-}
-
-.ml-\[60px\] {
-  margin-left: 60px;
 }
 
 .mr-2 {
@@ -1134,12 +1150,20 @@ video {
   width: 75%;
 }
 
+.w-5 {
+  width: 1.25rem;
+}
+
 .w-\[10px\] {
   width: 10px;
 }
 
 .w-\[130px\] {
   width: 130px;
+}
+
+.w-\[20\%\] {
+  width: 20%;
 }
 
 .w-\[200px\] {
@@ -1184,6 +1208,10 @@ video {
 
 .w-\[70px\] {
   width: 70px;
+}
+
+.w-\[80\%\] {
+  width: 80%;
 }
 
 .w-\[80px\] {
@@ -1306,6 +1334,10 @@ video {
   gap: 1.25rem;
 }
 
+.gap-8 {
+  gap: 2rem;
+}
+
 .gap-\[15px\] {
   gap: 15px;
 }
@@ -1320,6 +1352,10 @@ video {
 
 .gap-\[5px\] {
   gap: 5px;
+}
+
+.gap-\[6px\] {
+  gap: 6px;
 }
 
 .gap-y-5 {
@@ -1533,6 +1569,10 @@ video {
   padding: 1.25rem;
 }
 
+.p-\[1px\] {
+  padding: 1px;
+}
+
 .px-1 {
   padding-left: 0.25rem;
   padding-right: 0.25rem;
@@ -1583,6 +1623,10 @@ video {
   padding-bottom: 80px;
 }
 
+.pb-20 {
+  padding-bottom: 5rem;
+}
+
 .pb-\[10px\] {
   padding-bottom: 10px;
 }
@@ -1631,17 +1675,8 @@ video {
   font-family: comic, sans-serif;
 }
 
-.font-sitka-medium {
-  font-family: sitka-medium, serif;
-}
-
 .font-sitka-large {
   font-family: sitka-large, serif;
-}
-
-.text-2xl {
-  font-size: 1.5rem;
-  line-height: 2rem;
 }
 
 .text-\[10px\] {
@@ -1749,6 +1784,10 @@ video {
   opacity: 0;
 }
 
+.opacity-25 {
+  opacity: 0.25;
+}
+
 .opacity-45 {
   opacity: 0.45;
 }
@@ -1780,6 +1819,11 @@ video {
 
 .drop-shadow-lg {
   --tw-drop-shadow: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+
+.drop-shadow-md {
+  --tw-drop-shadow: drop-shadow(0 4px 3px rgb(0 0 0 / 0.07)) drop-shadow(0 2px 2px rgb(0 0 0 / 0.06));
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 
@@ -1825,6 +1869,10 @@ video {
 
 .duration-700 {
   transition-duration: 700ms;
+}
+
+.duration-150 {
+  transition-duration: 150ms;
 }
 
 .ease-out {
@@ -2116,6 +2164,10 @@ video {
     margin-bottom: 0px;
   }
 
+  .sm\:mt-0 {
+    margin-top: 0px;
+  }
+
   .sm\:mt-4 {
     margin-top: 1rem;
   }
@@ -2138,6 +2190,10 @@ video {
 
   .sm\:h-\[450px\] {
     height: 450px;
+  }
+
+  .sm\:w-\[200px\] {
+    width: 200px;
   }
 
   .sm\:w-\[250px\] {
@@ -2180,6 +2236,10 @@ video {
     align-items: center;
   }
 
+  .sm\:justify-normal {
+    justify-content: normal;
+  }
+
   .sm\:justify-center {
     justify-content: center;
   }
@@ -2208,8 +2268,16 @@ video {
     border-radius: 1rem;
   }
 
+  .sm\:rounded-none {
+    border-radius: 0px;
+  }
+
   .sm\:rounded-xl {
     border-radius: 0.75rem;
+  }
+
+  .sm\:bg-transparent {
+    background-color: transparent;
   }
 
   .sm\:p-0 {
@@ -2248,6 +2316,16 @@ video {
     --tw-text-opacity: 1;
     color: rgb(0 0 0 / var(--tw-text-opacity));
   }
+
+  .sm\:text-lightgray {
+    --tw-text-opacity: 1;
+    color: rgb(74 74 74 / var(--tw-text-opacity));
+  }
+
+  .sm\:drop-shadow-none {
+    --tw-drop-shadow: drop-shadow(0 0 #0000);
+    filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+  }
 }
 
 @media (min-width: 720px) {
@@ -2277,14 +2355,6 @@ video {
 
   .md\:ml-5 {
     margin-left: 1.25rem;
-  }
-
-  .md\:ml-\[\] {
-    margin-left: ;
-  }
-
-  .md\:ml-\[60px\] {
-    margin-left: 60px;
   }
 
   .md\:block {
@@ -2435,10 +2505,6 @@ video {
 @media (min-width: 960px) {
   .lg\:ml-5 {
     margin-left: 1.25rem;
-  }
-
-  .lg\:ml-0 {
-    margin-left: 0px;
   }
 
   .lg\:h-\[300px\] {
