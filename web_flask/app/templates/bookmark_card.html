@@ -1,4 +1,4 @@
-<div class="mb-4 w-[80%] flex-shrink-0 bg-offwhite p-4 drop-shadow-md rounded-lg sm:rounded-none sm:bg-transparent sm:drop-shadow-none sm:p-0 sm:mb-0 sm:w-auto flex flex-col md:block">
+<div class="slider-item mb-4 w-[80%] flex-shrink-0 bg-offwhite p-4 drop-shadow-md rounded-lg sm:rounded-none sm:bg-transparent sm:drop-shadow-none sm:p-0 sm:mb-0 sm:w-auto flex flex-col md:block">
     {% include 'profile_story_card.html' %}
 
     <p class="mt-2 sm:mt-0 {% if titlecolor == 'white' %} text-white {% else %} text-lightgray {% endif %} font-medium text-base"><a href="{{ url_for('story', story_id=story.id )}}">{{story.title}}</a></p>
