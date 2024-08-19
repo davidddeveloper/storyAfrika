@@ -324,7 +324,12 @@ $(function(){
     }
 
     function handleScroll() {
-        if (window.innerHeight + window.scrollY >= (document.body.offsetHeight - 5)) {
+        let container = $('.stories-container')
+        let height = container.height()
+        let scrollTop = container.scrollTop()
+        let scrollHeight = container.prop('scrollHeight')
+        console.log(Math.round(height + scrollTop), scrollHeight - (2/100) * scrollHeight)
+        if (Math.round(height + scrollTop) >= (scrollHeight - ((5/100) * scrollHeight))) {
             if (localStorage.getItem('story_id')) delete_story()
             if (window.location.pathname === '/') fetchStories();  // only on home
         }
