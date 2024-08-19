@@ -712,6 +712,10 @@ video {
   bottom: -20%;
 }
 
+.-left-\[100\%\] {
+  left: -100%;
+}
+
 .-top-\[100\%\] {
   top: -100%;
 }
@@ -740,10 +744,6 @@ video {
   right: 0px;
 }
 
-.right-\[200\%\] {
-  right: 200%;
-}
-
 .right-\[5\%\] {
   right: 5%;
 }
@@ -758,18 +758,6 @@ video {
 
 .top-\[45\%\] {
   top: 45%;
-}
-
-.right-\[100\%\] {
-  right: 100%;
-}
-
-.left-\[100\%\] {
-  left: 100%;
-}
-
-.-left-\[100\%\] {
-  left: -100%;
 }
 
 .isolate {
@@ -1867,12 +1855,12 @@ video {
   transition-duration: 1000ms;
 }
 
-.duration-700 {
-  transition-duration: 700ms;
+.duration-300 {
+  transition-duration: 300ms;
 }
 
-.duration-150 {
-  transition-duration: 150ms;
+.duration-700 {
+  transition-duration: 700ms;
 }
 
 .ease-out {
