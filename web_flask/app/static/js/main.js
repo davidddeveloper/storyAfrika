@@ -33,11 +33,17 @@ $(function(){
     const slider = $('.slider');
     const sliderItems = $('.slider-item');
     const itemWidth = sliderItems.outerWidth(true); // includes margin
-    const totalItems = sliderItems.length;
+    //const totalItems = sliderItems.length;
     let startX = 0;
     let isDragging = false;
 
+    const totalItems = ($current_slider) => {
+        try { return $current_slider.find('.slider-item').length }
+        catch { return 0}
+    }
+
     function updateSliderPosition($current_slider) {
+        console.log(itemWidth)
         $current_slider.css('transform', `translateX(${-$current_slider.data('current_index') * itemWidth}px)`); 
     }
 
@@ -55,7 +61,7 @@ $(function(){
 
     $('.next').on('click', function(e) {
         let $current_slider = $(this).parent().find('.slider')
-        if (currentIndex($current_slider) < totalItems - 1) {
+        if (currentIndex($current_slider) < totalItems($current_slider)) {
             incrementCurrentIndex($current_slider)
             updateSliderPosition($current_slider)
         }
@@ -79,13 +85,14 @@ $(function(){
             const currentX = e.originalEvent.touches[0].pageX
             const diff = startX - currentX
 
-            if (diff > 50) { //swips left
-                if (currentIndex($(this)) < totalItems - 1) {
+            if (diff > 30) { //swips left
+                console.log(totalItems($(this)), currentIndex($(this)))
+                if (currentIndex($(this)) < totalItems($(this)) + 2) {
                     incrementCurrentIndex($(this)) // increment current index
                     updateSliderPosition($(this))
                 }
                 isDragging = false
-            } else if (diff < -50) { // swips right
+            } else if (diff < -30) { // swips right
                 if (currentIndex($(this)) > 0) {
                     decrementCurrentIndex($(this)) // decrement current index
                     updateSliderPosition($(this))
@@ -110,13 +117,13 @@ $(function(){
             const diff = startX - currentX
             slider.css({'user-select': 'none'})
 
-            if (diff > 50) { // drag left
-                if (currentIndex($(this)) < totalItems - 1) {
+            if (diff > 30) { // drag left
+                if (currentIndex($(this)) < totalItems($(this))) {
                     incrementCurrentIndex($(this))
                     updateSliderPosition($(this))
                 }
                 isDragging = false
-            } else if (diff < -50) { // drag right
+            } else if (diff < -30) { // drag right
                 if (currentIndex($(this)) > 0) {
                     decrementCurrentIndex($(this))
                     updateSliderPosition($(this))
