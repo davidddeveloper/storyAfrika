@@ -101,7 +101,7 @@ $(function () {
 
         $.ajax({
             type: "POST",
-            url: `/api/v1/stories/${$story_id}/${$current_user_id}/comments/`,
+            url: `/ap/v1/stories/${$story_id}/${$current_user_id}/comments/`,
             data: comment_json,
             dataType: 'json',
             contentType: 'application/json',
@@ -166,8 +166,8 @@ $(function () {
 
     // fetch comments based on sort-type (newest, relevant)
     const fetchComments = (type) => {
-        let url = `/api/v1/stories/${$story_id}/${$current_user_id}/comments/newest/`
-        if (type) url = `/api/v1/stories/${$story_id}/${$current_user_id}/comments/${type}/`
+        let url = `/ap/v1/stories/${$story_id}/${$current_user_id}/comments/newest/`
+        if (type) url = `/ap/v1/stories/${$story_id}/${$current_user_id}/comments/${type}/`
 
         $.get(url, function (response, status) {
             if (status == 'success') {
