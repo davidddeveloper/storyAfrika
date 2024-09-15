@@ -26,7 +26,7 @@ class Story(BaseModel, ImageUpload, Base):
         __tablename__ = 'stories'
         title = Column(String(200), nullable=False)
         text = Column(Text, nullable=False)
-        user_id = Column('User', ForeignKey('users.id', ondelete='CASCADE'), nullable=False,)
+        user_id = Column(String(60), ForeignKey('users.id', ondelete='CASCADE'), nullable=False,)
 
         comments = relationship('Comment', backref='story', passive_deletes=True, cascade='all, delete-orphan', lazy=True,)
         likes = relationship('Like', backref='story', passive_deletes=True, cascade='all, delete-orphan', lazy=True)
@@ -43,10 +43,8 @@ class Story(BaseModel, ImageUpload, Base):
 
         dictionary = super().to_dict()
         dictionary['writer'] = self.writer.to_dict()
-        dictionary['comments_count'] = len(self.comments)
-        dictionary['likes_count'] = len(self.likes)
-        dictionary['bookmarks_count'] = len(self.bookmarks)
         dictionary['read_time'] = self.read_time
+
 
         return dictionary
 

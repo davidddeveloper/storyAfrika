@@ -3,16 +3,18 @@
 
 """
 
-from flask import request, jsonify, abort, url_for
-from flask_login import current_user, login_required
+from flask import request, jsonify, abort
+from flask_login import current_user
 from web_flask.api.v1 import views
 from web_flask.api.v1.helper_func import create_uri, check_for_valid_json
-from web_flask.api.v1.helper_func import custom_login_required
 from models.topic import Topic
-from models.user import User
 from models.story import Story
 from models.topic_follower import TopicFollower
 from web_flask.api.v1 import storage
+from web_flask.api.v1.services.data_service import get_story_data
+from web_flask.api.v1.services.data_service import get_topic_data
+from web_flask.api.v1.services.auth_guard import auth_guard
+import web_flask.api.v1.services.auth_provider as auth
 
 
 @views.route(
@@ -20,7 +22,7 @@ from web_flask.api.v1 import storage
     strict_slashes=False,
     methods=['GET', 'POST']
 )
-@custom_login_required
+@auth_guard
 def topics():
     """ Get all topics or creates a topic """
 
@@ -67,6 +69,7 @@ def topics():
     strict_slashes=False,
     methods=['GET', 'POST']
 )
+@auth_guard
 def limit_topics(n=None):
     """ Limits the number of topics to get
 
@@ -98,32 +101,60 @@ def limit_topics(n=None):
 
 
 @views.route(
+    '/topics/me/',
+    strict_slashes=False,
+    methods=['GET']
+)
+@auth_guard
+def get_user_created_topics():
+    if not auth.authorize(auth.current_user):
+        return jsonify({"Error": "Permission denied!"}), 403
+    
+    return auth.current_user.topics
+
+@views.route(
     '/topics/<string:topic_id>/',
     methods=['GET', 'PUT'],
     strict_slashes=False
 )
+@auth_guard
 def get_topic(topic_id=None):
     """ Gets a specific topic or update an existing one """
     topic = storage.get(Topic, topic_id)
     if topic is None:
         abort(404)
 
-    if request.method == 'PUT':
-        try:
-            topic_json = request.get_json()
-            check_for_valid_json(topic_json, ['name'])
+    return jsonify(get_topic_data(topic)), 200
 
-        except Exception:
-            return jsonify({"Error": 'not a valid json'}), 400
 
-        else:
-            for key, val in topic_json.items():
-                if key not in ['id', 'created_at', 'updated_at']:
-                    setattr(topic, key, val)
+@views.route(
+    '/topics/<string:topic_id>/',
+    methods=['PUT'],
+    strict_slashes=False
+)
+@auth_guard
+def update_topic(topic_id=None):
+    topic = storage.get(Topic, topic_id)
 
-            storage.save()
+    if topic is None:
+        abort(404)
 
-    return jsonify(topic.to_dict()), 200
+    if not auth.authorize(topic):
+        return jsonify({"Error": "Permission denied!"}), 403
+
+    try:
+        topic_json = request.get_json()
+        check_for_valid_json(topic_json, ['name'])
+
+    except Exception:
+        return jsonify({"Error": 'not a valid json'}), 400
+
+    else:
+        for key, val in topic_json.items():
+            if key not in ['id', 'created_at', 'updated_at']:
+                setattr(topic, key, val)
+
+        storage.save()
 
 
 @views.route(
@@ -131,6 +162,7 @@ def get_topic(topic_id=None):
     methods=['DELETE'],
     strict_slashes=False
 )
+@auth_guard
 def delete_topic(topic_id=None):
     """ Deletes a topic """
     topic = storage.get(Topic, topic_id)
@@ -138,17 +170,21 @@ def delete_topic(topic_id=None):
     if topic is None:
         abort(404)
 
+    if not auth.authorize(topic):
+        return jsonify({"Error": "Permission denied!"}), 403
+
     topic.delete()
     storage.save()
     return jsonify({"Deleted": topic.to_dict()})
 
 
 @views.route(
-    '/topics/<string:topic_id>/<string:user_id>/stories',
+    '/topics/<string:topic_id>/stories',
     methods=['GET'],
     strict_slashes=False
 )
-def get_stories_for_topic(topic_id=None, user_id=None):
+@auth_guard
+def get_stories_for_topic(topic_id=None):
     """ all stories under a particular topic
 
         Attributes:
@@ -156,23 +192,13 @@ def get_stories_for_topic(topic_id=None, user_id=None):
 
     """
     topic = storage.get(Topic, topic_id)
-    user = storage.get(User, user_id)
-    if topic is None or user is None:
+    if topic is None:
         abort(404)
 
-    per_page = request.args.get('per_page', 10, type=int)
-    page = request.args.get('page', 1, type=int)
+    stories = []
 
-    stories = [st.to_dict() for st in topic.stories]
-
-    for story in stories:
-        try:
-            story['liked'] = user.liked_story(story['id'])
-            story['bookmarked'] = user.bookmarked_story(story['id'])
-            writer = storage.get(User, story['writer']['id'])
-            story['user_is_following_writer'] = user.is_following(writer)
-        except Exception:
-            pass
+    for story in topic.stories:
+        stories.append(get_story_data(story))
 
     pagination = Topic.paginate_list(stories)
     stories = pagination['items']
@@ -189,36 +215,30 @@ def get_stories_for_topic(topic_id=None, user_id=None):
 
 
 @views.route(
-        '/topics/<string:user_id>/foryou_stories/',
+        '/topics/foryou_stories/',
         methods=['GET'],
         strict_slashes=False
 )
-#login_required
-def foryou_stories(user_id=None):
+@auth_guard
+def foryou_stories(): # user_id to be removed
     """ gets the stories from all the users self is following
         and own stories
 
     """
-    user = storage.get(User, user_id)
-    if user is None:
+    if auth.current_user is None:
         abort(404)
 
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 10, type=int)
     
     # query = storage._session.query(Story).where(Story.user_id == user.id)
-    query = user.foryou_stories
+    query = auth.current_user.foryou_stories
     
     pagination = Story.paginate(query, page, per_page)
 
     stories = []
     for story in pagination['items']:
-        story_dictionary = story.to_dict()
-        story_dictionary['liked'] = user.liked_story(story.id)
-        story_dictionary['bookmarked'] = user.bookmarked_story(story.id)
-        story_dictionary['user_is_following_writer'] = user.is_following(story.writer)
-
-        stories.append(story_dictionary)
+        stories.append(get_story_data(story))
     
     return jsonify(
         {
@@ -236,6 +256,7 @@ def foryou_stories(user_id=None):
     methods=['GET'],
     strict_slashes=False
 )
+@auth_guard
 def get_followers_for_topic(topic_id=None):
     """ all followers made on a particular topic
 
@@ -260,7 +281,7 @@ def get_followers_for_topic(topic_id=None):
     methods=['GET'],
     strict_slashes=False
 )
-@custom_login_required
+@auth_guard
 def follow_or_unfollow_topic(topic_id=None):
     """ Follow or unfollow a topic """
     topic = storage.get(Topic, topic_id)

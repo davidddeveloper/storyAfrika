@@ -1,6 +1,11 @@
 from flask import url_for, request, redirect, flash
 from flask_login import current_user
 from functools import wraps
+from web_flask.api.v1.services.auth_guard import check_jwt
+from web_flask.api.v1.services.auth_provider import authenticate
+from models.engine import storage
+from models.user import User
+import os
 
 
 def create_uri(dictionary=None, view=None):
@@ -14,7 +19,7 @@ def create_uri(dictionary=None, view=None):
     """
 
     if dictionary is None or view is None:
-        return {'fvck': ' you'}
+        return {'Error': 'couldn\'t pass data'}
 
     new_dictionary = {}
 
@@ -36,6 +41,12 @@ def create_uri(dictionary=None, view=None):
                 new_dictionary['uri'] = url_for(
                     f'views.{view}',
                     topic_id=dictionary['id'],
+                    _external=True
+                )
+            elif view == "get_comment_on_story":
+                new_dictionary['uri'] = url_for(
+                    f'views.{view}',
+                    comment_id=dictionary['id'],
                     _external=True
                 )
         else:
@@ -61,7 +72,7 @@ def check_for_valid_json(json_string, properties=[]):
     elif isinstance(json_string, dict):
         for property in properties:
             if property not in json_string:
-                raise ValueError()
+                return property
     elif isinstance(json_string, list) and len(json_string) < 3:
         raise ValueError()
 
@@ -69,6 +80,7 @@ def check_for_valid_json(json_string, properties=[]):
 def custom_login_required(f):
     @wraps(f)  # keep metadata about the wrapped function
     def wrapper(*args, **kwargs):
+        print('current_user', current_user)
         request_url = request.url
         login_url = f'http://localhost:5000/login?next={request_url}'
         message = 'Login required to view the request page'
@@ -82,3 +94,34 @@ def custom_login_required(f):
         return f(*args, **kwargs)
 
     return wrapper
+
+def get_auth_user():
+    """
+        get the authenticated user
+
+    """
+    user_dict = check_jwt()
+    user = authenticate(user_dict.get('email'), user_dict.get('password'))
+
+    return user
+
+def token_expired_error():
+    pass
+
+def validate_username(username):
+    print('username ', '----------->')
+    user = storage._session.query(User).where(
+            User.username == username
+        ).first()
+    if user:
+        return False
+    return True
+
+def validate_email(email):
+    user = storage._session.query(User).where(
+            User.email == email
+        ).first()
+    if user:
+        return False
+    return True
+

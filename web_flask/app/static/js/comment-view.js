@@ -101,7 +101,7 @@ $(function () {
 
         $.ajax({
             type: "POST",
-            url: `/api/v1/stories/${$story_id}/${$current_user_id}/comments/`,
+            url: `http://127.0.0.1:400http://127.0.0.1:4000/api/v1/stories/${$story_id}/${$current_user_id}/comments/`,
             data: comment_json,
             dataType: 'json',
             contentType: 'application/json',
@@ -166,8 +166,8 @@ $(function () {
 
     // fetch comments based on sort-type (newest, relevant)
     const fetchComments = (type) => {
-        let url = `/api/v1/stories/${$story_id}/${$current_user_id}/comments/newest/`
-        if (type) url = `/api/v1/stories/${$story_id}/${$current_user_id}/comments/${type}/`
+        let url = `http://127.0.0.1:400http://127.0.0.1:4000/api/v1/stories/${$story_id}/${$current_user_id}/comments/newest/`
+        if (type) url = `http://127.0.0.1:400http://127.0.0.1:4000/api/v1/stories/${$story_id}/${$current_user_id}/comments/${type}/`
 
         $.get(url, function (response, status) {
             if (status == 'success') {

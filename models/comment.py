@@ -26,8 +26,8 @@ class Comment(BaseModel, Base):
     if os.getenv('STORAGE') in ['db', 'DB']:
         __tablename__ = 'comments'
         comment = Column(Text, nullable=False)
-        story_id = Column('Story', ForeignKey('stories.id', ondelete='CASCADE'), nullable=False)
-        user_id = Column('User', ForeignKey('users.id', ondelete='CASCADE'), nullable=False,)
+        story_id = Column(String(60), ForeignKey('stories.id', ondelete='CASCADE'), nullable=False)
+        user_id = Column(String(60), ForeignKey('users.id', ondelete='CASCADE'), nullable=False,)
         likes = relationship('CommentLike', backref='comment', lazy=True, passive_deletes=True, cascade='all, delete-orphan')
         unlikes = relationship('CommentUnLike', backref='comment', lazy=True, passive_deletes=True, cascade='all, delete-orphan')
 
