@@ -56,6 +56,9 @@ def register_user():
                 email=user_json[1],
                 password=user_json[2]
             )
+        
+        # set password hashes
+        user.set_password(user.password)
 
         role = storage._session.query(Role).where(Role.role == 'user').first()
 

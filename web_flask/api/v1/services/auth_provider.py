@@ -9,6 +9,8 @@ current_user = None
 
 def authenticate(email, password):
     user = storage._session.query(User).where(User.email == email).first()
+    if not user.check_password(password):
+        return False
 
     if user:
         global current_user

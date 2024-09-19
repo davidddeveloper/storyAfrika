@@ -1,1 +1,19 @@
 
+INFO:sqlalchemy.engine.Engine:SELECT roles.`role` AS roles_role, roles.id AS roles_id, roles.created_at AS roles_created_at, roles.updated_at AS roles_updated_at 
+FROM roles 
+WHERE roles.`role` = %(role_1)s 
+ LIMIT %(param_1)s
+INFO:sqlalchemy.engine.Engine:[generated in 0.00149s] {'role_1': 'admin', 'param_1': 1}
+INFO:sqlalchemy.engine.Engine:INSERT INTO roles (`role`, id, created_at, updated_at) VALUES (%(role)s, %(id)s, %(created_at)s, %(updated_at)s)
+INFO:sqlalchemy.engine.Engine:[generated in 0.00111s] {'role': 'admin', 'id': 'ec80db67-3b7c-4106-ac56-9aa5f7488d21', 'created_at': datetime.datetime(2024, 9, 16, 11, 50, 26, 480115), 'updated_at': datetime.datetime(2024, 9, 16, 11, 50, 26, 480115)}
+INFO:sqlalchemy.engine.Engine:COMMIT
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:INSERT INTO users (username, email, password, short_bio, about, first_name, last_name, full_name, avatar, id, created_at, updated_at) VALUES (%(username)s, %(email)s, %(password)s, %(short_bio)s, %(about)s, %(first_name)s, %(last_name)s, (concat(users.first_name, %(param_1)s, users.last_name)), %(avatar)s, %(id)s, %(created_at)s, %(updated_at)s)
+INFO:sqlalchemy.engine.Engine:[generated in 0.00138s] {'username': 'david', 'email': 'davidconteh06@gmail.com', 'password': 'thequickbrownfox', 'short_bio': None, 'about': None, 'first_name': None, 'last_name': None, 'param_1': ' ', 'avatar': None, 'id': 'a856b25a-d4da-42ee-acd8-c30176489ab8', 'created_at': datetime.datetime(2024, 9, 16, 11, 50, 26, 444328), 'updated_at': datetime.datetime(2024, 9, 16, 11, 50, 26, 649543)}
+INFO:sqlalchemy.engine.Engine:SELECT roles.`role` AS roles_role, roles.id AS roles_id, roles.created_at AS roles_created_at, roles.updated_at AS roles_updated_at 
+FROM roles 
+WHERE roles.id = %(pk_1)s
+INFO:sqlalchemy.engine.Engine:[generated in 0.00125s] {'pk_1': 'ec80db67-3b7c-4106-ac56-9aa5f7488d21'}
+INFO:sqlalchemy.engine.Engine:INSERT INTO user_role_association (user_id, role_id) VALUES (%(user_id)s, %(role_id)s)
+INFO:sqlalchemy.engine.Engine:[generated in 0.00080s] {'user_id': 'a856b25a-d4da-42ee-acd8-c30176489ab8', 'role_id': 'ec80db67-3b7c-4106-ac56-9aa5f7488d21'}
+INFO:sqlalchemy.engine.Engine:COMMIT

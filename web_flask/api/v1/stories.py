@@ -25,7 +25,6 @@ from web_flask.api.v1 import storage
     strict_slashes=False,
     methods=['GET', 'POST']
 )
-@auth_guard
 def stories():
     """ Get all stories or creates a story """
 
