@@ -1,15 +1,18 @@
 $(function(){
-    let get_current_user = () => {
-        let $current_user_id = $('body').data('current_user_id')
-        return $.get(`/api/v1/users/${$current_user_id}/`)
-            .done(function (response, statusText, jqXHR) {
-                if (statusText === 'success') return response;
-            })
-            .fail(function (jqXHR, statusText, error) {
-                console.log("Error fetching user", statusText, error)
-            })
+    let get_token = async () => {
+        let access_token;
+        await $.ajax({
+            type: "POST",
+            url: "http://127.0.0.1:4000/api/v1/auth/",
+            data: '{"email": "me@gmail.com", "password": "me"}',
+            contentType: "application/json",
+            success: function (response) {
+              access_token = response.data
+            }
+        });
+        return access_token
     }
-
+    
 
     // delete temporary story
     // function to delete a story
@@ -22,7 +25,7 @@ $(function(){
         const story_id = localStorage.getItem('story_id')
         return $.ajax({
             type: 'DELETE',
-            url: `/api/v1/stories/${story_id}/`,
+            url: `http://127.0.0.1:4000/api/v1/stories/${story_id}/`,
             success: function (response) {
                 localStorage.removeItem('story_id')
             }
@@ -43,8 +46,11 @@ $(function(){
     }
 
     function updateSliderPosition($current_slider) {
-        console.log(itemWidth)
         $current_slider.css('transform', `translateX(${-$current_slider.data('current_index') * itemWidth}px)`); 
+        if (currentIndex($current_slider) == 0) $('.prev').hide()
+        if (currentIndex($current_slider) > 0) $('.prev').show()
+        if (currentIndex($current_slider) == totalItems($current_slider)) $('.next').hide()
+        if (currentIndex($current_slider) < totalItems($current_slider)) $('.next').show()
     }
 
     function currentIndex ($current_slider) {
@@ -61,9 +67,11 @@ $(function(){
 
     $('.next').on('click', function(e) {
         let $current_slider = $(this).parent().find('.slider')
-        if (currentIndex($current_slider) < totalItems($current_slider)) {
+        if (currentIndex($current_slider) < totalItems($current_slider) + 1) {
             incrementCurrentIndex($current_slider)
             updateSliderPosition($current_slider)
+
+            $('.prev').show()
         }
     });
 
@@ -72,6 +80,7 @@ $(function(){
         if (currentIndex($current_slider) > 0) {
             decrementCurrentIndex($current_slider)
             updateSliderPosition($current_slider)
+            
         }
     });
 
@@ -118,7 +127,7 @@ $(function(){
             slider.css({'user-select': 'none'})
 
             if (diff > 30) { // drag left
-                if (currentIndex($(this)) < totalItems($(this))) {
+                if (currentIndex($(this)) < totalItems($(this)) + 1) {
                     incrementCurrentIndex($(this))
                     updateSliderPosition($(this))
                 }
@@ -145,7 +154,7 @@ $(function(){
     let $story_text_container = $('.story-story-text')
     const $story_id = $story_text_container.data('story_id')
     
-    $.get(`/api/v1/stories/${$story_id}`, function (response, status) {
+    $.get(`http://127.0.0.1:4000/api/v1/stories/${$story_id}`, function (response, status) {
         if (status == 'success') {
             let content = ''
             console.log('asdf4134', JSON.parse(response.text))
@@ -273,7 +282,7 @@ $(function(){
         <hr class="border-black">
     `)}
 
-    /*$.get(`/api/v1/users/${$current_user_id}/following_stories/`, function ($response, $status) {
+    /*$.get(`http://127.0.0.1:4000/api/v1/users/${$current_user_id}/following_stories/`, function ($response, $status) {
         if ($status == 'success') {
             $response.forEach(story_data => {
                 $stories_container.append($story(story_data))
@@ -292,7 +301,7 @@ $(function(){
     function fetchStories(url, status) {
         if (loading) return
         loading = true
-        let $url = `/api/v1/topics/${$current_user_id}/foryou_stories?page=${page}&per_page=${perPage}`
+        let $url = `http://127.0.0.1:4000/api/v1/topics/${$current_user_id}/foryou_stories?page=${page}&per_page=${perPage}`
         if (url) {
             $url = url
         }
@@ -346,29 +355,29 @@ $(function(){
         let topic_id = $(this).data('topic_id')
         console.log(topic_id)
 
-        $('.topic-btn, .for-you, .following').removeClass('rounded-sm text-white bg-mediumpurple')
-        $(this).addClass('rounded-sm text-white bg-mediumpurple')
+        $('.topic-btn, .for-you, .following').removeClass('border-b')
+        $(this).addClass('border-b')
         loading = false;
-        fetchStories(`/api/v1/topics/${topic_id}/${$current_user_id}/stories?page=${page}&per_page=${perPage}`, 'topic')
+        fetchStories(`http://127.0.0.1:4000/api/v1/topics/${topic_id}/${$current_user_id}/stories?page=${page}&per_page=${perPage}`, 'topic')
     })
 
     $('.following').on('click', function () {
         page = 1 // reset page
     
         loading = false;
-        $('.topic-btn, .for-you').removeClass('rounded-sm text-white bg-mediumpurple')
+        $('.topic-btn, .for-you').removeClass('border-b')
         $stories_container.empty()
-        $(this).addClass('rounded-sm text-white bg-mediumpurple')
-        fetchStories(`/api/v1/users/${$current_user_id}/following_stories?page=${page}&per_page=${perPage}`)
+        $(this).addClass('border-b')
+        fetchStories(`http://127.0.0.1:4000/api/v1/users/${$current_user_id}/following_stories?page=${page}&per_page=${perPage}`)
     })
 
     $('.for-you').on('click', function () {
         page = 1 // reset page
 
         loading = false;
-        $('.topic-btn, .following').removeClass('rounded-sm text-white bg-mediumpurple')
+        $('.topic-btn, .following').removeClass('border-b')
         $stories_container.empty()
-        $(this).addClass('rounded-sm text-white bg-mediumpurple')
+        $(this).addClass('border-b')
         fetchStories()
     })
 
@@ -649,7 +658,7 @@ $(function(){
 
     }
 
-    //story view
+    // story view
     if (window.location.pathname.includes('/story/')) showMoreTools()
 
     // a divider is a nice bg that separates fixed or absolute card from the body
@@ -677,5 +686,3 @@ $(function(){
         })
     })
 })
-
-

@@ -3,56 +3,33 @@
 
 """
 
-from flask import request, jsonify, abort, url_for
-from flask_login import current_user, login_required
+from flask import request, jsonify, abort
+from flask_login import current_user
 from web_flask.api.v1 import views
-from web_flask.api.v1.helper_func import create_uri, check_for_valid_json
-from web_flask.api.v1.helper_func import custom_login_required
+from web_flask.api.v1.helper_func import create_uri
+from web_flask.api.v1.helper_func import check_for_valid_json
+from web_flask.api.v1.helper_func import validate_username
+from web_flask.api.v1.helper_func import validate_email
 from models.user import User
-from models.follower import Follower
 from web_flask.api.v1 import storage
+from web_flask.api.v1.services.data_service import get_story_data
+from web_flask.api.v1.services.data_service import get_user_data
+from web_flask.api.v1.services.auth_guard import auth_guard
+import web_flask.api.v1.services.auth_provider as auth
 
 
 @views.route(
     '/users/',
     strict_slashes=False,
-    methods=['GET', 'POST']
+    methods=['GET']
 )
-#login_required
+@auth_guard
 def users():
-    """ Get all users or creates a user """
-
-    if request.method == 'POST':
-        # checks for valid json
-        try:
-            user_json = request.get_json()
-            check_for_valid_json(user_json, ['username', 'email', 'password'])
-
-        except Exception:
-            return jsonify({"Error": 'not a valid json'}), 400
-
-        else:
-            if isinstance(user_json, dict):
-                user = User(
-                        username=user_json['username'],
-                        email=user_json['email'],
-                        password=user_json['password']
-                    )
-            elif isinstance(user_json, list):
-                user = User(
-                    username=user_json[0],
-                    email=user_json[1],
-                    password=user_json[2]
-                )
-            storage.new(user)
-            storage.save()
-            print(user)
-            return jsonify(user.to_dict()), 201
-
+    """ Get all users """
     users = storage.all(User)
 
     return jsonify(
-        [create_uri(user.to_dict(), 'get_user') for user in users.values()]
+        [create_uri(get_user_data(user), 'get_user') for user in users.values()]
     ), 200
 
 
@@ -61,7 +38,7 @@ def users():
     strict_slashes=False,
     methods=['GET', 'POST']
 )
-#login_required
+@auth_guard
 def limit_users(n=None):
     """ Limits the number of users to get
 
@@ -86,7 +63,7 @@ def limit_users(n=None):
 
     return jsonify(
         [
-            create_uri(user.to_dict(), 'get_user')
+            create_uri(get_user_data(user), 'get_user')
             for user in limited_users.values()
         ]
     ), 200
@@ -97,53 +74,89 @@ def limit_users(n=None):
     methods=['GET', 'PUT'],
     strict_slashes=False
 )
-#login_required
+@auth_guard
 def get_user(user_id=None):
     """ Gets a specific user or update an existing one """
     user = storage.get(User, user_id)
-    if user is None:
-        abort(404)
 
-    if request.method == 'PUT':
-        try:
-            user_json = request.get_json()
-            check_for_valid_json(user_json, ['username', 'email', 'password'])
-
-        except Exception:
-            return jsonify({"Error": 'not a valid json'}), 400
-
-        else:
-            for key, val in user_json.items():
-                if key not in ['id', 'created_at', 'updated_at']:
-                    setattr(user, key, val)
-
-            storage.save()
-
-    return jsonify(user.to_dict()), 200
-
-
-@views.route(
-    '/users/<string:user_id>/stories/',
-    methods=['GET'],
-    strict_slashes=False
-)
-#login_required
-def get_story_of_user(user_id=None):
-    user = storage.get(User, user_id)
+    if not auth.authorize(user):
+        return jsonify({"Error": "Permission denied!"}), 403
 
     if user is None:
         abort(404)
-    stories = [story.to_dict() for story in user.stories]
-    return jsonify([create_uri(story, 'get_story') for story in stories]), 200
+
+    return jsonify(get_user_data(user)), 200
 
 
 @views.route(
-    '/users/<string:user_id>/stories/<int:n>',
+    '/users/me/',
     methods=['GET'],
     strict_slashes=False
 )
-#login_required
-def limit_story_of_user(user_id=None, n=None):
+@auth_guard
+def get_current_user():
+    """ Gets a specific user or update an existing one """
+
+    if not auth.authorize(auth.current_user):
+        return jsonify({"Error": "Permission denied!"}), 403
+
+    return jsonify(get_user_data(auth.current_user)), 200
+
+
+@views.route(
+    '/users/',
+    methods=['PUT'],
+    strict_slashes=False
+)
+@auth_guard
+def update_user():
+    if not auth.current_user:
+        abort(404)
+    
+    if not auth.authorize(auth.current_user):
+        return jsonify({"Error": "Permission denied!"}), 403
+
+    try:
+        user_json = request.get_json()
+        check_for_valid_json(user_json, ['username', 'email', 'password'])
+
+    except Exception:
+        return jsonify({"Error": 'not a valid json'}), 400
+
+    else:
+        for key, val in user_json.items():
+            if key not in ['id', 'created_at', 'updated_at', 'role']:
+                setattr(auth.current_user, key, val)
+
+        storage.save()
+    
+    return jsonify(get_user_data(auth.current_user)), 204
+
+@views.route(
+    '/users/stories/',
+    methods=['GET'],
+    strict_slashes=False
+)
+@auth_guard
+def get_story_of_user():
+    if auth.current_user is None:
+        abort(404)
+
+    # re-attach current_user to current session
+    # auth.current_user = storage._session.merge(auth.current_user)
+
+    return jsonify([
+            create_uri(get_story_data(story), 'get_story') for story in auth.current_user.stories
+        ]), 200
+
+
+@views.route(
+    '/users/stories/<int:n>',
+    methods=['GET'],
+    strict_slashes=False
+)
+@auth_guard
+def limit_story_of_user(n=None):
     """ Limits the number of stories to get for a particular user
 
         Attributes:
@@ -151,12 +164,14 @@ def limit_story_of_user(user_id=None, n=None):
             - n: a number representing the amount of stories to get
 
     """
-    user = storage.get(User, user_id)
 
-    if user is None:
+    if auth.current_user is None:
         abort(404)
 
-    stories = [story for story in user.stories]
+    # re-attach current_user to current session
+    auth.current_user = storage._session.merge(auth.current_user)
+
+    stories = [story for story in auth.current_user.stories]
 
     limited_stories = {}
     counter = 0
@@ -169,85 +184,109 @@ def limit_story_of_user(user_id=None, n=None):
 
     return jsonify(
         [
-            create_uri(story.to_dict(), 'get_user')
+            create_uri(get_story_data(story), 'get_user')
             for story in limited_stories
         ]
     ), 200
 
 
 @views.route(
-    '/users/<string:user_id>/',
+    '/users/',
     methods=['DELETE'],
     strict_slashes=False
 )
-#login_required
-def delete_user(user_id=None):
+@auth_guard
+def delete_user():
     """ Deletes a user """
-    user = storage.get(User, user_id)
 
-    if user is None:
+    if auth.current_user is None:
         abort(404)
 
-    user.delete()
+    auth.current_user.delete()
     storage.save()
-    return jsonify({"Deleted": user.to_dict()})
+    # reset curret user
+    current_user_data = auth.current_user.to_dict()
+    auth.current_user = None
+
+
+    return jsonify({"Deleted": current_user_data}), 200
 
 
 @views.route(
-    '/users/<string:user_id>/followers',
+    '/users/me/',
+    methods=['DELETE'],
+    strict_slashes=False
+)
+@auth_guard
+def delete_current_user():
+    """ Deletes a user """
+
+    if auth.current_user is None:
+        abort(404)
+
+    auth.current_user.delete()
+    storage.save()
+    # reset curret user
+    current_user_data = auth.current_user.to_dict()
+    auth.current_user = None
+
+
+    return jsonify({"Deleted": current_user_data}), 200
+
+
+@views.route(
+    '/users/followers',
     methods=['GET'],
     strict_slashes=False
 )
-#login_required
-def get_user_followers(user_id=None):
-    user = storage.get(User, user_id)
+@auth_guard
+def get_user_followers():
 
-    if user is None:
+    if auth.current_user is None:
         abort(404)
 
-    followers = storage._session.scalars(user.followers.select()).all()
+    followers = storage._session.scalars(auth.current_user.followers.select()).all()
 
     return jsonify([
-        follower.to_dict() for follower in followers
+        get_user_data(follower) for follower in followers
     ])
 
 
 @views.route(
-    '/users/<string:user_id>/following',
+    '/users/following',
     methods=['GET'],
     strict_slashes=False
 )
-#login_required
-def get_user_following(user_id=None):
-    user = storage.get(User, user_id)
+@auth_guard
+def get_user_following():
 
-    if user is None:
+    if auth.current_user is None:
         abort(404)
 
-    followings = user.following
+    followings = storage._session.scalars(auth.current_user.following.select()).all()
 
     return jsonify([
-        following.to_dict() for following in followings
+        get_user_data(following) for following in followings
     ])
 
 
 @views.route(
-    '/users/<string:user_id>/follow',
+    '/users/follow/<string:user_id>',
     methods=['GET'],
     strict_slashes=False
 )
-#login_required
+@auth_guard
 def follow_or_unfollow_user(user_id=None):
     """ Follow or unfollow a user """
     user = storage.get(User, user_id)
-    if user is None:
+    if auth.current_user is None:
         abort(404)
 
-    if current_user.is_following(user):
-        current_user.following.remove(user)
+    if auth.current_user.is_following(user):
+        auth.current_user.following.remove(user)
     else:
-        current_user.following.add(user)
+        auth.current_user.following.add(user)
 
     storage.save()
 
-    return jsonify({}), 201
+    return jsonify(get_user_data(auth.current_user)), 201

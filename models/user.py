@@ -12,6 +12,7 @@ from models.base_model import Base, BaseModel
 from models.story import Story
 from models.bookmark import Bookmark
 from models.like import Like
+from models.role import Role
 from models.image_upload import ImageUpload
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -41,6 +42,7 @@ class User(BaseModel, ImageUpload, Base):
         last_name = Column(String(50), nullable=True)
         full_name = Column(String(50), nullable=True, default=(first_name + ' ' + last_name))
         stories = relationship('Story', backref='writer', lazy=True, passive_deletes=True, cascade='all, delete-orphan')
+        # topics = relationship('Topic', backref='creator', lazy=True, passive_deletes=True, cascade='all, delete-orphan')
         comments = relationship('Comment', backref='commenter', lazy=True, passive_deletes=True, cascade='all, delete-orphan')
         likes = relationship('Like', backref='liker', lazy=True, passive_deletes=True, cascade='all, delete-orphan')
         bookmarks = relationship('Bookmark', backref='bookmarker', lazy=True, passive_deletes=True, cascade='all, delete-orphan')
@@ -51,6 +53,7 @@ class User(BaseModel, ImageUpload, Base):
             primaryjoin='followers.c.followed_id == User.id',
             secondaryjoin='followers.c.follower_id == User.id',
             back_populates='following',
+            passive_deletes=True,
             lazy=True
         )
         following: WriteOnlyMapped['User'] = relationship(
@@ -58,6 +61,7 @@ class User(BaseModel, ImageUpload, Base):
             primaryjoin='followers.c.follower_id == User.id',
             secondaryjoin='followers.c.followed_id == User.id',
             back_populates='followers',
+            passive_deletes=True,
             lazy=True
         )
         topic_following = relationship(
@@ -94,11 +98,23 @@ class User(BaseModel, ImageUpload, Base):
         """ Dictionary representation of the object """
 
         dictionary = super().to_dict()
+
         try:
             dictionary.pop('password')
-            dictionary.pop('_sa_instance_state')
-        except Exception:
+        except KeyError:
             pass
+        try:
+            dictionary.pop('_sa_instance_state')
+        except KeyError:
+            pass
+
+        try:
+            dictionary.pop('stories')
+        except KeyError:
+            pass
+        
+        dictionary['roles'] = [role.to_dict() for role in self.roles]
+        
 
         return dictionary
 
@@ -188,6 +204,16 @@ class User(BaseModel, ImageUpload, Base):
 
         query = sa.select(sa.func.count()).select_from(
             self.following.select().subquery())
+
+        return storage._session.scalar(query)
+
+    @property
+    def stories_written_count(self):
+        """ count the number of people self is following """
+        from models.engine import storage
+
+        query = sa.select(sa.func.count()).select_from(
+            sa.select(Story).where(Story.user_id == self.id))
 
         return storage._session.scalar(query)
 

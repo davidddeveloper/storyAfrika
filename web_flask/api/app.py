@@ -3,7 +3,7 @@
 
 """
 
-from flask import Flask, redirect
+from flask import Flask, redirect, request, jsonify
 from web_flask.api.v1 import views
 from flask_cors import CORS
 from flask_login import LoginManager
@@ -11,6 +11,8 @@ from flask_wtf.csrf import CSRFProtect
 from web_flask.api.v1 import storage
 from models.user import User
 from flask_session import Session
+from web_flask.api.v1.services.jwt_handler import decode_jwt
+import web_flask.api.v1.services.auth_provider as auth
 import os
 import redis
 
@@ -50,6 +52,34 @@ def login():
 def shutdown_session(exception=None):
     storage.close()
 
+@app.before_request
+def get_current_user():
+    token = request.headers.get('Authorization')
+
+    if token:
+        jwt = token.split("Bearer ")[1]
+    
+        try:
+            user_data = decode_jwt(jwt)
+        except Exception:
+            user_data = None
+
+        if user_data and not auth.current_user:  # get the user in db
+            username = user_data['username']
+
+            user = storage._session.query(User).where(
+                username == username
+            ).first()
+            auth.current_user = user
+
+        if auth.current_user:
+            # attached current_user to session
+            auth.current_user = storage._session.merge(auth.current_user)
+
+
+@app.errorhandler(404)
+def handle_404(error):
+    return jsonify({"Error": "not found"}), 403
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=4000)

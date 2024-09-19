@@ -3,6 +3,7 @@
 
 """
 
+from models.image_upload import ImageUpload
 from models.imports import *
 from models.base_model import BaseModel, Base
 
@@ -19,7 +20,7 @@ if os.getenv('STORAGE') in ['db', 'DB']:
     )
 
 
-class Topic(BaseModel, Base):
+class Topic(BaseModel, ImageUpload, Base):
     """ Represent a topic
 
 
@@ -29,12 +30,14 @@ class Topic(BaseModel, Base):
         __tablename__ = 'topics'
         name = Column(String(80), nullable=False)
         description = Column(String(200), nullable=True)
+        banner = Column(String(100), nullable=True) # path to image
         stories = relationship(
             'Story',
             secondary=story_topic_association,
             backref='topics', lazy=True
         )
         followers = relationship('TopicFollower', backref='topic', lazy=True)
+        # creator = Column(String(60), ForeignKey("users.id"), nullable=False)
     else:
         name = ''
         description = ''

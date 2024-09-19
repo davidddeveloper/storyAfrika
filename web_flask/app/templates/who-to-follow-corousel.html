@@ -6,7 +6,7 @@
             {% if the_user != current_user %}
             {% if not current_user.is_following(the_user) %}
             {% if loop.index <= 6 %}
-                <div class="follow-card slider-item flex flex-shrink-0 items-center gap-[15px]" data-user_id={{the_user.id}}>
+                <div class="follow-card w-[200px] slider-item flex flex-shrink-0 items-center gap-[15px]" data-user_id={{the_user.id}}>
                     {% if the_user.avatar %}
                     <div class="h-[50px] w-[50px] flex-shrink-0">
                         <img class="h-full w-full rounded-full border-2" src="{{ url_for('upload', filename=the_user.avatar, user_id=the_user.id) }}" alt="">

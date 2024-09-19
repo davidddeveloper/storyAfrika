@@ -9,14 +9,11 @@ from web_flask.app.forms import LoginForm, UserRegistrationForm, UserUpdateForm
 from flask_login import current_user, login_user
 from flask_login import logout_user, login_required
 from flask import render_template, redirect, url_for, request, flash, \
-    abort, send_from_directory, jsonify
+    abort, send_from_directory
 from models.topic import Topic
 from models.story import Story
 from models.user import User
-from models.like import Like
-from models.bookmark import Bookmark
-from models.comment import Comment
-from urllib.parse import urlsplit, urlparse
+from urllib.parse import urlparse
 from flask import session
 from werkzeug.utils import secure_filename
 import os
@@ -37,7 +34,7 @@ def home():
         if request.files:
             try:
                 # save the file
-                path_2_file = current_user.image_upload(request.files['file'])
+                path_2_file = current_user.image_upload(request.files['file'], current_user.id)
             except Exception:
                 path_2_file = None
 
@@ -88,29 +85,22 @@ def story(story_id=None):
 
 
 @app.route(
-        "/story/write/", strict_slashes=False, methods=['GET', 'POST']
+    "/story/write/", strict_slashes=False, methods=['GET', 'POST']
 )
 def write():
     if request.method == 'POST':
-        print('001')
         story = storage.get(Story, request.form.get('story_id'))
-        print('002')
         if request.files:
             try:
                 # save the file
-                print('003')
-                path_2_file = story.image_upload(request.files['file'])
-                print('004')
+                path_2_file = story.image_upload(request.files['file'], current_user.id)
             except Exception:
                 path_2_file = None
-            print('005')
             if path_2_file is not None:
-                print('006')
                 story.image = path_2_file
                 storage.save()
                 print(story.image)
             else:
-                print('007')
                 flash("Please try an image with a different format.")
                 return url_for('write')
             return url_for('write', story=story)
@@ -179,9 +169,7 @@ def register():
         return redirect(url_for('home'))
 
     form = UserRegistrationForm()
-    print('-------------------------------------------')
     if form.validate_on_submit():
-        print('What is wrong!==================================')
         user = User(
             username=form.username.data,
             email=form.email.data,
@@ -216,158 +204,6 @@ def immersive_read(story_id=None):
         abort(404)
 
     return render_template('immersive-read.html', story=story)
-
-@app.route(
-    '/stories/<string:story_id>/like/',
-    methods=['GET'],
-    strict_slashes=False
-)
-@login_required
-def like_or_unlike_story(story_id=None):
-    """ Like a story
-
-        Attributes:
-            - story_id: id of the story
-
-    """
-
-    story = storage.get(Story, story_id)
-    if story is None:
-        abort(404)
-
-    for like in story.likes:
-        # user has already like the story
-        if like.liker.username == current_user.username:
-            # remove the like
-            storage.delete(like)
-            storage.save()
-            return jsonify({'status': 'unliked', 'likes_count': story.to_dict().get('likes_count')}), 201
-
-    # otherwise the user has not like a story
-    # like the story
-    like = Like(
-        story_id=story_id, user_id=current_user.id
-    )
-    storage.new(like)
-    storage.save()
-
-    return jsonify({'status': 'liked', 'likes_count': story.to_dict().get('likes_count')}), 201
-
-
-@app.route(
-    '/users/<string:user_id>/follow/',
-    methods=['GET'],
-    strict_slashes=False
-)
-@login_required
-def follow_or_unfollow(user_id=None):
-    """ Follow a story
-
-        Attributes:
-            - user_id: id of the user
-
-    """
-
-    user = storage.get(User, user_id)
-    if user is None:
-        abort(404)
-
-    if current_user.is_following(user):
-        current_user.unfollow(user)
-        status = 'unfollowed'
-    else:
-        current_user.follow(user)
-        status = 'follow'
-
-    storage.save()
-
-    return jsonify({status: status}), 201
-
-
-@app.route(
-    '/stories/<string:story_id>/bookmark/',
-    methods=['GET'],
-    strict_slashes=False
-)
-@login_required
-def bookmark_or_unbookmark_story(story_id=None):
-    """ Bookmark a story
-
-        Attributes:
-            - story_id: id of the story
-
-    """
-
-    story = storage.get(Story, story_id)
-    if story is None:
-        abort(404)
-
-    for bookmark in story.bookmarks:
-        # user has already bookmark the story
-        if bookmark.bookmarker.username == current_user.username:
-            # remove the bookmark
-            storage.delete(bookmark)
-            storage.save()
-            return jsonify({}), 201
-
-    # otherwise the user has not bookmark a story
-    # bookmark the story
-    bookmark = Bookmark(
-        story_id=story_id, user_id=current_user.id
-    )
-    storage.new(bookmark)
-    storage.save()
-
-    return jsonify({}), 201
-
-
-@app.route(
-    '/comments/<string:comment_id>/like/',
-    methods=['GET'],
-    strict_slashes=False
-)
-@login_required
-def like_or_unlike_comment(comment_id=None):
-    """ Like a comment
-
-        Attributes:
-            - comment_id: id of the comment
-
-    """
-    from models.engine import storage
-
-    comment = storage._session.query(Comment).options(joinedload(Comment.commenter)).filter_by(id=comment_id).scalar()
-    if comment is None:
-        abort(404)
-
-    print(comment.is_liked_by(current_user.id), '..................><><><>')
-    if not comment.is_liked_by(current_user.id):  # the user has not like a comment
-        comment.like(current_user.id)  # like the story
-        storage.save()
-        return jsonify({'status': 'liked', 'likes_count': comment.to_dict().get('likes_count')}), 201
-    else:  # user has already like the comment
-        comment.unlike(current_user.id)  # unlike it
-        storage.save()
-        return jsonify({'status': 'unliked', 'likes_count': comment.to_dict().get('likes_count')}), 201
-
-
-@app.route('/search_bookmarked_stories/<string:data>', strict_slashes=False)
-def search_bookmarked_stories(data=None):
-    if data == None or data == '':
-        abort(404)
-
-    stories = [ story.to_dict() for story in current_user.search_stories_bookmarked(data).all() ]
-
-    for story in stories:
-        try:
-            story['liked'] = current_user.liked_story(story['id'])
-            story['bookmarked'] = current_user.bookmarked_story(story['id'])
-            writer = storage.get(User, story['writer']['id'])
-            story['user_is_following_writer'] = current_user.is_following(writer)
-        except Exception:
-            pass
-
-    return stories, 200
 
 @app.route('/dummy', methods=['GET', 'POST'])
 @login_required
