@@ -69,21 +69,21 @@
                         <article class="flex flex-col gap-4">
 
                             <div class="pretty p-default p-round flex gap-2">
-                                <input type="radio" name="radio1" data-font="comic">
+                                <input type="radio" name="radio1" id="comic" data-font="comic">
                                 <div class="state">
-                                    <label>Comic</label>
+                                    <label for="comic">Comic</label>
                                 </div>
                             </div>
                             <div class="pretty p-default p-round flex gap-2">
-                                <input type="radio" name="radio1" data-font="cursive" checked>
+                                <input type="radio" name="radio1" id="cursive" data-font="cursive" checked>
                                 <div class="state">
-                                    <label>Cursive</label>
+                                    <label for="cursive">Cursive</label>
                                 </div>
                             </div>
                             <div class="pretty p-default p-round flex gap-2">
-                                <input type="radio" name="radio1" data-font="sitka">
+                                <input type="radio" name="radio1" id="sitka" data-font="sitka">
                                 <div class="state">
-                                    <label>Sitka</label>
+                                    <label for="sitka">Sitka</label>
                                 </div>
                             </div>
                         </article>
@@ -137,7 +137,7 @@
             </div>
         </article>
     </section>
-    <section class="content container w-full p-4 sm:p-0 mx-auto font-sitka-large transition-colors duration-1000 sm:w-[720px]">
+    <section class="content container w-full p-5 sm:p-3 mx-auto transition-colors duration-1000 sm:w-[720px]">
         <h1 class=" mt-16 logo-text font-medium">storyafrika</h1>
         <article class="story-story-text  mt-5 text-[20px] flex flex-col gap-[25px] " data-story_id="{{story.id}}">
             <p id="story-text" class="">{{story.text}}</p>

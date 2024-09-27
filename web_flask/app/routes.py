@@ -14,10 +14,11 @@ from models.topic import Topic
 from models.story import Story
 from models.user import User
 from urllib.parse import urlparse
-from flask import session
+from flask import session, make_response
 from werkzeug.utils import secure_filename
 import os
 import imghdr
+import requests
 
 
 
@@ -148,13 +149,29 @@ def login():
                 and urlparse(next_page).hostname\
                 != urlparse(request.url).hostname:
             # not a relative path and not from my domain
-            return redirect(url_for('home'))
+            next_page = url_for('home')
 
-        return redirect(next_page)
+        # generate a jwttoken
+        response = requests.post('http://127.0.0.1:4000/api/v1/auth', json={
+            "email": f"{form.email.data}",
+            "password": f"{form.password.data}"
+        }, headers={
+            'Content-Type': 'application/json'
+        },)
+        
+        token = response.json()
+        print(token)
+        response =  make_response(redirect(next_page))
+        response.set_cookie('jwt_token', token.get('data'))
+
+        return response
+    
     else:
         print('>>>>>', form.errors)
 
-    return render_template('login.html', form=form)
+    response = make_response(render_template('login.html', form=form))
+    response.set_cookie('test', 'xyz')
+    return response
 
 
 @app.route('/logout')
@@ -243,6 +260,12 @@ def upload(filename, user_id):
 
     user_dir = os.path.join(app.config['UPLOAD_PATH'], user.get_id())
     return send_from_directory(user_dir, filename)
+
+@app.route(
+    '/test_html/'
+)
+def test_html():
+    return render_template('skeletons/story_card.html')
 
 def validate_image(stream):
     header = stream.read(512)

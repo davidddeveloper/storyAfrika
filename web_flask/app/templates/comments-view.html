@@ -1,5 +1,5 @@
 <section class="comments-view is-hidden fixed z-50 bg-offwhite transition-all ease-out -bottom-[100%] w-full h-full overflow-y-scroll px-5 pb-[200px] drop-shadow-lg sm:rounded-2xl sm:px-16 sm:pb-[200px] sm:w-[80%] sm:left-[10%] sm:right-[10%] md:rounded-none md:pb-[50px] md:left-auto md:drop-shadow-lg md:top-0 md:overflow-x-hidden md:-right-[100%] md:w-[400px] lg:w-[500px] md:px-[60px] md:border-2 md:h-screen md:overflow-y-scroll no-scrollbar">
-    <h3 class="mt-[100px] text-base font-bold comments-count"><span>{% if story.comments | length %} == 1</span> person {% else %} people {% endif %} has commented on this story</h3>
+    <h3 class="mt-[100px] text-base font-bold comments-count"><span>{% if story.comments | length == 1 %} </span> {{ story.comments | length}} person {% else %} {{story.comments | length}} people {% endif %} has commented on this story</h3>
 
     <form action="" method="post" class="mt-10 container mx-auto share-comment-form">
         <textarea name="comment-text" id="comment-textarea" class="comment-textarea resize-y col-auto bg-transparent w-full pb-[10px] pl-[24px] border-0 text-[16px] text-lightgray border-b-2 border-black focus:transition-all focus:border-0 max-h-[200px] focus:outline-0 focus:border-b-2 focus:border-lightblue no-scrollbar" placeholder="share your thoughts too..." rows="1"></textarea>

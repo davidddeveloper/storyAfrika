@@ -11,6 +11,12 @@
     <meta name="twitter:title" content="storyafrika - Success Stories and Experiences of Everyday Africans">
     <meta name="twitter:description" content="Storyafrika is a platform showcasing the real-life experiences and stories of individual Africans, highlighting their upbringing, everyday successes, and much more.">
     <meta name="twitter:image" content="./write.webp">
+
+    <meta name="google-signin-client_id" content="25158261190-9emalbugfgsvbn9cv7fao3vp6kmi3h37.apps.googleusercontent.com">
+
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <meta name="Cross-Origin-Opener-Policy" content="same-origin-allow-popups">
+
     <link rel="stylesheet" href="/static/style.css">
     <link rel="stylesheet" href="/static/tailwind.css">
     <link rel="canonical" href="https://stories.storyafrika.live">
@@ -20,7 +26,7 @@
     
     <script src="/static/js/jquery.min.js" defer></script>
     <script src="/static/js/main.js" defer type="module"></script>
-    <!--<script src="/static/js/comment-view.js" defer></script>-->
+    <script src="/static/js/comment-view.js" defer></script>
     
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-FW17L5LYTT"></script>
@@ -31,6 +37,8 @@
 
       gtag('config', 'G-FW17L5LYTT');
     </script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script src="https://apis.google.com/js/api.js?onload=onLibraryLoaded" async defer></script>
 </head>
 <body data-current_user_id="{{current_user.id}}" class="relative">
     <header>
@@ -51,5 +59,20 @@
     {{ moment.include_moment() }}
 
     {% include 'confirm-deletion.html' %}
+
+    <script>
+      function onSignIn(googleUser) {
+        var profile = googleUser.getBasicProfile();
+        console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+        console.log('Name: ' + profile.getName());
+        console.log('Image URL: ' + profile.getImageUrl());
+        console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+      }
+
+      document.body.querySelector('.on-signin').addEventListener('click', () => {
+        onSignIn()
+      })
+      
+    </script>
 </body>
 </html>

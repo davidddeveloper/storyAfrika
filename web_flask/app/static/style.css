@@ -21,6 +21,32 @@
   text-overflow: ellipsis;
 }
 
+.skeleton {
+  background-color: #e0e0e0;
+  padding-block: 12px;
+  /*border-radius: 4px;
+  margin: 10px 0;*/
+  animation: pulse 1.5s infinite;
+}
+
+.skeleton-parent {
+  background-color: #D9D9D9;
+}
+
+.skeleton-divider {
+  padding-block: 8px;
+}
+
+.skeleton-radius {
+  border-radius: 4px;
+}
+
+@keyframes pulse {
+  0% { background-color: #e0e0e0; }
+  50% { background-color: #f0f0f0; }
+  100% { background-color: #e0e0e0; }
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;

@@ -1,4 +1,13 @@
 $(function () {
+
+    const getCookie = (name) => {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+    const jwtToken = getCookie('jwt_token');
+
     let $body = $('body')
     let $currentBlock = $('.block').first()
     let $story = {}
@@ -7,8 +16,11 @@ $(function () {
     // create a temporary story in database
     if (!localStorage.getItem('story_id')) {
         $.ajax({
-            type: 'POST',
             url: 'http://127.0.0.1:4000/api/v1/stories/',
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${jwtToken}`
+            },
             data: JSON.stringify({"title": " ", "text": '[{"content":"<div class=\'block\' contenteditable=\'true\'><span class=\'handle\' style=\'display: none;\'>⇅</span></div>"}]', "user_id": $body.data('current_user_id')}),
             dataType: 'json',
             contentType: 'application/json',
@@ -65,8 +77,11 @@ $(function () {
         $story.topics = topics
         $story.image = image
         $.ajax({
-            type: "PUT",
             url: `http://127.0.0.1:4000/api/v1/stories/${$story_id}/`,
+            method: "PUT",
+            headers: {
+                Authorization: `Bearer ${jwtToken}`
+            },
             data: JSON.stringify($story),
             dataType: "json",
             contentType: "application/json",
@@ -79,10 +94,14 @@ $(function () {
     // Load blocks from db
     const loadBlocks = () => {
         let $story_id = localStorage.getItem('story_id')
-
-        // get the story state
-        $.get(`http://127.0.0.1:4000/api/v1/stories/${$story_id}/`, function (response, status) {
-            if (status == 'success') {
+        //get the state of the story
+        $.ajax({
+            url: `http://127.0.0.1:4000/api/v1/stories/${$story_id}/`,
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${jwtToken}`
+            },
+            success: (response) => {
                 const blocks = JSON.parse(response.text) || [];
                 const $container = $('#blocks-container');
 

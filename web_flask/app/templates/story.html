@@ -23,9 +23,9 @@
                 <img class="rounded-full h-[50px] w-[50px] object-cover" src="https://picsum.photos/200/700" alt="">
                 {% endif %}
                 <div class="ml-[15px]">
-                    {% if story.writer.id != current_user.id %}
                     <div class="flex gap-[15px] follow-card" data-user_id={{story.writer.id}}>
                         <h3>{{story.writer.username}}</h3>
+                        {% if story.writer.id != current_user.id %}
                         {% if current_user.is_authenticated %}
                             {% if current_user.is_following(story.writer) %}
                                 <button class="follow flex items-center text-lightblue unfollow"><img src="/static/icons/correct.svg" alt="">Following</button>
@@ -35,8 +35,8 @@
                         {% else %}
                             <button class="follow text-sm flex items-center text-lightblue"><img src="/static/icons/plus.svg" alt="">Follow</button>
                         {% endif %}
+                        {% endif %}
                     </div>
-                    {% endif %}
                     <div class="mt-[5px] flex gap-[5px] items-center">
                         <p>{{story.read_time}} min read</p>
                         <p class="w-2 h-2 bg-black rounded-full mx-2"></p>
@@ -60,7 +60,7 @@
                 {% else %}
                 <img class='w-full h-full object-scale-down' src="https://unsplash.it/500" alt="" srcset="">
                 {% endif %}#}-->
-                    <img class='w-full h-full object-cover md:object-center' src="{{story.image}}" alt="" srcset="">
+                    <img class='view-image w-full h-full object-cover md:object-center' src="{{story.image}}" alt="" srcset="">
                 </div>
                 {% endif %}
             <div class="pl-[30px] pr-[30px] story-story-text text-lg text-lightgray" data-story_id="{{story.id}}">
@@ -71,21 +71,20 @@
             {% include 'actions.html' %}
         </div>
         <hr class="border-2 mt-[120px] mb-[30px] border-black">
-        <section class="container mx-auto px-5 sm:px-2">
+        <section class="container mx-auto px-5 sm:px-2 pb-10">
             <h3 class="mt-[50px] mb-[30px] text-[20px] font-medium">More from <span class="text-lightblue">{{story.writer.username}}</span></h3>
-            <div class="flex justify-start gap-5 gap-y-5 flex-wrap">
+            <div class="flex justify-center sm:justify-start items-center gap-5 flex-wrap">
                 {% for other_story in story.writer.stories %}
                 {% if other_story != story %}
                 {% if loop.index <= 3 %}
-                <div class="min-h-[200px] max-h-[380px] w-[300px]">
+                <div class="min-h-[200px] max-h-[380px] w-[300px] rounded-md shadow-sm bg-offwhite">
                     {% if other_story.image %}
                     {#<img class="h-[200px] w-full object-cover" src="{{ url_for('upload', filename=other_story.image, user_id=other_story.writer.id) }}" alt="">#}
-                    <img class="h-[200px] w-full object-cover" src="{{other_story.image}}" alt="">
+                    <img class="h-[200px] w-full object-cover rounded-md" src="{{other_story.image}}" alt="">
                     {% else %}
-                    <img class="h-full w-full object-cover" src="https://unsplash.it/500" alt="">
+                    <img class="h-full w-full object-cover rounded-md" src="https://unsplash.it/500" alt="">
                     {% endif %}
-                    <div class="mt-[20px] mb-[10px]">
-                        {% include 'profile_story_card.html' %}
+                    <div class="mt-[20px] mb-[10px] px-3">
                         <p class="text-lg font-medium"><a href="{{ url_for('story', story_id=other_story.id) }}">{{other_story.title}}</a></p>
                         <p class="mt-[10px] mb-[20px] w-full overflow-x-hidden whitespace-nowrap overflow-ellipsis">{{other_story.plain_text}}</p>
                         <p class="text-[10px]">{{other_story.read_time}} min read</p>
