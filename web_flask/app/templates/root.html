@@ -12,15 +12,16 @@
     <meta name="twitter:description" content="Storyafrika is a platform showcasing the real-life experiences and stories of individual Africans, highlighting their upbringing, everyday successes, and much more.">
     <meta name="twitter:image" content="./write.webp">
 
+    <!-- google oAuth2 client id -->
     <meta name="google-signin-client_id" content="25158261190-9emalbugfgsvbn9cv7fao3vp6kmi3h37.apps.googleusercontent.com">
 
     <meta name="referrer" content="no-referrer-when-downgrade">
-    <meta name="Cross-Origin-Opener-Policy" content="same-origin-allow-popups">
+    <meta name="Cross-Origin-Opener-Policy" content="">
 
     <link rel="stylesheet" href="/static/style.css">
     <link rel="stylesheet" href="/static/tailwind.css">
     <link rel="canonical" href="https://stories.storyafrika.live">
-    <link rel="icon" type="image/png" href="/static/images/storyafrika.png">
+    <link rel="icon" type="image/png" href="/static/images/logo.jpg">
     <link rel="me" href="https://www.linkedin.com/in/david-conteh-a42871253/">
     <title>storyafrika | Inspiring journey - success stories and experiences of everyday Africans</title>
     
@@ -38,7 +39,6 @@
       gtag('config', 'G-FW17L5LYTT');
     </script>
     <script src="https://apis.google.com/js/platform.js" async defer></script>
-    <script src="https://apis.google.com/js/api.js?onload=onLibraryLoaded" async defer></script>
 </head>
 <body data-current_user_id="{{current_user.id}}" class="relative">
     <header>
@@ -61,7 +61,9 @@
     {% include 'confirm-deletion.html' %}
 
     <script>
+      console.log('in function')
       function onSignIn(googleUser) {
+        console.log('called!')
         var profile = googleUser.getBasicProfile();
         console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
         console.log('Name: ' + profile.getName());
@@ -69,9 +71,12 @@
         console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
       }
 
-      document.body.querySelector('.on-signin').addEventListener('click', () => {
-        onSignIn()
-      })
+      function signOut() {
+        var auth2 = gapi.auth2.getAuthInstance();
+        auth2.signOut().then(function () {
+          console.log('User signed out.');
+        });
+      }
       
     </script>
 </body>

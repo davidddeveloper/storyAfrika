@@ -42,6 +42,15 @@ class Topic(BaseModel, ImageUpload, Base):
         name = ''
         description = ''
 
+    def to_dict(self):
+        """ Dictionary representation of the object """
+
+        dictionary = super().to_dict()
+        dictionary['stories'] = ''
+
+
+        return dictionary
+
     def __init__(self, name, description=None, **kwargs):
         super().__init__(self, **kwargs)
 
@@ -52,3 +61,12 @@ class Topic(BaseModel, ImageUpload, Base):
 
         if description:
             self.description = description
+
+    @classmethod
+    def search_topics_by_title(cls, data):
+        """
+            search topics by title
+        """
+        from models.engine import storage
+
+        return storage._session.query(cls).where(cls.name.contains(data))

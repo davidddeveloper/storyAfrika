@@ -21,7 +21,7 @@ $(function () {
             headers: {
                 Authorization: `Bearer ${jwtToken}`
             },
-            data: JSON.stringify({"title": " ", "text": '[{"content":"<div class=\'block\' contenteditable=\'true\'><span class=\'handle\' style=\'display: none;\'>⇅</span></div>"}]', "user_id": $body.data('current_user_id')}),
+            data: JSON.stringify({"title": " ", "text": '[{"content":"<div class=\'block\' contenteditable=\'true\'><span class=\'handle\' style=\'display: none;\'>⇅</span></div>"}]'}),
             dataType: 'json',
             contentType: 'application/json',
             success: function (response) {
@@ -102,6 +102,7 @@ $(function () {
                 Authorization: `Bearer ${jwtToken}`
             },
             success: (response) => {
+                console.log(response)
                 const blocks = JSON.parse(response.text) || [];
                 const $container = $('#blocks-container');
 
@@ -118,7 +119,29 @@ $(function () {
                         : block.content
                     )
                 });
-                $('.story-title-input').val(response.title)
+                $('.story-title-input').val(response.title);
+        
+                //show enable publish button when val is in input
+                if ($('.story-title-input').val().length > 8) $('.publish').removeAttr('disabled').removeClass('opacity-55')
+
+                //automatically select the selected topics when the using is editing story
+                if (localStorage.getItem('status') === 'updating') {
+                    const topicsContainer = $(".select-topics-container");
+
+                    const options = topicsContainer.find('option')
+
+                    options.each((idx, opt) => {
+                        let option = $(opt);
+                        response.topics.forEach(topic => {
+                            console.log(topic.name, option.text())
+                            if (topic.name === option.text()) {
+                                console.log("Yes!");
+                                option.attr('selected', 'true')
+                            }
+                        })
+                    })
+                }
+
             }
         })
         
@@ -155,8 +178,8 @@ $(function () {
             let $position = $(this).offset()
             
             $("#toolbar").css({
-                top: $position.top - window.screenY - $(this).outerHeight() - 80,
-                left: $position.left
+                top: $position.top - window.screenY - $(this).outerHeight() - 90,
+                left: $position.left - 120
             }).show()
         }
 
@@ -200,14 +223,14 @@ $(function () {
         let $selectedText = $selection.toString()
         if ($selectedText) {
             $toolbar.css({
-                top: window.scrollY + $rect.top - $toolbar.outerHeight() - 80,
-                left: $rect.left
+                top: window.scrollY + $rect.top - $toolbar.outerHeight() - 90,
+                left: $rect.left - 120
             }).show()
         } else {
             console.log('xzy')
             $toolbar.hide()
         }
-
+        console.log($rect.left, '0000')
         $currentBlock = $($selection.anchorNode).closest('.block');
     })
 
@@ -229,6 +252,13 @@ $(function () {
     $('.types').toggle()
     
    })
+   //show ai actions
+   //initially hide it
+   $("#ai .ai-solutions").hide()
+   $("#ai .ask-ai-btn").on('click', function () {
+    $('.ai-solutions').toggle()
+    
+   })
 
     // create block type
    $(document).delegate('#types button', 'click', function (e) {
@@ -243,7 +273,7 @@ $(function () {
             break;
         
         case "text":
-            constructBlock('p', $currentBlock)
+            constructBlock('text', $currentBlock)
             break;
         
         case "p":
@@ -256,7 +286,7 @@ $(function () {
 
     // helper function
     function constructBlock ($tag, $block, $css=null) {
-        $block = $(`<${$tag} contenteditable=true class="block"><span class="handle" contenteditable="false">⇅</span>${$block.text() !== '/' ? $block.text().replace("⇅", "") : ''}</${$tag}>`)
+        $block = $(`<${$tag == 'text' ? 'p' : $tag} contenteditable=true class="block"><span class="handle" contenteditable="false">⇅</span>${$block.text() !== '/' ? $block.text().replace("⇅", "") : ''}</${$tag == 'text' ? 'p' : $tag}>`)
 
         if ($css) $block.css($css);
 
@@ -274,6 +304,35 @@ $(function () {
     //hide types tools
     console.log($(this).closest('.types'))
     $(this).closest('.types').hide()
+   })
+
+   // use gemini for assistive writing
+   const actionButtons = $(".ai-solutions button");
+   actionButtons.on('click', function () {
+    const target = $(this);
+    const content = $currentBlock.text().replaceAll("⇅", "");
+    const action = $(this).text().toLowerCase().replaceAll(" ", "-");
+    const url = `http://127.0.0.1:4000/api/v1/ai_assistive_writing?ask-ai=${action}&text=${content}`;
+
+    //make api call to server
+    $.ajax({
+        type: "GET",
+        url: url,
+        headers: {
+            Authorization: `Bearer ${jwtToken}`
+        },
+        success: function (response) {
+            console.log(response)
+            $currentBlock.html(`<span class="handle" contenteditable="false">⇅</span>${response.response}`)
+        },
+        error: function (error) {
+            console.log(error.responseJSON)
+        }
+
+    })
+    //receive data
+
+    //insert the data
    })
 
     // make block draggable
@@ -359,9 +418,11 @@ $(function () {
         $('.bg-shadow').css({'display': 'block'}).show('fast')
         $('.title-form').css({'display': 'flex'}).show('slow')
         $('.title-form').find('story-title-input').focus()
+        saveBlocks();
     })
 
     // enable and disable the button to let user submit a title for a story
+
     $('.story-title-input').on('input', function () {
         if ($(this).val().length > 8 && $(this).val().replaceAll(' ', '') != '') $('.publish').removeAttr('disabled').removeClass('opacity-55')
         else $('.publish').addClass('opacity-55').attr('disabled')
@@ -384,4 +445,5 @@ $(function () {
         $('.bg-shadow').hide('fast')
         $('.title-form').hide('slow')
     })
+
 })

@@ -18,33 +18,35 @@
                         {% endfor %}
                     </ul>
                 </div>
-                <button class="next flex-shrink-0"><img src="/static/icons/gt.svg" alt="" srcset=""></button>
+                <button class="next flex-shrink-0 -mt-[2px]"><img src="/static/icons/gt.svg" alt="" srcset=""></button>
             </div>
             <div class="shrink-0 hidden sm:flex gap-3 md:hidden">
                 <button class="search-btn"><img src="/static/icons/search.svg" alt="search button icon"></button>
                 <button><a href="{{ url_for('write')}}"><img src="/static/icons/write.svg" alt="" srcset=""></a></button>
             </div>
             <div class="menu-container w-[20%] sm:hidden overflow-y-scroll no-scrollbar">
-                <button class="flex flex-col gap-[6px] show-menu-on-mobile">
-                    <span class="p-[1px] w-[30px] bg-black"></span>
-                    <span class="p-[1px] w-5 bg-black self-end"></span>
-                    <span class="p-[1px] w-[30px] bg-black"></span>
+                <button class="flex flex-col gap-[6px] show-menu-on-mobile float-end">
+                    <span class="p-[1px] w-[20px] bg-black"></span>
+                    <span class="p-[1px] w-[20px] bg-black"></span>
                 </button>
-                <div class="first-divider fixed top-0 z-40 h-full w-full bg-lightblue -left-[100%] opacity-25 transition-all"></div>
+                <div class="first-divider clear-both fixed top-0 z-40 h-full w-full bg-lightblue -left-[100%] opacity-25 transition-all"></div>
                 <div class="menu fixed top-0 z-40 h-full w-[80%] bg-mediumpurple -left-[100%] overflow-y-scroll overflow-x-hidden no-scrollbar pb-20 opacity-1 transition-all duration-1000">
-                    <div class="mt-10 flex flex-col items-center justify-center sm:pr-0 lg:pr-2">
-                        <button class="hidden mr-5"><img src="/static/icons/search.svg" alt=""></button>
-                        {% if current_user.avatar %}
-                        <button class="change-img-button-container border-2 rounded-full w-[60px] h-[60px]  relative overflow-hidden"><img class="profile-image w-full h-full rounded-full object-cover" src="{{ url_for('upload', filename=current_user.avatar, user_id=current_user.id) }}" alt=""> <div class="image-btn-change hidden text-xs absolute inset-0 p-1 h-full w-full top-0 left-0 bg-white text-lightgray z-10 cursor-pointer">Change</div></button>
-                        {% else %}
-                        <button class="change-img-button-container border-2 rounded-full w-[60px] h-[60px] relative overflow-hidden"><img class="profile-image w-full h-full rounded-full object-cover" src="/static/images/default-profile-image.png" alt=""> <div class="image-btn-change hidden text-xs absolute inset-0 p-1 h-full w-full top-[45%] left-0 bg-white text-lightgray z-10 cursor-pointer">Change</div></button>
-                        {% endif %}
-                        <h2 class="username text-white mt-2">{{current_user.username}}</h2>
-                    </div>
+                    <header class="flex justify-between items-center px-5">
+                        <button class="flex items-center justify-center"><a href="{{ url_for('write')}}"><img src="/static/icons/write.svg" alt="" srcset=""></a></button>
+                        <div class="mt-10 flex flex-col items-center justify-center sm:pr-0 lg:pr-2">
+                            <button class="hidden mr-5"><img src="/static/icons/search.svg" alt=""></button>
+                            {% if current_user.avatar %}
+                            <button class="change-img-button-container border-2 rounded-full w-[60px] h-[60px]  relative overflow-hidden"><img class="profile-image w-full h-full rounded-full object-cover" src="{{ current_user.avatar }}" alt=""> <div class="image-btn-change hidden text-xs absolute inset-0 p-1 h-full w-full top-0 left-0 bg-white text-lightgray z-10 cursor-pointer">Change</div></button>
+                            {% else %}
+                            <button class="change-img-button-container border-2 rounded-full w-[60px] h-[60px] relative overflow-hidden"><img class="profile-image w-full h-full rounded-full object-cover" src="/static/images/default-profile-image.png" alt=""> <div class="image-btn-change hidden text-xs absolute inset-0 p-1 h-full w-full top-[45%] left-0 bg-white text-lightgray z-10 cursor-pointer">Change</div></button>
+                            {% endif %}
+            
+                        </div>
+                    </header>
 
                     <article class="bookmark text-lightgray mt-[40px] container mx-auto w-full px-5">
-                        <h3 class="mb-5 text-xs font-medium text-center">From your bookmarks</h3>
-                        <div class="slider-wrapper overflow-x-hidden">
+                        <h3 class="mb-5 text-xs font-medium text-center text-white">From your bookmarks</h3>
+                        <!--<div class="slider-wrapper overflow-x-hidden">
                             <div class="slider follow-slider flex items-center justify-between w-full gap-8 transition-transform ease-out" data-current_index=0>
                                 {% for bookmark in current_user.bookmarks %}
                                     {% set story = bookmark.story %}
@@ -53,30 +55,41 @@
                                     {% endif %}
                                 
                                 {% endfor %}
+                                
                             </div>
-                        </div>
-                        <button class="block underline text-lightblue text-sm show-all-bookmarks container mx-auto">See all bookmarks</button>
+                        </div>-->
+                        {% for bookmark in current_user.bookmarks %}
+                            {% if loop.index <= 3 %}
+                            <p class="mt-2 ml-14 sm:mt-0 md:-mt-5 text-lightgray font-medium text-sm"><a href="{{ url_for('story', story_id=bookmark.story.id )}}">{{bookmark.story.title}}</a></p>
+                            {% endif %}
+                        {% endfor %}
+                        <button class="block underline text-lightblue text-sm show-all-bookmarks container mt-[20px] mx-auto">See all bookmarks</button>
                     </article>
 
                     <article class="likes text-lightgray mt-[40px] container mx-auto w-full px-5">
-                        <h3 class="mb-5 text-xs font-medium text-center">You recently liked</h3>
-                        <div class="slider-wrapper overflow-x-hidden">
+                        <h3 class="mb-5 text-xs font-medium text-center text-white">You recently liked</h3>
+                        <!--<div class="slider-wrapper overflow-x-hidden">
                             <div class="slider follow-slider flex items-center justify-between w-full gap-8 transition-transform ease-out" data-current_index=0>
                                 {% for like in current_user.likes %}
                                     {% set story = like.story %}
-                                    
+
                                     {% if loop.index <= 3 %}
                                     {% include 'bookmark_card.html' %}
                                     {% endif %}
                                 
                                 {% endfor %}
                             </div>
-                        </div>
+                        </div>-->
+                        {% for like in current_user.likes %}
+                            {% if loop.index <= 3 %}
+                            <p class="mt-2 ml-14 sm:mt-0 md:-mt-5 text-lightgray font-medium text-sm"><a href="{{ url_for('story', story_id=like.story.id )}}">{{like.story.title}}</a></p>
+                            {% endif %}
+                        {% endfor %}
                     </article>
 
                     {% include 'who-to-follow-corousel.html' %}
 
-                    <article class="update-information mt-[40px]">
+                    <article class="update-information mt-[40px] pr-20">
                         <h3 class="text-white text-center">Update Your information</h3>
                         {% include 'profile_card_mobile.html' %}
                     </article>
@@ -92,7 +105,7 @@
             <div class="hidden sm:flex items-center justify-center sm:pr-0 lg:pr-2">
                 <button class="hidden mr-5"><img src="/static/icons/search.svg" alt=""></button>
                 {% if current_user.avatar %}
-                <button class="home-profile-img border-2 rounded-full w-[50px] h-[50px] shrink-0"><img class="profile-image w-full h-full rounded-full object-cover" src="{{ url_for('upload', filename=current_user.avatar, user_id=current_user.id) }}" alt=""></button>
+                <button class="home-profile-img border-2 rounded-full w-[50px] h-[50px] shrink-0"><img class="profile-image w-full h-full rounded-full object-cover" src="{{ current_user.avatar }}" alt=""></button>
                 {% else %}
                 <button class="home-profile-img border-2 rounded-full w-[50px] h-[50px] shrink-0"><img class="profile-image w-full h-full rounded-full object-cover" src="/static/images/default-profile-image.png" alt=""></button>
                 {% endif %}

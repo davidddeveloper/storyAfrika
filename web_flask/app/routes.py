@@ -9,7 +9,7 @@ from web_flask.app.forms import LoginForm, UserRegistrationForm, UserUpdateForm
 from flask_login import current_user, login_user
 from flask_login import logout_user, login_required
 from flask import render_template, redirect, url_for, request, flash, \
-    abort, send_from_directory
+    abort, send_from_directory, jsonify
 from models.topic import Topic
 from models.story import Story
 from models.user import User
@@ -194,6 +194,10 @@ def register():
         )
         # save password as hash
         user.set_password(user.password)
+
+        # set default profile image
+        user.set_default_profile()
+
         # save user to storage
         storage.new(user)
         storage.save()
@@ -275,5 +279,25 @@ def validate_image(stream):
         return None
     return '.' + (format if format != 'jpeg' else 'jpg')
 
+@app.route("/api/v1/stories/<string:story_id>/upload_image/", methods=['OPTIONS', 'POST'], strict_slashes=False)
+def upload_image_for_story(story_id=None):
+    if story_id is None:
+         abort(404)
 
+    story = storage.get(Story, story_id)
+    if story is None:
+         abort(404)
+
+    if request.files:
+            try:
+                # save the file
+                path_2_file = story.image_upload(request.files['file'], auth.current_user.id)
+            except Exception:
+                return jsonify({"Error": "Failed to upload image"})
+            if path_2_file:
+                story.image = path_2_file
+                storage.save()
+            return jsonify(story.to_dict()), 200
+    print(request.files)
+    return ({}), 400
 

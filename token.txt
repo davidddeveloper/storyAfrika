@@ -17,3 +17,39 @@ INFO:sqlalchemy.engine.Engine:[generated in 0.00125s] {'pk_1': 'ec80db67-3b7c-41
 INFO:sqlalchemy.engine.Engine:INSERT INTO user_role_association (user_id, role_id) VALUES (%(user_id)s, %(role_id)s)
 INFO:sqlalchemy.engine.Engine:[generated in 0.00080s] {'user_id': 'a856b25a-d4da-42ee-acd8-c30176489ab8', 'role_id': 'ec80db67-3b7c-4106-ac56-9aa5f7488d21'}
 INFO:sqlalchemy.engine.Engine:COMMIT
+INFO:sqlalchemy.engine.Engine:SELECT users.username AS users_username, users.email AS users_email, users.password AS users_password, users.short_bio AS users_short_bio, users.about AS users_about, users.first_name AS users_first_name, users.last_name AS users_last_name, users.full_name AS users_full_name, users.avatar AS users_avatar, users.id AS users_id, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users 
+WHERE users.username = %(username_1)s 
+ LIMIT %(param_1)s
+INFO:sqlalchemy.engine.Engine:[generated in 0.00640s] {'username_1': 'storyafrika', 'param_1': 1}
+INFO:sqlalchemy.engine.Engine:SELECT roles.`role` AS roles_role, roles.id AS roles_id, roles.created_at AS roles_created_at, roles.updated_at AS roles_updated_at 
+FROM roles, user_role_association 
+WHERE %(param_1)s = user_role_association.user_id AND roles.id = user_role_association.role_id
+INFO:sqlalchemy.engine.Engine:[generated in 0.00129s] {'param_1': 'ee152b0a-a06d-42b0-802e-47b5abfef233'}
+INFO:root:created: 2024:10:01, 12-01-15 
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkX2F0IjoiMjAyNC0wOS0xN1QyMjoxOToyMiIsInNob3J0X2JpbyI6bnVsbCwidXBkYXRlZF9hdCI6IjIwMjQtMDktMTdUMjI6MTk6MjMiLCJhYm91dCI6bnVsbCwiZmlyc3RfbmFtZSI6bnVsbCwibGFzdF9uYW1lIjpudWxsLCJmdWxsX25hbWUiOm51bGwsInVzZXJuYW1lIjoic3RvcnlhZnJpa2EiLCJhdmF0YXIiOm51bGwsImVtYWlsIjoic3RvcnlhZnJpa2EubGl2ZUBnbWFpbC5jb20iLCJpZCI6ImVlMTUyYjBhLWEwNmQtNDJiMC04MDJlLTQ3YjVhYmZlZjIzMyIsIl9fY2xhc3NfXyI6IlVzZXIiLCJyb2xlcyI6W3siY3JlYXRlZF9hdCI6IjIwMjQtMDktMTdUMjI6MTk6MjIiLCJ1cGRhdGVkX2F0IjoiMjAyNC0wOS0xN1QyMjoxOToyMiIsInJvbGUiOiJ1c2VyIiwiaWQiOiJhYjY5ZmQxNC03OGFmLTQxZDItYWQ4OC1hYTc2ZjQ0NzU3ZTciLCJfX2NsYXNzX18iOiJSb2xlIn1dLCJleHAiOjE3Mjc3ODU4NzUuNzM3OTg3fQ.fI0GwGAQc88ys3YJu2yNjx2fJ6-d_fw7TdKcS5Poc7c 
+expires: 2024:10:01, 12-31-15
+INFO:sqlalchemy.engine.Engine:SELECT users.username AS users_username, users.email AS users_email, users.password AS users_password, users.short_bio AS users_short_bio, users.about AS users_about, users.first_name AS users_first_name, users.last_name AS users_last_name, users.full_name AS users_full_name, users.avatar AS users_avatar, users.id AS users_id, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users 
+WHERE users.username = %(username_1)s 
+ LIMIT %(param_1)s
+INFO:sqlalchemy.engine.Engine:[generated in 0.00181s] {'username_1': 'storyafrika', 'param_1': 1}
+INFO:sqlalchemy.engine.Engine:SELECT roles.`role` AS roles_role, roles.id AS roles_id, roles.created_at AS roles_created_at, roles.updated_at AS roles_updated_at 
+FROM roles, user_role_association 
+WHERE %(param_1)s = user_role_association.user_id AND roles.id = user_role_association.role_id
+INFO:sqlalchemy.engine.Engine:[generated in 0.00120s] {'param_1': 'ee152b0a-a06d-42b0-802e-47b5abfef233'}
+INFO:root:created: 2024:10:01, 12-31-47 
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkX2F0IjoiMjAyNC0wOS0xN1QyMjoxOToyMiIsInNob3J0X2JpbyI6bnVsbCwidXBkYXRlZF9hdCI6IjIwMjQtMDktMTdUMjI6MTk6MjMiLCJhYm91dCI6bnVsbCwiZmlyc3RfbmFtZSI6bnVsbCwibGFzdF9uYW1lIjpudWxsLCJmdWxsX25hbWUiOm51bGwsInVzZXJuYW1lIjoic3RvcnlhZnJpa2EiLCJhdmF0YXIiOm51bGwsImVtYWlsIjoic3RvcnlhZnJpa2EubGl2ZUBnbWFpbC5jb20iLCJpZCI6ImVlMTUyYjBhLWEwNmQtNDJiMC04MDJlLTQ3YjVhYmZlZjIzMyIsIl9fY2xhc3NfXyI6IlVzZXIiLCJyb2xlcyI6W3siY3JlYXRlZF9hdCI6IjIwMjQtMDktMTdUMjI6MTk6MjIiLCJyb2xlIjoidXNlciIsImlkIjoiYWI2OWZkMTQtNzhhZi00MWQyLWFkODgtYWE3NmY0NDc1N2U3IiwidXBkYXRlZF9hdCI6IjIwMjQtMDktMTdUMjI6MTk6MjIiLCJfX2NsYXNzX18iOiJSb2xlIn1dLCJleHAiOjE3Mjc3ODk1MDcuNDQwMTg4fQ.WV28SUJk5LbF90R1KBxRifAHcfj88UnOA18A88rl2yI 
+expires: 2024:10:01, 13-31-47
+INFO:sqlalchemy.engine.Engine:SELECT users.username AS users_username, users.email AS users_email, users.password AS users_password, users.short_bio AS users_short_bio, users.about AS users_about, users.first_name AS users_first_name, users.last_name AS users_last_name, users.full_name AS users_full_name, users.avatar AS users_avatar, users.id AS users_id, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+FROM users 
+WHERE users.username = %(username_1)s 
+ LIMIT %(param_1)s
+INFO:sqlalchemy.engine.Engine:[generated in 0.00177s] {'username_1': 'storyafrika', 'param_1': 1}
+INFO:sqlalchemy.engine.Engine:SELECT roles.`role` AS roles_role, roles.id AS roles_id, roles.created_at AS roles_created_at, roles.updated_at AS roles_updated_at 
+FROM roles, user_role_association 
+WHERE %(param_1)s = user_role_association.user_id AND roles.id = user_role_association.role_id
+INFO:sqlalchemy.engine.Engine:[generated in 0.00128s] {'param_1': 'ee152b0a-a06d-42b0-802e-47b5abfef233'}
+INFO:root:created: 2024:10:09, 04-43-33 
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkX2F0IjoiMjAyNC0wOS0xN1QyMjoxOToyMiIsInNob3J0X2JpbyI6bnVsbCwidXBkYXRlZF9hdCI6IjIwMjQtMDktMTdUMjI6MTk6MjMiLCJhYm91dCI6bnVsbCwiZmlyc3RfbmFtZSI6bnVsbCwibGFzdF9uYW1lIjpudWxsLCJmdWxsX25hbWUiOm51bGwsInVzZXJuYW1lIjoic3RvcnlhZnJpa2EiLCJhdmF0YXIiOm51bGwsImVtYWlsIjoic3RvcnlhZnJpa2EubGl2ZUBnbWFpbC5jb20iLCJpZCI6ImVlMTUyYjBhLWEwNmQtNDJiMC04MDJlLTQ3YjVhYmZlZjIzMyIsIl9fY2xhc3NfXyI6IlVzZXIiLCJyb2xlcyI6W3siY3JlYXRlZF9hdCI6IjIwMjQtMDktMTdUMjI6MTk6MjIiLCJ1cGRhdGVkX2F0IjoiMjAyNC0wOS0xN1QyMjoxOToyMiIsInJvbGUiOiJ1c2VyIiwiaWQiOiJhYjY5ZmQxNC03OGFmLTQxZDItYWQ4OC1hYTc2ZjQ0NzU3ZTciLCJfX2NsYXNzX18iOiJSb2xlIn1dLCJleHAiOjE3Mjg0NTI2MTMuOTQwMTc2fQ.2w1wj-8KhFxSu3knoZy_y_sag6pGEVUyTfWhW--FjOk 
+expires: 2024:10:09, 05-43-33

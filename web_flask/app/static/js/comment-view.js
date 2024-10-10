@@ -64,13 +64,15 @@ $(function () {
             $('textarea').focus()
 
         } else {
-            commentView.removeClass('md:right-0').addClass('md:-right-[100%] md:-bottom-[100%] is-hidden')
+            //commentView.removeClass('md:right-0').addClass('md:-right-[100%] md:-bottom-[100%] is-hidden')
         }
     })
 
     $('.divider').on('click', function () {
         commentView.removeClass('md:right-0 -bottom-[20%]').addClass('md:-right-[100%] md:-bottom-[100%] -bottom-[100%] is-hidden')
         $('.divider').hide()
+        //hide showImages carousel in story.html
+        $('.show-story-images-container').addClass('hidden');
     })
 
     $('.comment-textarea, .search-bookmarks-input').on('input', function () {

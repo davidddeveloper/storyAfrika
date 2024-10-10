@@ -9,7 +9,7 @@ current_user = None
 
 def authenticate(email, password):
     user = storage._session.query(User).where(User.email == email).first()
-    if not user.check_password(password):
+    if user and not user.check_password(password):
         return False
 
     if user:
@@ -27,12 +27,13 @@ def authorize(obj=None):
         Args:
             - obj: can be an instance of any models: User, Story, Comment, Topic
     """
+    import web_flask.api.v1.services.auth_provider as auth
     if not obj:
         return False
 
     if isinstance(obj, Story):
         story = obj
-        if story.writer == current_user or 'admin' in current_user.roles:
+        if story.writer.username == current_user.username or 'admin' in current_user.roles:
             return True
         return False
     

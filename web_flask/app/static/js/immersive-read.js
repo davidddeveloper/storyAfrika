@@ -113,6 +113,7 @@ $(function () {
 		})
 	})
 
+	// fonts
 	// comic 
 	let changeFontInputs = $('.text-font-setting input');
 	changeFontInputs.each((idx, inputbox) => {
@@ -134,9 +135,8 @@ $(function () {
 
 	// themes
 	//set save theme on local storage
-	const defaultTheme = `
-		text-black text-darkGrayForeground text-white text-lightgray bg-black bg-grey bg-sepia bg-darkGrey bg-white
-	`
+	//text-black text-darkGrayForeground text-white text-lightgray bg-black bg-grey bg-sepia bg-darkGrey bg-white
+	const defaultTheme = `text-lightgray bg-white`
 	const removeDefaultTheme = () => {
 		$('body').removeClass(defaultTheme)
 		localStorage.removeItem('theme')
@@ -147,11 +147,19 @@ $(function () {
 		localStorage.setItem('theme', defaultTheme)
 	}
 
+	const setTheme = (themBtn) => {
+		removeTheme();
+		$('body').addClass(themBtn.data('theme'));
+		localStorage.setItem('theme', themBtn.data('theme'));
+	}
+
+	const removeTheme = () => {
+		$('body').removeClass(localStorage.getItem('theme'))
+	}
 	// set default theme
-	if (!localStorage.getItem('theme')) {
-		setDefaultTheme()
+	if (localStorage.getItem('theme')) {
+		$('body').addClass(localStorage.getItem('theme'))
 	} else {
-		removeDefaultTheme()
 		setDefaultTheme()
 	}
 
@@ -164,9 +172,8 @@ $(function () {
 			$('.theme').removeClass('active-column')
 			// remove default theme
 			theme.addClass('active-column');
-			removeDefaultTheme()
-			//$('body').addClass(theme.data('theme'));
-			setDefaultTheme()
+			setTheme(theme);
+			//setDefaultTheme()
 		})
 	})
 

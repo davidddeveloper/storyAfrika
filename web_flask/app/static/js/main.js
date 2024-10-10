@@ -26,6 +26,8 @@ $(function(){
             headers: {
                 Authorization: `Bearer ${jwtToken}`
             },
+            processData: false,
+            contentType: false,
             success: function (response) {
                 localStorage.removeItem('story_id')
             }
@@ -49,6 +51,7 @@ $(function(){
         $current_slider.css('transform', `translateX(${-$current_slider.data('current_index') * itemWidth}px)`); 
         if (currentIndex($current_slider) == 0) $('.prev').hide()
         if (currentIndex($current_slider) > 0) $('.prev').show()
+        console.log(currentIndex($current_slider), totalItems($current_slider))
         if (currentIndex($current_slider) == totalItems($current_slider)) $('.next').hide()
         if (currentIndex($current_slider) < totalItems($current_slider)) $('.next').show()
     }
@@ -81,6 +84,7 @@ $(function(){
             decrementCurrentIndex($current_slider)
             updateSliderPosition($current_slider)
             
+            $('.next').show()
         }
     });
 
@@ -221,7 +225,7 @@ $(function(){
         <article class="shrink-0 story-card max-h-[350px] relative" data-story_id="${story.id}">
             <div class="flex w-[300px] items-center">
             <div class="profile flex items-center">
-                <img class=" w-[40px] h-[40px] object-cover border-2 rounded-full" src="/uploads/${story.writer.avatar}/${story.writer.id}" alt="">
+                <img class=" w-[40px] h-[40px] object-cover border-2 rounded-full" src="${story.writer.avatar}" alt="">
                 <h2 class="ml-5 text-sm">${story.writer.username}</h2>
             </div>
             <div class="w-[10px] h-3 border-lightgray border-l ml-[14px] mr-[8px]"></div>
@@ -465,9 +469,7 @@ $(function(){
     // initially fetch foryou story on the story on homepage
     if (window.location.pathname === '/') {
         if (localStorage.getItem('story_id')) delete_story().then(() => fetchStories());  // only on home
-        else {
-            fetchStories(undefined, true)
-        }
+        fetchStories(undefined, true)
     }
 
     // get stories for a particular topic
@@ -682,7 +684,7 @@ $(function(){
             let form_data = new FormData()
             form_data.append('file', file)
             if (localStorage.getItem('story_id')) form_data.append('story_id', localStorage.getItem('story_id'))
-            form_data.append('csrf_token', $('#csrfToken').val())
+            //form_data.append('csrf_token', $('#csrfToken').val())
 
             const getUrl = () => {
                 if (window.location.pathname == '/') {
@@ -692,26 +694,30 @@ $(function(){
                 }
             }
             $.ajax({
-                url: `http://127.0.0.1:4000/api/v1${getUrl()}`,
                 method: 'POST',
+                url: `http://127.0.0.1:4000/api/v1${getUrl()}`,
                 headers: {
                     Authorization: `Bearer ${jwtToken}`
                 },
                 data: form_data,
-                contentType: false,
                 processData: false,
+                contentType: false,
                 success: function(response) {
+                    console.log('this is the response', response)
                     if (window.location.pathname == '/story/write/' ||
                         window.location.pathname == '/story/write'
                     ) {
-                        $('#story-image').attr('src', `/uploads/${file.name.replaceAll(" ", "_")}/${$current_user_id}`)
+                        //$('#story-image').attr('src', `/uploads/${file.name.replaceAll(" ", "_")}/${$current_user_id}`)
+                        $('#story-image').attr('src', response.image)
 
                     } else if (window.location.pathname == '/') {
-                        $('.profile-image').attr('src', `/uploads/${file.name.replaceAll(" ", "_")}/${$current_user_id}`)
+
+                        $('.profile-image').attr('src', response.image)
+                        //$('.profile-image').attr('src', `/uploads/${file.name.replaceAll(" ", "_")}/${$current_user_id}`)
                         //$('.home-profile-img').attr('src', `/uploads/${file.name.replaceAll(" ", "_")}`)
 
                     }
-                    if (!response.includes('/story/write/')) window.location.reload()
+                    //if (!response.includes('/story/write/')) window.location.reload()
                 },
                 error: function(error) {
                     console.error('Error:', error);
@@ -833,12 +839,38 @@ $(function(){
         $('.menu').removeClass('-left-[100%]').addClass('left-0')
     })
 
-    //view images
+    //show images in story when initial image is clicked
+    //initial hide view-image
+    $('.show-story-images-container').addClass('hidden')
+
     let viewImages = $('.view-image');
     viewImages.each((idx, img) => {
         let image = $(img);
-        image.on('click', () => {
-            image.addClass('block absolute h-[500px] z-40 w-full md:h-[300px] w-[200px]').removeClass('w-full h-full').focus()
+        let storyImagesContainer = $('.show-story-images-container');
+        image.on('click', function () {
+            if (storyImagesContainer.hasClass('hidden')) {
+                storyImagesContainer.removeClass('hidden');
+                $('.divider').addClass('bg-offset opacity-45').show();
+            } else {
+                storyImagesContainer.addClass('hidden');
+            }
+        })
+
+        storyImagesContainer.on('click', function (e) {
+            let target = $(e.target)
+            console.log(target)
+            if (target.hasClass('story-wrapper')) {
+                return;
+            } else if (target.hasClass('next')) {
+                return;
+            } else if (target.hasClass('prev')) {
+                return;
+            } else if (e.target.localName === 'img') {
+                console.log(e.target.className)
+                return;
+            } else {
+                $('.divider').click()
+            }
         })
     })
 })

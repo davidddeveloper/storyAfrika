@@ -20,7 +20,7 @@ INSERT INTO users (id, username, email, password, first_name, last_name, full_na
 
 
 -- Insert Stories
-INSERT INTO stories (id, title, text, User, created_at, updated_at, image) VALUES
+INSERT INTO stories (id, title, text, user_id, created_at, updated_at, image) VALUES
 (uuid(), 'The Power of Education', '[{"content":"Education can transform lives. Through years of teaching in rural areas, I have witnessed firsthand how access to quality education can uplift communities. It gives children the tools to dream big and equips them with the skills to pursue their goals. Every child deserves this chance."}]', (SELECT id FROM users WHERE username = 'yusuf_teacher'), NOW(), NOW(), 'https://unsplash.it/600'),
 (uuid(), 'A Journey of Resilience', '[{"content":"This story is about a woman who faced insurmountable odds yet emerged victorious. From growing up in a war-torn region to becoming a leader in her community, her journey is a testament to the strength and resilience of the human spirit. Her story is one of hope and determination."}]', (SELECT id FROM users WHERE username = 'aminabello'), NOW(), NOW(), 'https://unsplash.it/600'),
 (uuid(), 'Innovating for Change', '[{"content":"How technology is changing lives in Africa. In regions where resources are scarce, innovation is not just a luxury, but a necessity. This story explores various technological advancements that are helping to solve problems in healthcare, education, and agriculture, bringing about a new wave of change."}]', (SELECT id FROM users WHERE username = 'chiamaka89'), NOW(), NOW(), 'https://unsplash.it/600'),
@@ -29,7 +29,7 @@ INSERT INTO stories (id, title, text, User, created_at, updated_at, image) VALUE
 
 
 -- Insert More Stories
-INSERT INTO stories (id, title, text, User, created_at, updated_at, image) VALUES
+INSERT INTO stories (id, title, text, user_id, created_at, updated_at, image) VALUES
 (uuid(), 'Exploring the Unknown', '[{"content":"Exploring the Unknown takes you on a journey through the most remote and mysterious places on Earth. It delves into the adventures and discoveries made by explorers who dared to venture into the unknown, facing numerous challenges along the way."}]', (SELECT id FROM users WHERE username = 'john_doe'), NOW(), NOW(), 'https://unsplash.it/600'),
 (uuid(), 'The Last Frontier', '[{"content":"The Last Frontier explores the vast and uncharted territories that remain on our planet. From the deepest oceans to the highest mountains, this story captures the spirit of adventure and the drive to explore the unknown."}]', (SELECT id FROM users WHERE username = 'jane_doe'), NOW(), NOW(), 'https://unsplash.it/600'),
 (uuid(), 'Innovations in Medicine', '[{"content":"Innovations in Medicine showcases the latest advancements in medical science and technology. It highlights breakthrough treatments and technologies that are revolutionizing healthcare and improving patient outcomes."}]', (SELECT id FROM users WHERE username = 'mary_jane'), NOW(), NOW(), 'https://unsplash.it/600'),
@@ -66,13 +66,13 @@ INSERT INTO bookmarks (id, story_id, user_id, created_at, updated_at) VALUES
 
 
 -- Insert Comments
-INSERT INTO comments (id, comment, Story, User, created_at, updated_at) VALUES
+INSERT INTO comments (id, comment, story_id, user_id, created_at, updated_at) VALUES
 (uuid(), 'This is an amazing story! It really captures the essence of how education can change lives.', (SELECT id FROM stories WHERE title = 'The Power of Education'), (SELECT id FROM users WHERE username = 'aminabello'), NOW(), NOW()),
 (uuid(), 'Very inspiring! I am moved by the resilience shown in this story.', (SELECT id FROM stories WHERE title = 'A Journey of Resilience'), (SELECT id FROM users WHERE username = 'yusuf_teacher'), NOW(), NOW()),
 (uuid(), 'Great read! Technology truly is a game-changer in our society.', (SELECT id FROM stories WHERE title = 'Innovating for Change'), (SELECT id FROM users WHERE username = 'chiamaka89'), NOW(), NOW());
 
 -- Insert More Comments
-INSERT INTO comments (id, comment, Story, User, created_at, updated_at) VALUES
+INSERT INTO comments (id, comment, story_id, user_id, created_at, updated_at) VALUES
 (uuid(), 'This story is incredibly inspiring and thought-provoking.', (SELECT id FROM stories WHERE title = 'Exploring the Unknown'), (SELECT id FROM users WHERE username = 'john_doe'), NOW(), NOW()),
 (uuid(), 'A fascinating read! The Last Frontier captures the essence of adventure.', (SELECT id FROM stories WHERE title = 'The Last Frontier'), (SELECT id FROM users WHERE username = 'jane_doe'), NOW(), NOW()),
 (uuid(), 'Innovations in Medicine is an eye-opening look at the future of healthcare.', (SELECT id FROM stories WHERE title = 'Innovations in Medicine'), (SELECT id FROM users WHERE username = 'mary_jane'), NOW(), NOW()),

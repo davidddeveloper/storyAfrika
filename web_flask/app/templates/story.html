@@ -2,13 +2,14 @@
 
 {% block  story %}
     <header class="mt-[60px] container mx-auto flex justify-between items-center px-5 sm:px-2">
+        <!--storyafrika-->
         <h1 class="text-xl"><a href="{{ url_for('home') }}">storyafrika</a></h1>
         {% if current_user.avatar %}
-        <div class="rounded-full w-[60px] h-[60px] border">
-            <img class="rounded-full w-full h-full object-cover" src="{{ url_for('upload', filename=current_user.avatar, user_id=current_user.id) }}" alt="" srcset="">
+        <div class="rounded-full w-[50px] h-[50px] border">
+            <img class="rounded-full w-full h-full object-cover" src="{{current_user.avatar}}" alt="" srcset="">
         </div>
         {% else %}
-        <div class="rounded-full w-[60px] h-[60px] border">
+        <div class="rounded-full w-[50px] h-[50px] border">
             <img class="rounded-full w-full h-full object-cover" src="https://picsum.photos/200/400" alt="" srcset="">
         </div>
         {% endif %}
@@ -18,7 +19,7 @@
         <div class="profile mb-[30px] container mx-auto px-5 sm:px-2 ">
             <div class="flex items-center">
                 {% if story.writer.avatar %}
-                <img class="rounded-full h-[50px] w-[50px] object-cover" src="{{ url_for('upload', filename=story.writer.avatar, user_id=story.writer.id) }}" alt="">
+                <img class="rounded-full h-[50px] w-[50px] object-cover" src="{{ story.writer.avatar }}" alt="">
                 {% else %}
                 <img class="rounded-full h-[50px] w-[50px] object-cover" src="https://picsum.photos/200/700" alt="">
                 {% endif %}
@@ -60,7 +61,7 @@
                 {% else %}
                 <img class='w-full h-full object-scale-down' src="https://unsplash.it/500" alt="" srcset="">
                 {% endif %}#}-->
-                    <img class='view-image w-full h-full object-cover md:object-center' src="{{story.image}}" alt="" srcset="">
+                    <img class='view-image w-full h-full object-cover md:object-center transition-transform duration-75 ease-out' src="{{story.image}}" alt="" srcset="">
                 </div>
                 {% endif %}
             <div class="pl-[30px] pr-[30px] story-story-text text-lg text-lightgray" data-story_id="{{story.id}}">
@@ -99,7 +100,8 @@
         </section>
     </main>
 
-    <div class="divider inset-0 w-full h-full fixed hidden"></div>
+    <div class="divider inset-0 z-30 w-full h-full fixed hidden"></div>
+    {% include 'show-story-images.html' %}
     {% include 'confirm-deletion.html' %}
     {% include 'comments-view.html' %}
 {% endblock %}
