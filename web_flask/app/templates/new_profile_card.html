@@ -1,0 +1,64 @@
+<section class="mx-auto bg-offwhite shadow-md rounded-sm w-[250px]">
+    <div>
+
+    </div>
+    <section>
+        <article class="mt-8 my-8 px-8">
+            {% include 'username-card.html' %}
+        </article>
+        {% include 'divider-black.html' %}
+        <!-- write -->
+        <article class="my-4 px-8">
+            <div class="flex gap-2 items-center">
+                <a href="{{ url_for('write')}}"><img src="/static/icons/write.svg" alt=""></a>
+                <p class="text-lightgray text-base">Write</p>
+            </div>
+        </article>
+
+        <section>
+            <!-- profile-->
+            <article class="my-4 px-8">
+                <div class="flex gap-2 items-center">
+                    <a href="{{ url_for('write')}}"><img src="/static/icons/write.svg" alt=""></a>
+                    <p class="text-lightgray text-base">Profile</p>
+                </div>
+            </article>
+            <!-- bookmark -->
+            <article class="my-4 px-8">
+                <div class="flex gap-2 items-center">
+                    <a href="{{ url_for('write')}}"><img src="/static/icons/bookmark.svg" alt=""></a>
+                    <p class="text-lightgray text-base">Bookmarks</p>
+                </div>
+            </article>
+            <!-- stories-->
+            <article class="my-4 px-8">
+                <div class="flex gap-2 items-center">
+                    <a href="{{ url_for('write')}}"><img src="/static/icons/write.svg" alt=""></a>
+                    <p class="text-lightgray text-base">Stories</p>
+                </div>
+            </article>
+            <!-- Likes -->
+            <article class="my-4 px-8">
+                <div class="flex gap-2 items-center">
+                    <a href="{{ url_for('write')}}"><img src="/static/icons/write.svg" alt=""></a>
+                    <p class="text-lightgray text-base">Likes</p>
+                </div>
+            </article>
+        </section>
+        {% include 'divider-black.html' %}
+        <article class="mt-8 my-8 px-8">
+            <p class="text-black text-base">Terms of Service</p>
+            <p class="text-black text-base my-4">About Us</p>
+            <p class="text-black text-base">Our Story</p>
+        </article>
+        {% include 'divider-black.html' %}
+        <!-- donate -->
+        <article class="my-4 px-8">
+            <div class="flex gap-2 items-center">
+                <a href="{{ url_for('write')}}"><img src="/static/icons/write.svg" alt=""></a>
+                <p class="text-lightgray text-base">Donate</p>
+            </div>
+        </article>
+        {% include 'divider-black.html' %}
+    </section>
+</section>

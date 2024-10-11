@@ -301,3 +301,54 @@ def upload_image_for_story(story_id=None):
     print(request.files)
     return ({}), 400
 
+
+
+@app.route('/login_with_google/', methods=['POST'], strict_slashes=False)
+def login_with_google():
+    # Retrieve token from the request
+    token = request.json.get('token')
+    
+    # Verify the token with Google's API
+    try:
+        # Google token verification endpoint
+        response = requests.get(
+            'https://oauth2.googleapis.com/tokeninfo',
+            params={'id_token': token}
+        )
+        user_info = response.json()
+        print('user info', user_info)
+        # If the token is invalid, return an error
+        if 'error_description' in user_info:
+            return jsonify({'success': False, 'message': 'Invalid token'}), 400
+
+        # Extract user information
+        google_id = user_info['sub']  # Google unique user ID
+        email = user_info['email']
+        name = user_info['name']
+        first_name = user_info.get('given_name')
+        last_name = user_info.get('family_name')
+        username = first_name + (last_name if last_name else '')
+        username = username.lower()
+        fake_password = user_info.get('jti')
+        picture = user_info['picture']
+
+        # Check if the user exists in the database
+        user = storage._session.query(User).where(User.email==email).first()
+
+        if user:
+            # User exists, log them in
+            login_user(user, remember=True)
+            print('actuaul user', user)
+        else:
+            # Create a new user
+            new_user = User(email=email, username=username, first_name=first_name, password=fake_password, last_name=last_name, avatar=picture)
+            new_user.save()
+            print(('new user created', new_user))
+            storage.save()
+            login_user(new_user)
+
+        return jsonify({'success': True})
+
+    except Exception as e:
+        print(f"Error during Google login: {e}")
+        return jsonify({'success': False, 'message': 'Login failed'}), 500
