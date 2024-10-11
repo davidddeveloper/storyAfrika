@@ -71,5 +71,5 @@ if args[0] == 'generate_token':
     payload['exp'] = (datetime.now() + timedelta(minutes=duration)).timestamp()
     
     token = jwt.encode(payload, os.environ.get('SECRET_KEY'), algorithm="HS256")
-    logging.info(f'created: {datetime.now().strftime('%Y:%m:%d, %H-%M-%S')} \n{token} \nexpires: {(datetime.now() + timedelta(minutes=duration)).strftime('%Y:%m:%d, %H-%M-%S')}')
+    logging.info(f"created: {datetime.now().strftime('%Y:%m:%d, %H-%M-%S')} \n{token} \nexpires: {(datetime.now() + timedelta(minutes=duration)).strftime('%Y:%m:%d, %H-%M-%S')}")
     
