@@ -14,7 +14,7 @@
 
     <!-- google oAuth2 client id -->
     <meta name="google-signin-client_id" content="25158261190-9emalbugfgsvbn9cv7fao3vp6kmi3h37.apps.googleusercontent.com">
-
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <meta name="referrer" content="no-referrer-when-downgrade">
     <meta name="Cross-Origin-Opener-Policy" content="">
 
@@ -61,23 +61,31 @@
     {% include 'confirm-deletion.html' %}
 
     <script>
-      console.log('in function')
-      function onSignIn(googleUser) {
-        console.log('called!')
-        var profile = googleUser.getBasicProfile();
-        console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-        console.log('Name: ' + profile.getName());
-        console.log('Image URL: ' + profile.getImageUrl());
-        console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-      }
-
-      function signOut() {
-        var auth2 = gapi.auth2.getAuthInstance();
-        auth2.signOut().then(function () {
-          console.log('User signed out.');
-        });
-      }
-      
+      function handleCredentialResponse(response) {
+      // Get the ID token
+      const id_token = response.credential;
+      console.log(id_token)
+      // Send the ID token to the server
+      fetch("/login_with_google", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ token: id_token })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          console.log('status', data.success)
+          // User is successfully logged in, redirect to profile or dashboard
+          window.location.href = "/";
+        } else {
+          // Handle errors
+          console.error("Login failed", data.message);
+        }
+      })
+      .catch(err => console.error("Error during login", err));
+    }  
     </script>
 </body>
 </html>
