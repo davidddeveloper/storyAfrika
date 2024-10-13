@@ -301,3 +301,19 @@ def upload_image_for_story(story_id=None):
     print(request.files)
     return ({}), 400
 
+
+
+@app.route(
+    '/topic/<string:name>/',
+    methods=['GET'],
+    strict_slashes=False
+)
+def topic(name=None):
+    if name is None:
+        abort(404)
+
+    topic = storage._session.query(Topic).where(Topic.name==name).first()
+    if topic is None:
+        abort(404)
+
+    return render_template('topic/topic.html', topic=topic)
