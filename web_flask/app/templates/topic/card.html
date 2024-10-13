@@ -30,7 +30,7 @@
     <!-- contributors -->
     <section class="topic-contributors-container flex mt-[50px] flex-col gap-5 hidden">
         {% for follower in topic.followers %}
-            {% set user = follower.users %}  <!-- remember to change users to user -->
+            {% set user = follower.user %}  <!-- remember to change users to user -->
             <article>
                 {% include 'components/profile-card-sm.html' %}
                 <p class="text-xs text-lightgray">I was laughed at when I started fashion, but today I represent my country Ghana in the biggest fashion show</p>

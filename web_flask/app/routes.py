@@ -28,7 +28,23 @@ print(base_dir)
 @app.route("/", methods=['GET', 'POST'], strict_slashes=False)
 @login_required
 def home():
-    """ Home View """
+    """
+    Endpoint for the homepage. This endpoint handles both get and post requests
+    It is only accessible to logged in users.
+
+    If a post request is made, it checks if there is a file in the request and
+    updates the user's avatar if it is a valid image. If the file is not an image,
+    or if the request does not contain a file, the file is ignored.
+
+    If the request contains a form, the form is validated and the user's
+    username, email or password is updated if the form is valid.
+
+    If the form is not valid, the errors are printed to the console.
+
+    If a get request is made, or if the form is not valid, the page is rendered
+    with the current user's data, all users, topics, stories, and stories the
+    current user is following.
+    """
     form = UserUpdateForm()
 
     if request.method == 'POST':
@@ -78,6 +94,12 @@ def home():
         "/story/<string:story_id>/", strict_slashes=False, methods=['GET', 'POST']
 )
 def story(story_id=None):
+    """
+    story: renders a story page
+
+        - story_id: the uuid of the story
+
+    """
     story = storage.get(Story, story_id)
     if story is None:
         abort(404)
@@ -89,6 +111,12 @@ def story(story_id=None):
     "/story/write/", strict_slashes=False, methods=['GET', 'POST']
 )
 def write():
+    """
+    write: renders a write page
+
+        - GET: renders a blank page to write a story
+        - POST: saves the story with the given image
+    """
     if request.method == 'POST':
         story = storage.get(Story, request.form.get('story_id'))
         if request.files:
@@ -113,7 +141,13 @@ def write():
     "/login", strict_slashes=False, methods=['GET', 'POST']
 )
 def login():
-    """ Login View """
+    """
+    login: renders a login page
+
+        - GET: renders a login form
+        - POST: checks if the given credentials are valid, if they are, logs the
+            user in and redirects them to the next page
+    """
     if current_user.is_authenticated:
         return redirect(url_for('home'))
 
@@ -176,12 +210,22 @@ def login():
 
 @app.route('/logout')
 def logout():
+    """
+    logout user and redirect to login page
+    """
     logout_user()
     return redirect(url_for('login'))
 
 
 @app.route('/register', methods=['GET', 'POST'], strict_slashes=False)
 def register():
+    """
+    register user
+
+    renders a registration form on GET request
+    processes the form data on POST request
+    saves the user to the database and redirects to login page
+    """
     if current_user.is_authenticated:
         return redirect(url_for('home'))
 
@@ -309,6 +353,18 @@ def upload_image_for_story(story_id=None):
     strict_slashes=False
 )
 def topic(name=None):
+    """
+    Endpoint to render a topic page.
+
+    Parameters:
+        name (str): The name of the topic to render.
+
+    Returns:
+        The rendered HTML page.
+
+    Raises:
+        404: If the topic is not found.
+    """
     if name is None:
         abort(404)
 
@@ -316,10 +372,35 @@ def topic(name=None):
     if topic is None:
         abort(404)
 
+    contributors = storage._session.query(User).where(User.id.in_(topic.contributors)).all()
     return render_template('topic/topic.html', topic=topic)
 @app.route('/login_with_google/', methods=['POST'], strict_slashes=False)
 def login_with_google():
     # Retrieve token from the request
+    """
+    Endpoint to handle a login attempt with a Google token.
+
+    Request should contain a JSON payload with a single key-value pair:
+    {
+        "token": <string>
+    }
+
+    The function verifies the token with Google's API, extracts user information
+    from the response, and checks if the user exists in the database. If the user
+    exists, they are logged in. If the user doesn't exist, a new user is created
+    with the extracted information and logged in.
+
+    :return:
+        A JSON response with a single key-value pair:
+        {
+            "success": <bool>
+        }
+        If the login is successful, the "success" key has a value of True. If
+        the login fails, the value is False, and an optional "message" key
+        contains a string with an error message.
+    :rtype:
+        tuple
+    """
     token = request.json.get('token')
     
     # Verify the token with Google's API

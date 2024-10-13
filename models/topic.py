@@ -18,6 +18,16 @@ if os.getenv('STORAGE') in ['db', 'DB']:
             'topic_id', String(60), ForeignKey('topics.id'), primary_key=True
         )
     )
+    topic_user_association = Table(
+        'topic_user_association',
+        Base.metadata,
+        Column(
+            'user_id', String(60), ForeignKey('users.id'), primary_key=True
+        ),
+        Column(
+            'topic_id', String(60), ForeignKey('topics.id'), primary_key=True
+        )
+    )
 
 
 class Topic(BaseModel, ImageUpload, Base):
@@ -37,7 +47,9 @@ class Topic(BaseModel, ImageUpload, Base):
             backref='topics', lazy=True
         )
         followers = relationship('TopicFollower', backref='topic', lazy=True)
-        # creator = Column(String(60), ForeignKey("users.id"), nullable=False)
+
+        contributors = relationship('User', secondary=topic_user_association, backref='topics', lazy=True)
+        creator = Column(String(60), ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     else:
         name = ''
         description = ''
