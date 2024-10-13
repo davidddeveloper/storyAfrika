@@ -53,3 +53,21 @@ INFO:sqlalchemy.engine.Engine:[generated in 0.00128s] {'param_1': 'ee152b0a-a06d
 INFO:root:created: 2024:10:09, 04-43-33 
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkX2F0IjoiMjAyNC0wOS0xN1QyMjoxOToyMiIsInNob3J0X2JpbyI6bnVsbCwidXBkYXRlZF9hdCI6IjIwMjQtMDktMTdUMjI6MTk6MjMiLCJhYm91dCI6bnVsbCwiZmlyc3RfbmFtZSI6bnVsbCwibGFzdF9uYW1lIjpudWxsLCJmdWxsX25hbWUiOm51bGwsInVzZXJuYW1lIjoic3RvcnlhZnJpa2EiLCJhdmF0YXIiOm51bGwsImVtYWlsIjoic3RvcnlhZnJpa2EubGl2ZUBnbWFpbC5jb20iLCJpZCI6ImVlMTUyYjBhLWEwNmQtNDJiMC04MDJlLTQ3YjVhYmZlZjIzMyIsIl9fY2xhc3NfXyI6IlVzZXIiLCJyb2xlcyI6W3siY3JlYXRlZF9hdCI6IjIwMjQtMDktMTdUMjI6MTk6MjIiLCJ1cGRhdGVkX2F0IjoiMjAyNC0wOS0xN1QyMjoxOToyMiIsInJvbGUiOiJ1c2VyIiwiaWQiOiJhYjY5ZmQxNC03OGFmLTQxZDItYWQ4OC1hYTc2ZjQ0NzU3ZTciLCJfX2NsYXNzX18iOiJSb2xlIn1dLCJleHAiOjE3Mjg0NTI2MTMuOTQwMTc2fQ.2w1wj-8KhFxSu3knoZy_y_sag6pGEVUyTfWhW--FjOk 
 expires: 2024:10:09, 05-43-33
+INFO:sqlalchemy.engine.Engine:SELECT roles.`role` AS roles_role, roles.id AS roles_id, roles.created_at AS roles_created_at, roles.updated_at AS roles_updated_at 
+FROM roles 
+WHERE roles.`role` = %(role_1)s 
+ LIMIT %(param_1)s
+INFO:sqlalchemy.engine.Engine:[generated in 0.00065s] {'role_1': 'admin', 'param_1': 1}
+INFO:sqlalchemy.engine.Engine:INSERT INTO roles (`role`, id, created_at, updated_at) VALUES (%(role)s, %(id)s, %(created_at)s, %(updated_at)s)
+INFO:sqlalchemy.engine.Engine:[generated in 0.00062s] {'role': 'admin', 'id': '35395d02-8079-488f-8b2b-6947ce8ff755', 'created_at': datetime.datetime(2024, 9, 24, 16, 32, 42, 646859), 'updated_at': datetime.datetime(2024, 9, 24, 16, 32, 42, 646965)}
+INFO:sqlalchemy.engine.Engine:COMMIT
+INFO:sqlalchemy.engine.Engine:BEGIN (implicit)
+INFO:sqlalchemy.engine.Engine:INSERT INTO users (username, email, password, short_bio, about, first_name, last_name, full_name, avatar, id, created_at, updated_at) VALUES (%(username)s, %(email)s, %(password)s, %(short_bio)s, %(about)s, %(first_name)s, %(last_name)s, (concat(users.first_name, %(param_1)s, users.last_name)), %(avatar)s, %(id)s, %(created_at)s, %(updated_at)s)
+INFO:sqlalchemy.engine.Engine:[generated in 0.00043s] {'username': 'david', 'email': 'david@gmail.com', 'password': 'daveman', 'short_bio': None, 'about': None, 'first_name': None, 'last_name': None, 'param_1': ' ', 'avatar': None, 'id': 'a06fcbd6-c8f5-455e-8562-abece609f7d3', 'created_at': datetime.datetime(2024, 9, 24, 16, 32, 42, 640416), 'updated_at': datetime.datetime(2024, 9, 24, 16, 32, 42, 677743)}
+INFO:sqlalchemy.engine.Engine:SELECT roles.`role` AS roles_role, roles.id AS roles_id, roles.created_at AS roles_created_at, roles.updated_at AS roles_updated_at 
+FROM roles 
+WHERE roles.id = %(pk_1)s
+INFO:sqlalchemy.engine.Engine:[generated in 0.00034s] {'pk_1': '35395d02-8079-488f-8b2b-6947ce8ff755'}
+INFO:sqlalchemy.engine.Engine:INSERT INTO user_role_association (user_id, role_id) VALUES (%(user_id)s, %(role_id)s)
+INFO:sqlalchemy.engine.Engine:[generated in 0.00048s] {'user_id': 'a06fcbd6-c8f5-455e-8562-abece609f7d3', 'role_id': '35395d02-8079-488f-8b2b-6947ce8ff755'}
+INFO:sqlalchemy.engine.Engine:COMMIT

@@ -66,7 +66,7 @@ class User(BaseModel, ImageUpload, Base):
         )
         topic_following = relationship(
             'TopicFollower',
-            backref='users',
+            backref='users', # I should remember to change users to user here and in my templates
             lazy=True
         )
         avatar = Column(String(100), nullable=True) # path to avatar

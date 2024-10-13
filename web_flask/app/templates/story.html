@@ -1,19 +1,7 @@
 {% extends 'root.html' %}
 
 {% block  story %}
-    <header class="mt-[60px] container mx-auto flex justify-between items-center px-5 sm:px-2">
-        <!--storyafrika-->
-        <h1 class="text-xl"><a href="{{ url_for('home') }}">storyafrika</a></h1>
-        {% if current_user.avatar %}
-        <div class="rounded-full w-[50px] h-[50px] border">
-            <img class="rounded-full w-full h-full object-cover" src="{{current_user.avatar}}" alt="" srcset="">
-        </div>
-        {% else %}
-        <div class="rounded-full w-[50px] h-[50px] border">
-            <img class="rounded-full w-full h-full object-cover" src="https://picsum.photos/200/400" alt="" srcset="">
-        </div>
-        {% endif %}
-    </header>
+    {% include 'components/navbar.html' %}
     <main class="story-card" data-story_id={{story.id}}>
         <h2 class="container mx-auto font-medium text-[45px] mt-[60px] mb-[20px] px-5 sm:px-2">{{story.title}}</h2>
         <div class="profile mb-[30px] container mx-auto px-5 sm:px-2 ">

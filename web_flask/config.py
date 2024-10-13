@@ -19,3 +19,7 @@ class Config:
     MAX_CONTENT_LENGTH = 40 * 1024 * 1024
     UPLOAD_EXTENSIONS = ['.jpg', '.png', '.jpeg', '.gif', '.svg', '.webp', '.heif', '.heic', '.jfif']
     UPLOAD_PATH = os.path.join(os.path.dirname(__file__), '..', 'uploads')
+
+    # login or signup with google
+    GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
+    GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')

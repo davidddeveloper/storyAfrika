@@ -16,7 +16,7 @@ $(function () {
     // create a temporary story in database
     if (!localStorage.getItem('story_id')) {
         $.ajax({
-            url: 'http://127.0.0.1:4000/api/v1/stories/',
+            url: '/api/v1/stories/',
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${jwtToken}`
@@ -77,7 +77,7 @@ $(function () {
         $story.topics = topics
         $story.image = image
         $.ajax({
-            url: `http://127.0.0.1:4000/api/v1/stories/${$story_id}/`,
+            url: `/api/v1/stories/${$story_id}/`,
             method: "PUT",
             headers: {
                 Authorization: `Bearer ${jwtToken}`
@@ -96,7 +96,7 @@ $(function () {
         let $story_id = localStorage.getItem('story_id')
         //get the state of the story
         $.ajax({
-            url: `http://127.0.0.1:4000/api/v1/stories/${$story_id}/`,
+            url: `/api/v1/stories/${$story_id}/`,
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${jwtToken}`
@@ -312,7 +312,7 @@ $(function () {
     const target = $(this);
     const content = $currentBlock.text().replaceAll("⇅", "");
     const action = $(this).text().toLowerCase().replaceAll(" ", "-");
-    const url = `http://127.0.0.1:4000/api/v1/ai_assistive_writing?ask-ai=${action}&text=${content}`;
+    const url = `/api/v1/ai_assistive_writing?ask-ai=${action}&text=${content}`;
 
     //make api call to server
     $.ajax({
