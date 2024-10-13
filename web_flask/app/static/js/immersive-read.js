@@ -113,6 +113,7 @@ $(function () {
 		})
 	})
 
+	// fonts
 	// comic 
 	let changeFontInputs = $('.text-font-setting input');
 	changeFontInputs.each((idx, inputbox) => {
@@ -133,16 +134,46 @@ $(function () {
 	})
 
 	// themes
+	//set save theme on local storage
+	//text-black text-darkGrayForeground text-white text-lightgray bg-black bg-grey bg-sepia bg-darkGrey bg-white
+	const defaultTheme = `text-lightgray bg-white`
+	const removeDefaultTheme = () => {
+		$('body').removeClass(defaultTheme)
+		localStorage.removeItem('theme')
+	}
+
+	const setDefaultTheme = () => {
+		$('body').addClass(defaultTheme)
+		localStorage.setItem('theme', defaultTheme)
+	}
+
+	const setTheme = (themBtn) => {
+		removeTheme();
+		$('body').addClass(themBtn.data('theme'));
+		localStorage.setItem('theme', themBtn.data('theme'));
+	}
+
+	const removeTheme = () => {
+		$('body').removeClass(localStorage.getItem('theme'))
+	}
+	// set default theme
+	if (localStorage.getItem('theme')) {
+		$('body').addClass(localStorage.getItem('theme'))
+	} else {
+		setDefaultTheme()
+	}
+
+	$('body').addClass(localStorage.getItem('theme'))
 	let themesBtn = $('.themes-container .theme');
 	themesBtn.each((idx, themeHtml) => {
 		let theme = $(themeHtml);
 		theme.removeClass('active-column');
 		theme.on('click', (e) => {
 			$('.theme').removeClass('active-column')
-			$('body').removeClass('text-black text-darkGrayForeground text-white text-lightgray');
-			$('body').removeClass('bg-black bg-grey bg-sepia bg-darkGrey bg-white')
+			// remove default theme
 			theme.addClass('active-column');
-			$('body').addClass(theme.data('theme'));
+			setTheme(theme);
+			//setDefaultTheme()
 		})
 	})
 
@@ -159,6 +190,11 @@ $(function () {
 		} else {
 			alert("Sorry, your browser doesn't support text to speech!")
 		}
+	})
+
+	//hide toolbar
+	$('.content').on('click', () => {
+		readingPreferences.addClass('is-hidden').hide()
 	})
 
 })

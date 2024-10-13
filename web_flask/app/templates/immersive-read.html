@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css">
 
     <link rel="canonical" href="https://stories.storyafrika.live">
-    <link rel="icon" type="image/png" href="/static/images/storyafrika.png">
+    <link rel="icon" type="image/png" href="/static/images/logo.jpg">
     <link rel="me" href="https://www.linkedin.com/in/david-conteh-a42871253/">
     <title>storyafrika (Immersive Read) - {{story.title}}</title>
     <link rel="stylesheet" href="/static/immersive-read.css">
@@ -40,7 +40,7 @@
     gtag('config', 'G-FW17L5LYTT');
     </script>
 </head>
-<body class="bg-white text-lightgray transition-colors duration-1000">
+<body class="transition-colors duration-1000">
     <section class="toolbar-container flex justify-end items-center h-14 w-full bg-lightgray fixed top-0 z-10 transition-all duration-700 before:absolute before: before:mt-14 before:z-20 before:w-full before:h-full before:bg-transparent">
         <article class="flex flex-nowrap gap-4 text-white">
             <button class="listen-story setting-btn flex items-center gap-2 px-3 py-2 hover:bg-mediumpurple hover:rounded-sm"><img class="h-[20px] object-cover" src="/static/icons/listen.svg" alt=""><span class="hidden md:block">Listen</span></button>
@@ -56,11 +56,13 @@
                             <span class="text-xs" >Large</span>
                         </div>
                     </article>
-                    <article class="text-spacing-setting flex pretty p-switch p-slim justify-between mt-5">
+                    <article class="text-spacing-setting flex flex-col justify-between mt-5">
                         <h2 class="mb-2 text-offwhite text-base font-bold">Extra spacing between the letters</h2>
-                        <input type="checkbox" />
-                        <div class="state">
-                            <label>Letter Spacing</label>
+                        <div class="pretty p-switch p-slim flex gap-2">
+                            <input type="checkbox" />
+                            <div class="state">
+                                <label>Letter Spacing</label>
+                            </div>
                         </div>
                         <p class="text-sm mt-2 text-offset">Wider spacing could improve reading fluency</p>
                     </article>
@@ -69,21 +71,21 @@
                         <article class="flex flex-col gap-4">
 
                             <div class="pretty p-default p-round flex gap-2">
-                                <input type="radio" name="radio1" data-font="comic">
+                                <input type="radio" name="radio1" id="comic" data-font="comic">
                                 <div class="state">
-                                    <label>Comic</label>
+                                    <label for="comic">Comic</label>
                                 </div>
                             </div>
                             <div class="pretty p-default p-round flex gap-2">
-                                <input type="radio" name="radio1" data-font="cursive" checked>
+                                <input type="radio" name="radio1" id="cursive" data-font="cursive">
                                 <div class="state">
-                                    <label>Cursive</label>
+                                    <label for="cursive">Cursive</label>
                                 </div>
                             </div>
                             <div class="pretty p-default p-round flex gap-2">
-                                <input type="radio" name="radio1" data-font="sitka">
+                                <input type="radio" name="radio1" id="sitka" data-font="sitka">
                                 <div class="state">
-                                    <label>Sitka</label>
+                                    <label for="sitka">Sitka</label>
                                 </div>
                             </div>
                         </article>
@@ -137,7 +139,7 @@
             </div>
         </article>
     </section>
-    <section class="content container w-full p-4 sm:p-0 mx-auto font-sitka-large transition-colors duration-1000 sm:w-[720px]">
+    <section class="content container w-full p-5 sm:p-3 mx-auto transition-colors duration-1000 sm:w-[720px]">
         <h1 class=" mt-16 logo-text font-medium">storyafrika</h1>
         <article class="story-story-text  mt-5 text-[20px] flex flex-col gap-[25px] " data-story_id="{{story.id}}">
             <p id="story-text" class="">{{story.text}}</p>

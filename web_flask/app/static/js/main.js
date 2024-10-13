@@ -1,18 +1,15 @@
 $(function(){
-    let get_token = async () => {
-        let access_token;
-        await $.ajax({
-            type: "POST",
-            url: "http://127.0.0.1:4000/api/v1/auth/",
-            data: '{"email": "me@gmail.com", "password": "me"}',
-            contentType: "application/json",
-            success: function (response) {
-              access_token = response.data
-            }
-        });
-        return access_token
+    const getCookie = (name) => {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
     }
-    
+
+    const jwtToken = getCookie('jwt_token');
+
+    const checkToken = (response) => {
+        if (response.status == 401) location.replace('/logout')
+    }
 
     // delete temporary story
     // function to delete a story
@@ -24,8 +21,13 @@ $(function(){
         }
         const story_id = localStorage.getItem('story_id')
         return $.ajax({
-            type: 'DELETE',
-            url: `http://127.0.0.1:4000/api/v1/stories/${story_id}/`,
+            method: 'DELETE',
+            url: `/api/v1/stories/${story_id}/`,
+            headers: {
+                Authorization: `Bearer ${jwtToken}`
+            },
+            processData: false,
+            contentType: false,
             success: function (response) {
                 localStorage.removeItem('story_id')
             }
@@ -49,6 +51,7 @@ $(function(){
         $current_slider.css('transform', `translateX(${-$current_slider.data('current_index') * itemWidth}px)`); 
         if (currentIndex($current_slider) == 0) $('.prev').hide()
         if (currentIndex($current_slider) > 0) $('.prev').show()
+        console.log(currentIndex($current_slider), totalItems($current_slider))
         if (currentIndex($current_slider) == totalItems($current_slider)) $('.next').hide()
         if (currentIndex($current_slider) < totalItems($current_slider)) $('.next').show()
     }
@@ -81,6 +84,7 @@ $(function(){
             decrementCurrentIndex($current_slider)
             updateSliderPosition($current_slider)
             
+            $('.next').show()
         }
     });
 
@@ -153,25 +157,46 @@ $(function(){
     // load the state of a story text
     let $story_text_container = $('.story-story-text')
     const $story_id = $story_text_container.data('story_id')
+    const removeSkeleton = (container) => {
+        container.find('skeleton').remove()
+    }
+    const storyTextSkeleton = () => {
+        $story_text_container.html('<div class="skeleton skeleton-radius"></div>')
+        $story_text_container.append('<div class="my-5"></div>')
+        $story_text_container.append('<div class="skeleton skeleton-radius"></div>')
+        $story_text_container.append('<div class="my-5"></div>')
+        $story_text_container.append('<div class="skeleton skeleton-radius"></div>')
+
+    }
+
+    storyTextSkeleton()
+
+    setTimeout(() => {
+        $.ajax({
+            url: `/api/v1/stories/${$story_id}`,
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${jwtToken}`
+            },
+            success: (response) => {
+                let content = ''
+                removeSkeleton($story_text_container)
+                JSON.parse(response.text).forEach(block => {
+                    console.log(block.content)
+                    try {
+                        let temp = $(block.content).removeAttr('contenteditable')
+                        content = content + temp[0].outerHTML;
+                    }
+                    catch {
+                        content = block.content;
+                    }
+                })
+                let $jcontent = $(`<div>${content}</div>`.replaceAll("⇅", "")).html();
+                $story_text_container.html(`${$jcontent}`)
+            }
+        })
+    }, 2000)
     
-    $.get(`http://127.0.0.1:4000/api/v1/stories/${$story_id}`, function (response, status) {
-        if (status == 'success') {
-            let content = ''
-            console.log('asdf4134', JSON.parse(response.text))
-            JSON.parse(response.text).forEach(block => {
-                console.log(block.content)
-                try {
-                    let temp = $(block.content).removeAttr('contenteditable')
-                    content = content + temp[0].outerHTML;
-                }
-                catch {
-                    content = block.content;
-                }
-            })
-            let $jcontent = $(`<div>${content}</div>`.replaceAll("⇅", "")).html();
-            $story_text_container.html(`${$jcontent}`)
-        }
-    })
 
     // load stories when user scroll to the bottom
     const $current_user_id = $('body').data('current_user_id')
@@ -197,17 +222,17 @@ $(function(){
     let $stories_container = $('.stories-container')
     let $story = (story) => {
         return (`
-        <article class="shrink-0 story-card fade-in max-h-[350px] relative" data-story_id="${story.id}">
+        <article class="shrink-0 story-card max-h-[350px] relative" data-story_id="${story.id}">
             <div class="flex w-[300px] items-center">
             <div class="profile flex items-center">
-                <img class=" w-[40px] h-[40px] object-cover border-2 rounded-full" src="/uploads/${story.writer.avatar}/${story.writer.id}" alt="">
+                <img class=" w-[40px] h-[40px] object-cover border-2 rounded-full" src="${story.writer.avatar}" alt="">
                 <h2 class="ml-5 text-sm">${story.writer.username}</h2>
             </div>
             <div class="w-[10px] h-3 border-lightgray border-l ml-[14px] mr-[8px]"></div>
             <div class="time text-xs">
                 ${
-                    moment !== undefined ? moment(story.created_at).fromNow() : story.created_at
-                    
+                    //moment !== undefined ? moment(story.created_at).fromNow() : story.created_at
+                    ""  
                 }
             </div>
             </div>
@@ -282,7 +307,7 @@ $(function(){
         <hr class="border-black">
     `)}
 
-    /*$.get(`http://127.0.0.1:4000/api/v1/users/${$current_user_id}/following_stories/`, function ($response, $status) {
+    /*$.get(`/api/v1/users/${$current_user_id}/following_stories/`, function ($response, $status) {
         if ($status == 'success') {
             $response.forEach(story_data => {
                 $stories_container.append($story(story_data))
@@ -293,61 +318,158 @@ $(function(){
         }
     })*/
 
+    const loadingIndicator = () => {
+        const html = `
+            <article class="loading-indicator shrink-0 story-card fade-in max-h-[350px] relative">
+                <div class="flex w-[300px] items-center">
+                    <div class="profile flex items-center">
+                        <!-- image -->
+                        <div class="w-[40px] h-[40px] object-cover border-2 rounded-full skeleton"></div>
+                        <h2 class="ml-5 text-sm py-3 px-10 skeleton skeleton-radius"></h2>
+                    </div>
+                </div>
+                <div class="flex justify-between gap-[25px]">
+                    <div class="mt-3 flex flex-col w-3/4">
+                        <h3 class="shrink-0 skeleton skeleton-radius"></h3>
+                        <p class="shrink-0 mt-[10px] w-full max-w-[400px] sm:w-[250px] md:w-[400px] skeleton skeleton-radius h-20"></p>
+                    </div>
+                    <div class="story-image self-center w-1/4 h-20 skeleton skeleton-radius">
+                        <!-- image -->
+                    </div>
+                </div>
+                <div class="px-3 mt-[15px] flex items-center justify-between">
+                    <div class="flex items-center skeleton skeleton-radius w-2/5">
+                    </div>
+                    <div class="flex flex-row gap-2 justify-between items-center skeleton skeleton-radius w-2/12">
+                    </div>
+                </div>
+            </article>
+            <hr class="loading-indicator skeleton skeleton-divider skeleton-radius fade-in">
+        `
+        $stories_container.append(html)
+        $stories_container.append(html)
+    }
+
+    const removeLoadingIndicator = () => {
+        $stories_container.find('.loading-indicator').remove()
+    }
+
     // load data when the user scrolls to the bottom
     let page = 1;
-    const perPage = 5;
+    const perPage = 8;
     let loading = false;
 
-    function fetchStories(url, status) {
+    function fetchStories(url, new_tab) {
         if (loading) return
         loading = true
-        let $url = `http://127.0.0.1:4000/api/v1/topics/${$current_user_id}/foryou_stories?page=${page}&per_page=${perPage}`
+        let $url = `/api/v1/topics/foryou_stories?page=${page}&per_page=${perPage}`
         if (url) {
             $url = url
         }
-        $.get($url, function ($response, $status, $error) {
-            console.log($response)
-            if ($status == 'success') {
-                if (status == 'topic') $stories_container.empty()
-                $response.stories.forEach($story_data => {
-                    $stories_container.append($story($story_data))
-                })
-                if ($response.stories.length === 0) {
-                    $stories_container.html('<h1>Try following some people to see their post here</h1>')
-                    if (status == 'topic') $stories_container.html("<h1>There aren't any story yet for this topic</h1>")
-                }
-                if (page < $response.total_pages) {
-                    page++;
-                    loading = false
-                } else {
-                    $('.stories-container').off('scroll', handleScroll);
-                }
 
-                showMoreTools()
-            }
-            else {
-                $stories_container.html('<h1>Failed to load data</h1>')
-                loading = false;
-            }
-        })
+        if (!new_tab) {
+            loadingIndicator()
+            console.log($stories_container)
+        }
+        setTimeout(() => {
+            $.ajax({
+                url: $url,
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${jwtToken}`
+                },
+                success: (response) => {
+                    checkToken(response)
+                    if (new_tab) $stories_container.empty()
+                    
+                    removeLoadingIndicator()
+                    response.stories.forEach($story_data => {
+                        $stories_container.append($story($story_data))
+                    })
+                    if (response.stories.length === 0) {
+                        $stories_container.html('<h1>Try following some people to see their post here</h1>')
+                        if (new_tab) $stories_container.html("<h1>There aren't any story yet for this topic</h1>")
+                    }
+                    if (page < response.total_pages) {
+                        page++;
+                        loading = false
+                    } else {
+                        $('.stories-container').off('scroll', handleScroll);
+                    }
+    
+                    showMoreTools()
+                },
+                error: (err) => {
+                    $stories_container.html('<h1>Failed to load data</h1>')
+                    loading = false;
+                    checkToken(err)
+                }
+            })
+        }, 2000)
+        
+    }
+
+    const skeleton = () => {
+        const html = `
+            <article class="shrink-0 story-card fade-in max-h-[350px] relative">
+                <div class="flex w-[300px] items-center">
+                    <div class="profile flex items-center">
+                        <!-- image -->
+                        <div class="w-[40px] h-[40px] object-cover border-2 rounded-full skeleton"></div>
+                        <h2 class="ml-5 text-sm py-3 px-10 skeleton skeleton-radius"></h2>
+                    </div>
+                </div>
+                <div class="flex justify-between gap-[25px]">
+                    <div class="mt-3 flex flex-col w-3/4">
+                        <h3 class="shrink-0 skeleton skeleton-radius"></h3>
+                        <p class="shrink-0 mt-[10px] w-full max-w-[400px] sm:w-[250px] md:w-[400px] skeleton skeleton-radius h-20"></p>
+                    </div>
+                    <div class="story-image self-center w-1/4 h-20 skeleton skeleton-radius">
+                        <!-- image -->
+                    </div>
+                </div>
+                <div class="px-3 mt-[15px] flex items-center justify-between">
+                    <div class="flex items-center skeleton skeleton-radius w-2/5">
+                    </div>
+                    <div class="flex flex-row gap-2 justify-between items-center skeleton skeleton-radius w-2/12">
+                    </div>
+                </div>
+            </article>
+            <hr class="skeleton skeleton-divider skeleton-radius fade-in">
+
+        `
+
+        /** append three times */
+        $stories_container.html(html)
+        $stories_container.append(html)
+        $stories_container.append(html)
     }
 
     function handleScroll() {
-        let container = $('.stories-container')
-        let height = container.height()
-        let scrollTop = container.scrollTop()
-        let scrollHeight = container.prop('scrollHeight')
-
-        if (Math.round(height + scrollTop) >= (scrollHeight - ((5/100) * scrollHeight))) {
-            if (localStorage.getItem('story_id')) delete_story()
-            if (window.location.pathname === '/') fetchStories();  // only on home
+        let container = $('.stories-container');
+        let height = container.outerHeight();  // Use outerHeight for better accuracy
+        let scrollTop = container.scrollTop();
+        let scrollHeight = container.prop('scrollHeight');
+        
+        // Adding a buffer to handle floating-point precision issues
+        let buffer = 10;  // Pixels to account for rounding issues
+    
+        // Check if scrolled near the bottom
+        if (height + scrollTop >= scrollHeight - buffer) {
+            if (localStorage.getItem('story_id')) {
+                delete_story();  // Ensure this function exists
+            }
+            if (window.location.pathname === '/') {
+                fetchStories();  // Fetch stories only on the homepage
+            }
         }
     }
 
     $('.stories-container').scroll(handleScroll);
+    // initially fetch foryou story on the story on homepage
     if (window.location.pathname === '/') {
         if (localStorage.getItem('story_id')) delete_story().then(() => fetchStories());  // only on home
-        else fetchStories()
+        fetchStories(undefined, true)
     }
 
     // get stories for a particular topic
@@ -358,7 +480,8 @@ $(function(){
         $('.topic-btn, .for-you, .following').removeClass('border-b')
         $(this).addClass('border-b')
         loading = false;
-        fetchStories(`http://127.0.0.1:4000/api/v1/topics/${topic_id}/${$current_user_id}/stories?page=${page}&per_page=${perPage}`, 'topic')
+        skeleton()
+        fetchStories(`/api/v1/topics/${topic_id}/stories?page=${page}&per_page=${perPage}`, true)
     })
 
     $('.following').on('click', function () {
@@ -367,8 +490,9 @@ $(function(){
         loading = false;
         $('.topic-btn, .for-you').removeClass('border-b')
         $stories_container.empty()
+        skeleton()
         $(this).addClass('border-b')
-        fetchStories(`http://127.0.0.1:4000/api/v1/users/${$current_user_id}/following_stories?page=${page}&per_page=${perPage}`)
+        fetchStories(`/api/v1/users/following_stories?page=${page}&per_page=${perPage}`, true)
     })
 
     $('.for-you').on('click', function () {
@@ -377,8 +501,9 @@ $(function(){
         loading = false;
         $('.topic-btn, .following').removeClass('border-b')
         $stories_container.empty()
+        skeleton()
         $(this).addClass('border-b')
-        fetchStories()
+        fetchStories(undefined, true)
     })
 
     const replaceButton = ($target, $value) => {
@@ -400,9 +525,13 @@ $(function(){
         let $story = $(e.target.closest('.story-card'))
         let [$current_user_id, $story_id] = story_and_user_id($story)
 
-        // like the story
-        $.get(`/stories/${$story_id}/like/`, function (response, status) {
-            if (status == 'success') {
+        $.ajax({
+            url: `/api/v1/stories/${$story_id}/like/`,
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${jwtToken}`
+            },
+            success: (response) => {
                 // update like count and btn
                 let $like_count = $story.find('.like-count')
                 let likedBtn = '<button class="like-btn liked-btn"><img class="block active:bg-lightblue" src="/static/icons/liked.svg" alt=""></button>'
@@ -419,18 +548,22 @@ $(function(){
                     $target.replaceWith('<button class="like-btn like-btn-trans"><img class="block active:bg-lightblue" src="/static/icons/like.svg" alt=""/></button>')
                     replaceButton($('.like-btn'), likeBtn)
                 }
-
-
             }
         })
+        
     })
 
     //follow user or unfollow user
     $('body').delegate('.follow', 'click', function () {
         let $target = $(this)
         let user_id = $target.closest('.follow-card').data('user_id')
-        $.get(`/users/${user_id}/follow/`, function (response, status) {
-            if (status == 'success') {
+        $.ajax({
+            url: `/api/v1/users/follow/${user_id}`,
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${jwtToken}`
+            },
+            success: (response) => {
                 console.log(response)
                 if ($target.hasClass('unfollow')) $target.html('<img src="/static/icons/plus.svg" alt="">Follow').removeClass('unfollow')
                 else $target.html('<img src="/static/icons/correct.svg" alt="">Following').addClass('unfollow')
@@ -443,8 +576,13 @@ $(function(){
     $('body').on('click', '.bookmark-btn', function () {
         let $target = $(this)
         let story_id = $target.closest('.story-card').data('story_id')
-        $.get(`/stories/${story_id}/bookmark/`, function (response, status) {
-            if (status == 'success') {
+        $.ajax({
+            url: `/api/v1/stories/${story_id}/bookmark/`,
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${jwtToken}`
+            },
+            success: () => {
                 let bookmarkBtn = `<button class="bookmark-btn"><img class='bookmark-img' src="/static/icons/bookmark.svg" alt="" srcset=""></button>`
                 let bookmarkedBtn = `<button class="bookmark-btn unbookmark-btn"><img class='bookmark-img' src="/static/icons/bookmarked.svg" alt="" srcset=""></button>`
 
@@ -502,9 +640,13 @@ $(function(){
     $('.search-bookmark-form').on('submit', function (e) {
         e.preventDefault()
         let searchData = bookmarkSearchInput.val()
-
-        $.get(`/search_bookmarked_stories/${searchData}`, function (response, status) {
-            if (status == 'success') {
+        $.ajax({
+            url: `/api/v1/search_bookmarked_stories?data=${searchData}`,
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${jwtToken}`
+            },
+            success: (response) => {
                 console.log(response)
                 bookmarksContainer.empty()
                 response.forEach((story, idx) => {
@@ -542,26 +684,40 @@ $(function(){
             let form_data = new FormData()
             form_data.append('file', file)
             if (localStorage.getItem('story_id')) form_data.append('story_id', localStorage.getItem('story_id'))
-            form_data.append('csrf_token', $('#csrfToken').val())
+            //form_data.append('csrf_token', $('#csrfToken').val())
 
+            const getUrl = () => {
+                if (window.location.pathname == '/') {
+                    return `/users/upload_avatar/`
+                } else {
+                    return `/stories/${localStorage.getItem('story_id')}/upload_image/`
+                }
+            }
             $.ajax({
-                url: '',
-                type: 'POST',
+                method: 'POST',
+                url: `/api/v1${getUrl()}`,
+                headers: {
+                    Authorization: `Bearer ${jwtToken}`
+                },
                 data: form_data,
-                contentType: false,
                 processData: false,
+                contentType: false,
                 success: function(response) {
+                    console.log('this is the response', response)
                     if (window.location.pathname == '/story/write/' ||
                         window.location.pathname == '/story/write'
                     ) {
-                        $('#story-image').attr('src', `/uploads/${file.name.replaceAll(" ", "_")}/${$current_user_id}`)
+                        //$('#story-image').attr('src', `/uploads/${file.name.replaceAll(" ", "_")}/${$current_user_id}`)
+                        $('#story-image').attr('src', response.image)
 
                     } else if (window.location.pathname == '/') {
-                        $('.profile-image').attr('src', `/uploads/${file.name.replaceAll(" ", "_")}/${$current_user_id}`)
+
+                        $('.profile-image').attr('src', response.image)
+                        //$('.profile-image').attr('src', `/uploads/${file.name.replaceAll(" ", "_")}/${$current_user_id}`)
                         //$('.home-profile-img').attr('src', `/uploads/${file.name.replaceAll(" ", "_")}`)
 
                     }
-                    if (!response.includes('/story/write/')) window.location.reload()
+                    //if (!response.includes('/story/write/')) window.location.reload()
                 },
                 error: function(error) {
                     console.error('Error:', error);
@@ -625,6 +781,11 @@ $(function(){
             }
         })
 
+        //view image on story
+        $('.view-story-image').on('click', () => {
+            $(this).addClass('block absolute').removeClass('w-full h-full').focus()
+        })
+
         // hide divider and card when divider is clicked
         divider.on('click', function () {
             divider.hide()
@@ -678,11 +839,38 @@ $(function(){
         $('.menu').removeClass('-left-[100%]').addClass('left-0')
     })
 
+    //show images in story when initial image is clicked
+    //initial hide view-image
+    $('.show-story-images-container').addClass('hidden')
+
     let viewImages = $('.view-image');
     viewImages.each((idx, img) => {
         let image = $(img);
-        image.on('click', () => {
-            image.addClass('block container mx-auto top-0 absolute h-screen')
+        let storyImagesContainer = $('.show-story-images-container');
+        image.on('click', function () {
+            if (storyImagesContainer.hasClass('hidden')) {
+                storyImagesContainer.removeClass('hidden');
+                $('.divider').addClass('bg-offset opacity-45').show();
+            } else {
+                storyImagesContainer.addClass('hidden');
+            }
+        })
+
+        storyImagesContainer.on('click', function (e) {
+            let target = $(e.target)
+            console.log(target)
+            if (target.hasClass('story-wrapper')) {
+                return;
+            } else if (target.hasClass('next')) {
+                return;
+            } else if (target.hasClass('prev')) {
+                return;
+            } else if (e.target.localName === 'img') {
+                console.log(e.target.className)
+                return;
+            } else {
+                $('.divider').click()
+            }
         })
     })
 })

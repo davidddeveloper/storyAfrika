@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/static/jquery-ui.css">
 
 </head>
-<header class="mt-[60px] container mx-auto relative flex justify-between items-center">
+<header class="mt-[60px] container mx-auto relative flex justify-center items-center">
     {#{% with messages = get_flashed_messages() %}
       {% if messages %}
       <ul class="ml-5 float right absolute">
@@ -18,6 +18,7 @@
       </ul>
       {% endif %}
     {% endwith %}#}
+    <div class="w-full md:w-[90%] lg:w-[80%] flex justify-between items-center">
     <div class="flex gap-5">
         <h1 class="text-xl"><a href="{{ url_for('home')}}">storyafrika</a></h1>
         <button class="save-state">Save</button>
@@ -28,6 +29,7 @@
         {% else %}
         <img class="rounded-full w-full h-full object-cover" src="/static/images/default-profile-image.png" alt="" srcset="">
         {% endif %}
+    </div>
     </div>
 </header>
 <main class="container mx-auto relative">
@@ -41,7 +43,7 @@
             <input id="title" type="text" class="border story-title-input pl-1 py-1 border-lightblue focus:outline-lightblue" autofocus>
             <div class="w-full h-full">
                 <h3 class="text-lightgray my-5">Select Topics</h3>
-                <select class="select-topics border w-full no-scrollbar pl-1 py-1 border-lightblue focus:outline-lightblue" name="topics-selected" id="topics-selected" multiple>
+                <select class="select-topics-container border w-full no-scrollbar pl-1 py-1 border-lightblue focus:outline-lightblue" name="topics-selected" id="topics-selected" multiple>
                     {% for topic in topics.values() %}
                     <option value="{{topic.name}}">{{topic.name}}</option>
                     {% endfor %}
@@ -58,7 +60,7 @@
         <h3 class="text-lightgray mb-5">Select topics</h3>
         <form action="" class="flex flex-col gap-5">
             <input id="title" type="text" class="border story-title-input pl-1 py-1 border-lightblue focus:outline-lightblue" autofocus>
-            <select class="border pl-1 py-1 border-lightblue focus:outline-lightblue" name="topic" id="" multiple>
+            <select class="select-topics-container border pl-1 py-1 border-lightblue focus:outline-lightblue" name="topic" id="" multiple>
                 {% for topic in topics.values() %}
                 <option value="{{topic.name}}">{{topic.name}}</option>
                 {% endfor %}

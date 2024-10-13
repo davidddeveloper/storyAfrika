@@ -9,15 +9,16 @@ from web_flask.app.forms import LoginForm, UserRegistrationForm, UserUpdateForm
 from flask_login import current_user, login_user
 from flask_login import logout_user, login_required
 from flask import render_template, redirect, url_for, request, flash, \
-    abort, send_from_directory
+    abort, send_from_directory, jsonify
 from models.topic import Topic
 from models.story import Story
 from models.user import User
 from urllib.parse import urlparse
-from flask import session
+from flask import session, make_response
 from werkzeug.utils import secure_filename
 import os
 import imghdr
+import requests
 
 
 
@@ -148,13 +149,29 @@ def login():
                 and urlparse(next_page).hostname\
                 != urlparse(request.url).hostname:
             # not a relative path and not from my domain
-            return redirect(url_for('home'))
+            next_page = url_for('home')
 
-        return redirect(next_page)
+        # generate a jwttoken
+        response = requests.post('http://127.0.0.1:4000/api/v1/auth', json={
+            "email": f"{form.email.data}",
+            "password": f"{form.password.data}"
+        }, headers={
+            'Content-Type': 'application/json'
+        },)
+        
+        token = response.json()
+        print(token)
+        response =  make_response(redirect(next_page))
+        response.set_cookie('jwt_token', token.get('data'))
+
+        return response
+    
     else:
         print('>>>>>', form.errors)
 
-    return render_template('login.html', form=form)
+    response = make_response(render_template('login.html', form=form))
+    response.set_cookie('test', 'xyz')
+    return response
 
 
 @app.route('/logout')
@@ -177,6 +194,10 @@ def register():
         )
         # save password as hash
         user.set_password(user.password)
+
+        # set default profile image
+        user.set_default_profile()
+
         # save user to storage
         storage.new(user)
         storage.save()
@@ -244,6 +265,12 @@ def upload(filename, user_id):
     user_dir = os.path.join(app.config['UPLOAD_PATH'], user.get_id())
     return send_from_directory(user_dir, filename)
 
+@app.route(
+    '/test_html/'
+)
+def test_html():
+    return render_template('skeletons/story_card.html')
+
 def validate_image(stream):
     header = stream.read(512)
     stream.seek(0)
@@ -252,5 +279,76 @@ def validate_image(stream):
         return None
     return '.' + (format if format != 'jpeg' else 'jpg')
 
+@app.route("/api/v1/stories/<string:story_id>/upload_image/", methods=['OPTIONS', 'POST'], strict_slashes=False)
+def upload_image_for_story(story_id=None):
+    if story_id is None:
+         abort(404)
+
+    story = storage.get(Story, story_id)
+    if story is None:
+         abort(404)
+
+    if request.files:
+            try:
+                # save the file
+                path_2_file = story.image_upload(request.files['file'], auth.current_user.id)
+            except Exception:
+                return jsonify({"Error": "Failed to upload image"})
+            if path_2_file:
+                story.image = path_2_file
+                storage.save()
+            return jsonify(story.to_dict()), 200
+    print(request.files)
+    return ({}), 400
 
 
+
+@app.route('/login_with_google/', methods=['POST'], strict_slashes=False)
+def login_with_google():
+    # Retrieve token from the request
+    token = request.json.get('token')
+    
+    # Verify the token with Google's API
+    try:
+        # Google token verification endpoint
+        response = requests.get(
+            'https://oauth2.googleapis.com/tokeninfo',
+            params={'id_token': token}
+        )
+        user_info = response.json()
+        print('user info', user_info)
+        # If the token is invalid, return an error
+        if 'error_description' in user_info:
+            return jsonify({'success': False, 'message': 'Invalid token'}), 400
+
+        # Extract user information
+        google_id = user_info['sub']  # Google unique user ID
+        email = user_info['email']
+        name = user_info['name']
+        first_name = user_info.get('given_name')
+        last_name = user_info.get('family_name')
+        username = first_name + (last_name if last_name else '')
+        username = username.lower()
+        fake_password = user_info.get('jti')
+        picture = user_info['picture']
+
+        # Check if the user exists in the database
+        user = storage._session.query(User).where(User.email==email).first()
+
+        if user:
+            # User exists, log them in
+            login_user(user, remember=True)
+            print('actuaul user', user)
+        else:
+            # Create a new user
+            new_user = User(email=email, username=username, first_name=first_name, password=fake_password, last_name=last_name, avatar=picture)
+            new_user.save()
+            print(('new user created', new_user))
+            storage.save()
+            login_user(new_user)
+
+        return jsonify({'success': True})
+
+    except Exception as e:
+        print(f"Error during Google login: {e}")
+        return jsonify({'success': False, 'message': 'Login failed'}), 500

@@ -42,7 +42,7 @@ class Story(BaseModel, ImageUpload, Base):
         """ Dictionary representation of the object """
 
         dictionary = super().to_dict()
-        dictionary['writer'] = self.writer.to_dict()
+        dictionary['writer'] = self.writer.to_dict() if self.writer else None
         dictionary['read_time'] = self.read_time
 
 
@@ -101,35 +101,39 @@ class Story(BaseModel, ImageUpload, Base):
         )
 
 
-    @staticmethod
+    @classmethod
     def search_title(cls, data):
         """ Search story by searching in it title"""
         from models.engine import storage
 
-        return storage.query(cls).where(cls.title.contains(data))
+        return storage._session.query(cls).where(cls.title.contains(data))
     
-    @staticmethod
+    @classmethod
     def search_text(cls, data):
         """ search story by searching in it text"""
         from models.engine import storage
 
-        return storage.query(cls).where(cls.text.contains(data))
+        return storage._session.query(cls).where(cls.text.contains(data))
 
 
-    @staticmethod
+    @classmethod
     def search(cls, data):
         """ search in title and text """
         from models.engine import storage
         return (
-            storage.query(Story)
+            storage._session.query(cls)
             .where(
                 sa.or_(
-                    Story.title.contains(data),
-                    Story.text.contains(data)
+                    cls.title.contains(data),
+                    cls.text.contains(data)
                 )
-            ).order_by(Story.created_at.asc()),
-            
+            )
         )
+    
+    @property
+    def all_topics(self):
+        """ get the topics were story is in"""
+        return [topic.to_dict() for topic in self.topics]
 
         
     def __init__(self, title, text, user_id, **kwargs):

@@ -8,7 +8,7 @@
             {% endif %}
             <div class="ml-[15px]">
                 <div class="flex gap-[5px] follow-card" data-user_id="{{comment.commenter.id}}">
-                    <h3 class="">{{comment.commenter.username}}</h3>
+                    <h3 class="text-sm">{{comment.commenter.username}}</h3>
                     <button class="follow flex items-center text-lightblue"><img src="/static/icons/plus.svg" alt="">Follow</button>
                 </div>
                 <div class="mt-[2px] flex gap-[5px] items-center">
@@ -21,12 +21,18 @@
         <p class="comment-text text-sm mt-[10px] ml-[50px] h-10 overflow-hidden">{{comment.comment}}</p>
         <span class="span block text-white text-sm absolute bottom-0 right-0 z-10 px-1 rounded-md bg-lightblue cursor-pointer view-more">view more</span>
     </div>
-    <div class="flex items-center ml-[50px]">
-        <p class="mt-3 text-sm comment-like-count">{{comment.likes | length}}</p>
-        {% if comment.is_liked_by(current_user.id) %}
-        <button class="comment-like-btn comment-liked-btn"><img class="block active:bg-lightblue" src="/static/icons/liked.svg" alt=""/></button>
-        {% else %}
-        <button class="comment-like-btn comment-like-btn-trans"><img class="block active:bg-lightblue" src="/static/icons/like.svg" alt=""/></button>
-        {% endif %}
+    <div class="flex items-center justify-center ml-[50px]">
+        <div>
+            <p class="mt-3 text-sm comment-like-count">{{comment.likes | length}}</p>
+            {% if comment.is_liked_by(current_user.id) %}
+            <button class="comment-like-btn comment-liked-btn"><img class="block active:bg-lightblue" src="/static/icons/liked.svg" alt=""/></button>
+            {% else %}
+            <button class="comment-like-btn comment-like-btn-trans"><img class="block active:bg-lightblue" src="/static/icons/like.svg" alt=""/></button>
+            {% endif %}
+        </div>
+        <div>
+            <p class="text-lg bg-lightblue">update</p>
+            <p class="text-lg bg-lightblue">delete</p>
+        </div>
     </div>
 </article>

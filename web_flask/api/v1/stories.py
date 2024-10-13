@@ -50,8 +50,8 @@ def stories():
                     text=story_json[1],
                     user_id=auth.current_user.id
                 )
-            storage.new(story)
-            storage.save()
+            story.save()
+            print(story)
             return jsonify(get_story_data(story)), 201
 
     stories = storage.all(Story)
@@ -67,7 +67,6 @@ def stories():
         methods=['GET'],
         strict_slashes=False
 )
-@auth_guard
 def following_stories():
     """ gets the stories from all the users self is following
         and own stories
@@ -189,9 +188,11 @@ def update_story(story_id=None):
                         if topic_obj is not None:
                             story.topics.append(topic_obj)
                 else:
-                    setattr(story, key, val)
+                    if key != 'user_id':
+                        setattr(story, key, val)
 
         storage.save()
+        print(story)
     
     return jsonify(get_story_data(story)), 200
 
@@ -208,6 +209,7 @@ def delete_story(story_id=None):
     if story is None:
         abort(404)
 
+    print(auth.authorize(story))
     if not auth.authorize(story):
         return jsonify({"Error": "Permission denied!"}), 403
 
@@ -249,7 +251,7 @@ def like_or_unlike_story(story_id=None):
     )
     storage.new(like)
     storage.save()
-
+    print(story)
     return jsonify({'status': 'liked', 'likes_count': get_story_data(story).get('likes_count')}), 201
 
 
@@ -320,34 +322,20 @@ def bookmark_or_unbookmark_story(story_id=None):
     return jsonify({}), 201
 
 
-@views.route(
-    '/comments/<string:comment_id>/like/',
-    methods=['GET'],
-    strict_slashes=False
-)
-@auth_guard
-def like_or_unlike_comment(comment_id=None):
-    """ Like a comment
-
-        Attributes:
-            - comment_id: id of the comment
-
-    """
-    from models.engine import storage
-
-    comment = storage._session.query(Comment).options(joinedload(Comment.commenter)).filter_by(id=comment_id).scalar()
-    if comment is None:
+@views.route('/search_bookmarked_stories/', strict_slashes=False)
+def search_bookmarked_stories():
+    data = request.args.get('data')
+    if data == None or data == '':
         abort(404)
 
-    print(comment.is_liked_by(auth.current_user.id), '..................><><><>')
-    if not comment.is_liked_by(auth.current_user.id):  # the user has not like a comment
-        comment.like(auth.current_user.id)  # like the story
-        storage.save()
-        return jsonify({'status': 'liked', 'likes_count': get_comment_data(comment).get('likes_count')}), 201
-    else:  # user has already like the comment
-        comment.unlike(auth.current_user.id)  # unlike it
-        storage.save()
-        return jsonify({'status': 'unliked', 'likes_count': get_comment_data(comment).get('likes_count')}), 201
+    _stories = [ 
+        story.to_dict() for story in auth.current_user.search_stories_bookmarked(data).all() 
+    ]
+
+    stories = []
+    for story in _stories:
+        stories.append(story)
+    return jsonify(stories), 200
 
 
 @views.route(
@@ -389,7 +377,7 @@ def make_comment_on_story(story_id=None):
 
     storage.new(comment)
     storage.save()
-
+    print(comment)
     return jsonify(get_comment_data(comment)), 201
 
 

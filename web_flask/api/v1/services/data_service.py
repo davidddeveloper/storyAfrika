@@ -5,6 +5,7 @@ import web_flask.api.v1.services.auth_provider as auth
 def get_story_data(story):
     from models.comment import Comment
     from models.like import Like
+    from web_flask.api.v1.helper_func import create_uri
 
     data = {
         **story.to_dict(),
@@ -18,6 +19,7 @@ def get_story_data(story):
         'liked': auth.current_user.liked_story(story.id),
         'bookmarked': auth.current_user.bookmarked_story(story.id),
         'user_is_following_writer': auth.current_user.is_following(story.writer),
+        'topics': [create_uri(get_topic_data(topic), 'get_topic') for topic in story.topics],
         
         'links': {
             'make_comment': url_for('views.make_comment_on_story', story_id=story.id),

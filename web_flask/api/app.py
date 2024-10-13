@@ -3,7 +3,7 @@
 
 """
 
-from flask import Flask, redirect, request, jsonify
+from flask import Flask, redirect, render_template, request, jsonify
 from web_flask.api.v1 import views
 from flask_cors import CORS
 from flask_login import LoginManager
@@ -35,7 +35,7 @@ app.register_blueprint(views)
 
 login = LoginManager(app)
 login.login_view = 'login'
-CORS(app)
+CORS(app, origins=["http://localhost:5000", "http://192.168.212.220:5000", "http://172.20.10.3:5000", "https://special-space-waddle-v6vwgvrvj5q52wq9r-5000.app.github.dev"])
 
 #Session(app)
 

@@ -188,6 +188,15 @@ class User(BaseModel, ImageUpload, Base):
         query = self.following.select().where(User.id == user.id)
         return storage._session.scalar(query) is not None
 
+    def set_default_profile(self, path=None):
+        if path is None:
+            self.avatar = f'https://api.dicebear.com/9.x/initials/svg?seed={self.username}'
+        else:
+            self.avatar = path
+        self.save()
+
+        return self.avatar
+
     @property
     def followers_count(self):
         """ count the number of followers self has """
@@ -243,21 +252,32 @@ class User(BaseModel, ImageUpload, Base):
 
     @property
     def foryou_stories(self):
-        """ gets the stories that self has not liked or bookmarked
-
-        """
+        """Gets the stories that the user has not liked or bookmarked."""
         from models.engine import storage
+        import sqlalchemy as sa
 
+        # Subquery to check if the story is liked or bookmarked by the user
+        liked_subquery = (
+            sa.select(Like.story_id)
+            .where(Like.user_id == self.id)
+            .subquery()
+        )
+
+        bookmarked_subquery = (
+            sa.select(Bookmark.story_id)
+            .where(Bookmark.user_id == self.id)
+            .subquery()
+        )
+
+        # Main query for stories not liked or bookmarked by the user
         return (
             sa.select(Story)
             .join(User, Story.user_id == User.id)
-            .join(Bookmark, Bookmark.story_id == Story.id )
-            .join(Like, Bookmark.story_id == Story.id)
-            .where(Story.user_id != self.id)
-            .where(sa.or_(
-                Like.user_id != self.id,
-                Bookmark.user_id != self.id
-            ))
+            .outerjoin(liked_subquery, liked_subquery.c.story_id == Story.id)
+            .outerjoin(bookmarked_subquery, bookmarked_subquery.c.story_id == Story.id)
+            .where(Story.user_id != self.id)  # Stories from other users
+            .where(liked_subquery.c.story_id == None)  # Exclude liked stories
+            .where(bookmarked_subquery.c.story_id == None)  # Exclude bookmarked stories
             .group_by(Story.id)
             .order_by(Story.created_at.desc())
         )
@@ -283,6 +303,17 @@ class User(BaseModel, ImageUpload, Base):
             .order_by(Bookmark.created_at.asc())
         )
 
+
+    @classmethod
+    def search_by_username(cls, data):
+        """ retrive users base on their username """
+        from models.engine import storage
+        return storage._session.query(cls).where(cls.username.contains(data))
+
+    def search_users(self, data):
+        from models.engine import storage
+        storage.query(User)
+        pass
 
     @property
     def following_topics(self):

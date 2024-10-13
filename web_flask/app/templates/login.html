@@ -29,7 +29,20 @@
             <span class="relative block text-white before:block before:top-[20px] before:p-[1px] before:inset-0 before:w-[80%] before:rounded-sm before:bg-lightblue md:text-lightgray">No account? <a href="{{ url_for('register') }}" class="text-lightblue">Register here</a></span>
     
         </form>
+        <!--<div class="g-signin2 mt-10 on-signin" data-onsuccess="onSignIn"></div>-->
+        <div id="g_id_onload"
+            data-client_id="25158261190-9emalbugfgsvbn9cv7fao3vp6kmi3h37.apps.googleusercontent.com"
+            data-callback="handleCredentialResponse"
+            data-auto_prompt="false">
+        </div>
 
+        <div class="g_id_signin"
+            data-type="standard"
+            data-shape="rectangular"
+            data-theme="outline"
+            data-text="signin_with"
+            data-size="large">
+        </div>
     </div>
     <div class="h-screen hidden md:block md:w-[40%] lg:w-[45%]">
         <img class="w-full h-full object-cover" src="../static/images/write.webp" alt="">

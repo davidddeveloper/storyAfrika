@@ -1,0 +1,23 @@
+<section class="container mx-auto isolate show-story-images-container flex justify-center items-center overflow-hidden absolute top-0 h-screen z-50 bg-transparent">
+    <section class="show-story-images slider-wrapper container mx-auto flex justify-center items-center absolute overflow-x-hidden w-4/5 top-2/4 -mt-[120px] md:-mt-[20px] z-20">
+        <button class="prev absolute left-20 text-2xl z-10 text-offwhite">&lt;</button>
+        <section class="story-wrapper slider transition-transform ease-out flex flex-nowrap justify-between w-full h-[300px] mx-auto" data-current_index="0">
+            <article class="w-full h-full flex-shrink-0 slider-item">
+                <img src="{{story.image}}" class="w-full h-full object-cover" alt="">
+            </article>
+            <article class="w-full h-full flex-shrink-0">
+                <img src="{{story.image}}" alt="" class="w-full h-full object-cover">
+            </article>
+            <article class="w-full h-full flex-shrink-0">
+                <img src="{{story.image}}" alt="" class="w-full h-full object-cover">
+            </article>
+            <article class="w-full h-full flex-shrink-0">
+                <img src="{{story.image}}" alt="" class="w-full h-full object-cover">
+            </article>
+            <article class="w-full h-full flex-shrink-0">
+                <img src="{{story.image}}" alt="" class="w-full h-full object-cover">
+            </article>
+        </section>
+        <button class="next absolute right-20 text-2xl z-10 text-offwhite">&gt;</button>
+    </section>
+</section>

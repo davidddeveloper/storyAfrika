@@ -60,6 +60,9 @@ def register_user():
         # set password hashes
         user.set_password(user.password)
 
+        # generate an image base on initial
+        user.set_default_profile()
+
         role = storage._session.query(Role).where(Role.role == 'user').first()
 
         if not role:
@@ -70,5 +73,5 @@ def register_user():
         user.roles.append(role)
         user.save()
         storage.save()
-
+        print(user)
         return jsonify(user.to_dict()), 201
