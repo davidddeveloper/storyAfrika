@@ -22,7 +22,7 @@ $(function(){
         const story_id = localStorage.getItem('story_id')
         return $.ajax({
             method: 'DELETE',
-            url: `http://127.0.0.1:4000/api/v1/stories/${story_id}/`,
+            url: `/api/v1/stories/${story_id}/`,
             headers: {
                 Authorization: `Bearer ${jwtToken}`
             },
@@ -173,7 +173,7 @@ $(function(){
 
     setTimeout(() => {
         $.ajax({
-            url: `http://127.0.0.1:4000/api/v1/stories/${$story_id}`,
+            url: `/api/v1/stories/${$story_id}`,
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${jwtToken}`
@@ -307,7 +307,7 @@ $(function(){
         <hr class="border-black">
     `)}
 
-    /*$.get(`http://127.0.0.1:4000/api/v1/users/${$current_user_id}/following_stories/`, function ($response, $status) {
+    /*$.get(`/api/v1/users/${$current_user_id}/following_stories/`, function ($response, $status) {
         if ($status == 'success') {
             $response.forEach(story_data => {
                 $stories_container.append($story(story_data))
@@ -362,7 +362,7 @@ $(function(){
     function fetchStories(url, new_tab) {
         if (loading) return
         loading = true
-        let $url = `http://127.0.0.1:4000/api/v1/topics/foryou_stories?page=${page}&per_page=${perPage}`
+        let $url = `/api/v1/topics/foryou_stories?page=${page}&per_page=${perPage}`
         if (url) {
             $url = url
         }
@@ -481,7 +481,7 @@ $(function(){
         $(this).addClass('border-b')
         loading = false;
         skeleton()
-        fetchStories(`http://127.0.0.1:4000/api/v1/topics/${topic_id}/stories?page=${page}&per_page=${perPage}`, true)
+        fetchStories(`/api/v1/topics/${topic_id}/stories?page=${page}&per_page=${perPage}`, true)
     })
 
     $('.following').on('click', function () {
@@ -492,7 +492,7 @@ $(function(){
         $stories_container.empty()
         skeleton()
         $(this).addClass('border-b')
-        fetchStories(`http://127.0.0.1:4000/api/v1/users/following_stories?page=${page}&per_page=${perPage}`, true)
+        fetchStories(`/api/v1/users/following_stories?page=${page}&per_page=${perPage}`, true)
     })
 
     $('.for-you').on('click', function () {
@@ -526,7 +526,7 @@ $(function(){
         let [$current_user_id, $story_id] = story_and_user_id($story)
 
         $.ajax({
-            url: `http://127.0.0.1:4000/api/v1/stories/${$story_id}/like/`,
+            url: `/api/v1/stories/${$story_id}/like/`,
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${jwtToken}`
@@ -558,7 +558,7 @@ $(function(){
         let $target = $(this)
         let user_id = $target.closest('.follow-card').data('user_id')
         $.ajax({
-            url: `http://127.0.0.1:4000/api/v1/users/follow/${user_id}`,
+            url: `/api/v1/users/follow/${user_id}`,
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${jwtToken}`
@@ -577,7 +577,7 @@ $(function(){
         let $target = $(this)
         let story_id = $target.closest('.story-card').data('story_id')
         $.ajax({
-            url: `http://127.0.0.1:4000/api/v1/stories/${story_id}/bookmark/`,
+            url: `/api/v1/stories/${story_id}/bookmark/`,
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${jwtToken}`
@@ -641,7 +641,7 @@ $(function(){
         e.preventDefault()
         let searchData = bookmarkSearchInput.val()
         $.ajax({
-            url: `http://127.0.0.1:4000/api/v1/search_bookmarked_stories?data=${searchData}`,
+            url: `/api/v1/search_bookmarked_stories?data=${searchData}`,
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${jwtToken}`
@@ -695,7 +695,7 @@ $(function(){
             }
             $.ajax({
                 method: 'POST',
-                url: `http://127.0.0.1:4000/api/v1${getUrl()}`,
+                url: `/api/v1${getUrl()}`,
                 headers: {
                     Authorization: `Bearer ${jwtToken}`
                 },
