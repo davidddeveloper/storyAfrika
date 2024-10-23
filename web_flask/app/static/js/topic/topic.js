@@ -26,13 +26,17 @@ $(function () {
         $('.topic-followers-container').show(400)
     })
 
-    $('.show-followers-card-btn').on('click', function () {
+    $('.show-followers-card-btn, .show-edit-profile-card-btn').on('click', function () {
         $('.separator').show()
-        $('.topic-follower-and-contributors-card').show()
+        $('.topic-follower-and-contributors-card').hide()
+        $('.edit-profile-card').show()
+
+
     })
     $('.separator').on('click', function () {
         $(this).hide()
         $('.topic-follower-and-contributors-card').hide()
+        $('.edit-profile-card').hide()
 
     })
 })
