@@ -1,15 +1,17 @@
 <header class="mt-[80px] container mx-auto flex justify-between items-center px-5 sm:px-2">
     <h1 class="text-xl"><a href="{{ url_for('home') }}">storyafrika</a></h1>
     <!-- profile -->
-     <section class="flex items-center">
+     <section class="relative flex items-center">
+        
          {% if current_user.avatar %}
-        <div class="rounded-full w-[50px] h-[50px] border">
+        <button class="rounded-full w-[50px] h-[50px] border home-profile-img">
             <img class="rounded-full w-full h-full object-cover" src="{{current_user.avatar}}" alt="profile image of the user" srcset="">
-        </div>
+        </button>
         {% else %}
-        <div class="rounded-full w-[50px] h-[50px] border">
+        <button class="rounded-full w-[50px] h-[50px] border home-profile-img">
             <img class="rounded-full w-full h-full object-cover" src="/static/images/default-profile-image.png" alt="profile image of the user" srcset="">
-        </div>
+        </button>
         {% endif %}
+        {% include 'new_profile_card.html' %}
      </section>
 </header>

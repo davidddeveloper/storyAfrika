@@ -25,10 +25,15 @@ def get_story_data(story):
             'make_comment': url_for('views.make_comment_on_story', story_id=story.id),
             'relevant_comments': url_for('views.get_relevant_comments_for_story', story_id=story.id),
             'newest_comments': url_for('views.get_newest_comments_for_story', story_id=story.id),
-            'comments': url_for('views.get_comments_for_story', story_id=story.id)
-
+            'comments': url_for('views.get_comments_for_story', story_id=story.id),
+            'likes': url_for('views.get_likes_for_story', story_id=story.id),
+            'bookmarks': url_for('views.get_bookmarks_for_story', story_id=story.id)
         }
     }
+
+    data.pop('likes', None)
+    data.pop('comments', None)
+    data.pop('bookmarks', None)
 
     return data
 

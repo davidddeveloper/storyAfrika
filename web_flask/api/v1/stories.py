@@ -183,14 +183,19 @@ def update_story(story_id=None):
         for key, val in story_json.items():
             if key in ['text', 'title', 'topics', 'image']:
                 if key == 'topics' and val != []:
+                    story.topics = []
                     for topic in val:
                         topic_obj = storage._session.query(Topic).where(Topic.name == topic).first()
                         if topic_obj is not None:
                             story.topics.append(topic_obj)
+                            if story.writer not in topic_obj.contributors:
+                                topic_obj.contributors.append(story.writer)
+                                topic_obj.save()
                 else:
                     if key != 'user_id':
                         setattr(story, key, val)
 
+        # contributors - anyone that make a post on a particular topic
         storage.save()
         print(story)
     

@@ -75,10 +75,9 @@
       })
       .then(res => res.json())
       .then(data => {
-        if (data.success) {
-          console.log('status', data.success)
+        if (data) {
           // User is successfully logged in, redirect to profile or dashboard
-          window.location.href = "/";
+          window.location.href = data.redirect_url;
         } else {
           // Handle errors
           console.error("Login failed", data.message);

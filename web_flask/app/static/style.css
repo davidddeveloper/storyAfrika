@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+@import url('./fonts/inter/Inter_18pt-Regular.ttf');
 /* Hide scrollbar for Chrome, Safari, and Opera */
 .no-scrollbar::-webkit-scrollbar {
     display: none;
@@ -123,5 +123,12 @@
     font-style: normal;
     font-display: swap;
     src: url(./fonts/calibri-font/Calibri-Light.ttf) format('ttf');
+  }
+  
+  @font-face {
+    font-family: 'inter';
+    font-style: normal;
+    font-display: swap;
+    src: url(./fonts/inter/Inter_18pt-Regular.ttf) format('ttf');
   }
 }

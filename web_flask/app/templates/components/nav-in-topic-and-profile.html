@@ -1,0 +1,10 @@
+<nav class="{{where}}-nav relative flex justify-center items-center gap-7 {{'w-[300px]' if where == 'profile' else 'w-[130px]'}} mx-auto after:border-b after:block after:inset-0 after:absolute after:mx-auto before:absolute" data-topic_id="{{topic.id if where == 'topic'}}">
+    <button class="{{where}}-stories-btn z-10 text-base text-lightgray sm:text-black">
+        Stories
+    </button>
+    <button class="{{where}}-about-btn z-10 text-base text-lightgray border-b-2 border-lightgray sm:text-black ">About</button>
+    {% if where == 'profile' %}
+    <button class="{{where}}-bookmarks-btn z-10 text-base text-lightgray sm:text-black ">Bookmarks</button>
+    <button class="{{where}}-likes-btn z-10 text-base text-lightgray sm:text-black ">Likes</button>
+    {% endif %}
+</nav>

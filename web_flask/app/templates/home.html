@@ -2,7 +2,6 @@
 
 {% block home %}
 {% include 'profile_card.html' %}
-{% include 'new_profile_card.html' %}
 <div class="flex relative overflow-hidden">
     <div class='px-5 sm:px-0 md:min-w-[300px] md:max-w-[800px] md:w-[568px] lg:min-w-[400px] lg:max-w-[900px] lg:w-[768px] container left-0 shrink-1 overflow-y-hidden mx-auto md:border-r-[1px] md:border-r-black md:px-10 lg:px-20 xl:w-[768px]'>
     <header class="container relative pr-2 mx-auto flex flex-col-reverse sm:px-0 sm:flex sm:flex-row sm:justify-between sm:items-center mt-[72px] shrink-1">
@@ -25,7 +24,7 @@
                 <button class="search-btn"><img src="/static/icons/search.svg" alt="search button icon"></button>
                 <button><a href="{{ url_for('write')}}"><img src="/static/icons/write.svg" alt="" srcset=""></a></button>
             </div>
-            <div class="menu-container w-[20%] sm:hidden overflow-y-scroll no-scrollbar">
+            {#<div class="menu-container w-[20%] sm:hidden overflow-y-scroll no-scrollbar">
                 <button class="flex flex-col gap-[6px] show-menu-on-mobile float-end">
                     <span class="p-[1px] w-[20px] bg-black"></span>
                     <span class="p-[1px] w-[20px] bg-black"></span>
@@ -33,7 +32,7 @@
                 <div class="first-divider clear-both fixed top-0 z-40 h-full w-full bg-lightblue -left-[100%] opacity-25 transition-all"></div>
                 <div class="menu fixed top-0 z-40 h-full w-[80%] bg-mediumpurple -left-[100%] overflow-y-scroll overflow-x-hidden no-scrollbar pb-20 opacity-1 transition-all duration-1000">
                     <header class="flex justify-between items-center px-5">
-                        <button class="flex items-center justify-center"><a href="{{ url_for('write')}}"><img src="/static/icons/write.svg" alt="" srcset=""></a></button>
+                        <button class="flex items-center justify-center mt-10"><a href="{{ url_for('write')}}" class=" flex items-center"><img src="/static/icons/write.svg" alt="" srcset=""></a></button>
                         <div class="mt-10 flex flex-col items-center justify-center sm:pr-0 lg:pr-2">
                             <button class="hidden mr-5"><img src="/static/icons/search.svg" alt=""></button>
                             {% if current_user.avatar %}
@@ -94,23 +93,44 @@
                         <h3 class="text-white text-center">Update Your information</h3>
                         {% include 'profile_card_mobile.html' %}
                     </article>
+
+                    <article class="mt-10">
+                        <h2 class="text-lightblue">View full profile</h2>
+                    </article>
                 </div>
-            </div>
+            </div>#}
+            <section class="relative sm:hidden">
+                <div class="sm:flex items-center justify-center sm:pr-0 lg:pr-2">
+                    <button class="hidden mr-5"><img src="/static/icons/search.svg" alt=""></button>
+                    {% if current_user.avatar %}
+                    <button class="home-profile-img border-2 rounded-full w-[50px] h-[50px] shrink-0"><img class="profile-image w-full h-full rounded-full object-cover" src="{{ current_user.avatar }}" alt=""></button>
+                    {% else %}
+                    <button class="home-profile-img border-2 rounded-full w-[50px] h-[50px] shrink-0"><img class="profile-image w-full h-full rounded-full object-cover" src="/static/images/default-profile-image.png" alt=""></button>
+                    {% endif %}
+                    
+                </div>
+                {% include 'new_profile_card.html' %}
+            </section>
         </div>
 
         <div class="flex justify-between items-center gap-4 -mt-10 mb-5 sm:block sm:mb-0 sm:gap-0 sm:-mt-0">
             <h1 class="flex sm:hidden text-xl font-normal shrink-0 flex-row items-center"><!--<img src="/static/images/storyafrika.png" class="" alt="" srcset="">--><span class="z-20">storyafrika</span></h1>
-            <h1 class="absolute container mx-auto left-0 -mt-14 hidden sm:flex md:hidden text-xl font-normal shrink-0 flex-row items-center"><!--<img src="/static/images/storyafrika.png" class="" alt="" srcset="">--><span class="z-20">storyafrika</span></h1>
+            <h1 class="hidden absolute container mx-auto left-0 -mt-14 sm:flex md:hidden text-xl font-normal shrink-0 flex-row items-center"><!--<img src="/static/images/storyafrika.png" class="" alt="" srcset="">--><span class="z-20">storyafrika</span></h1>
 
             <!-- profile image on the right -->
-            <div class="hidden sm:flex items-center justify-center sm:pr-0 lg:pr-2">
-                <button class="hidden mr-5"><img src="/static/icons/search.svg" alt=""></button>
-                {% if current_user.avatar %}
-                <button class="home-profile-img border-2 rounded-full w-[50px] h-[50px] shrink-0"><img class="profile-image w-full h-full rounded-full object-cover" src="{{ current_user.avatar }}" alt=""></button>
-                {% else %}
-                <button class="home-profile-img border-2 rounded-full w-[50px] h-[50px] shrink-0"><img class="profile-image w-full h-full rounded-full object-cover" src="/static/images/default-profile-image.png" alt=""></button>
-                {% endif %}
-            </div>
+            <section class="relative">
+                <div class="hidden sm:flex items-center justify-center sm:pr-0 lg:pr-2">
+                    <button class="hidden mr-5"><img src="/static/icons/search.svg" alt=""></button>
+                    {% if current_user.avatar %}
+                    <button class="home-profile-img border-2 rounded-full w-[50px] h-[50px] shrink-0"><img class="profile-image w-full h-full rounded-full object-cover" src="{{ current_user.avatar }}" alt=""></button>
+                    {% else %}
+                    <button class="home-profile-img border-2 rounded-full w-[50px] h-[50px] shrink-0"><img class="profile-image w-full h-full rounded-full object-cover" src="/static/images/default-profile-image.png" alt=""></button>
+                    {% endif %}
+    
+                    
+                </div>
+                {% include 'new_profile_card.html' %}
+            </section>
         </div>
 
     </header>

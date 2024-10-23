@@ -1,7 +1,7 @@
 <div class="flex items-center justify-center gap-5">
     <img class="block rounded-full w-[60px] h-[60px] text-black" src="{{ current_user.avatar }}" alt="avatar for the user">
     <div>
-        <h1 class="text-base font-bold">{{ current_user.first_name }} {{ current_user.last_name }}</h1>
+        <h1 class="text-base font-bold">{{ current_user.first_name if current_user.first_name else ""}} {{ current_user.last_name if current_user.last_name else ""}}</h1>
         <p class="text-sm text-lightgray ml-1">@{{ current_user.username }}</p>
     </div>
 </div>

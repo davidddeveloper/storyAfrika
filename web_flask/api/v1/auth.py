@@ -12,6 +12,7 @@ def auth():
         return jsonify({"message": "Email or password missing", "status": 400}), 400
 
     user_data = authenticate(email, password)
+    print('-------------.', user_data)
     if not user_data:
         return jsonify({'user': user_data, "message": "Invalid credentials", "status": 400}), 400
 

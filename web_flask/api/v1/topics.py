@@ -39,12 +39,14 @@ def topics():
             if isinstance(topic_json, dict):
                 topic = Topic(
                         name=topic_json['name'],
-                        description=topic_json.get('description')
+                        description=topic_json.get('description'),
+                        creator=auth.current_user
                     )
             elif isinstance(topic_json, list):
                 topic = Topic(
                     name=topic_json[0],
                     description=None,
+                    creator=auth.current_user
                 )
                 try:
                     description = topic_json[1]
@@ -195,12 +197,14 @@ def get_stories_for_topic(topic_id=None):
     if topic is None:
         abort(404)
 
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 8, type=int)
     stories = []
 
     for story in topic.stories:
         stories.append(get_story_data(story))
 
-    pagination = Topic.paginate_list(stories)
+    pagination = Topic.paginate_list(stories, page, per_page)
     stories = pagination['items']
     
     return jsonify(

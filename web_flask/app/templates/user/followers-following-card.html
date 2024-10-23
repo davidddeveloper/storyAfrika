@@ -1,0 +1,53 @@
+<!-- user followers and following card -->
+<article class="topic-follower-and-contributors-card hidden p-[50px] bg-white sm:w-[500px] h-[600px] absolute mx-auto top-[50%] left-[50%] -ml-[250px] -mt-[300px] z-30">
+    <header class="flex items-center gap-5">
+        <button class="topic-followers-btn text-xl text-black">Followers</button>
+        <button class="topic-contributors-btn text-xl text-lightgray">Following</button>
+    </header>
+    <!-- followers -->
+    <section class="topic-followers-container mt-[50px] flex flex-col gap-5">
+        {{user.followers}}
+        {#{% for follower in user.followers %}
+            {% set user = follower.user %}  <!-- remember to change users to user -->
+            <article>
+                {% include 'components/profile-card-sm.html' %}
+                <p class="text-xs text-lightgray">I was laughed at when I started fashion, but today I represent my country Ghana in the biggest fashion show</p>
+            </article>
+            <article>
+                {% include 'components/profile-card-sm.html' %}
+                <p class="text-xs text-lightgray">I was laughed at when I started fashion, but today I represent my country Ghana in the biggest fashion show</p>
+            </article>
+            <article>
+                {% include 'components/profile-card-sm.html' %}
+                <p class="text-xs text-lightgray">I was laughed at when I started fashion, but today I represent my country Ghana in the biggest fashion show</p>
+            </article>
+            <article>
+                {% include 'components/profile-card-sm.html' %}
+                <p class="text-xs text-lightgray">I was laughed at when I started fashion, but today I represent my country Ghana in the biggest fashion show</p>
+            </article>
+        {% endfor %}#}
+    </section>
+
+    <!-- following -->
+    <section class="topic-contributors-container flex mt-[50px] flex-col gap-5 hidden">
+        {#{% for following in topic.following %}
+            {% set user = following.user %}  <!-- remember to change users to user -->
+            <article>
+                {% include 'components/profile-card-sm.html' %}
+                <p class="text-xs text-lightgray">I was laughed at when I started fashion, but today I represent my country Ghana in the biggest fashion show</p>
+            </article>
+            <article>
+                {% include 'components/profile-card-sm.html' %}
+                <p class="text-xs text-lightgray">I was laughed at when I started fashion, but today I represent my country Ghana in the biggest fashion show</p>
+            </article>
+            <article>
+                {% include 'components/profile-card-sm.html' %}
+                <p class="text-xs text-lightgray">I was laughed at when I started fashion, but today I represent my country Ghana in the biggest fashion show</p>
+            </article>
+            <article>
+                {% include 'components/profile-card-sm.html' %}
+                <p class="text-xs text-lightgray">I was laughed at when I started fashion, but today I represent my country Ghana in the biggest fashion show</p>
+            </article>
+        {% endfor %}#}
+    </section>
+</article>

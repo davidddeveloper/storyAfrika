@@ -1,6 +1,9 @@
-<section class="new-profile-card mx-auto bg-offwhite shadow-md rounded-sm w-[250px]">
-    <div>
-
+<section class="new-profile-card absolute z-30 right-0 mx-auto bg-offwhite shadow-lg rounded-sm w-[250px] top-16 hidden">
+    <div class="h-[17px] w-[17px] rotate-45 bg-offwhite absolute top-[-8px] right-5">
+        <!--
+        /\
+        __
+        -->
     </div>
     <section>
         <article class="mt-8 my-8 px-8">
@@ -10,8 +13,8 @@
         <!-- write -->
         <article class="my-4 px-8">
             <div class="flex gap-2 items-center">
-                <a href="{{ url_for('write')}}"><img src="/static/icons/write.svg" alt=""></a>
-                <p class="text-lightgray text-base">Write</p>
+                <a href="{{ url_for('write')}}" class="self-start"><img src="/static/icons/write.svg" alt=""></a>
+                <p class="text-lightgray text-base"><a href="{{ url_for('write')}}" class="self-start">Write</a></p>
             </div>
         </article>
 
@@ -19,28 +22,28 @@
             <!-- profile-->
             <article class="my-4 px-8">
                 <div class="flex gap-2 items-center">
-                    <a href="{{ url_for('write')}}"><img src="/static/icons/write.svg" alt=""></a>
-                    <a href="{{ url_for('write')}}"><p class="text-lightgray text-base">Profile</p></a>
+                    <a href="{{ url_for('profile', username='@' + current_user.username)}}" class="self-start"><img src="/static/icons/profile.svg" alt=""></a>
+                    <a href="{{ url_for('profile', username='@' + current_user.username)}}"><p class="text-lightgray text-base">Profile</p></a>
                 </div>
             </article>
             <!-- bookmark -->
             <article class="my-4 px-8">
                 <div class="flex gap-2 items-center">
-                    <a href="{{ url_for('write')}}"><img src="/static/icons/bookmark.svg" alt=""></a>
-                    <a href="{{ url_for('write')}}"><img src="/static/icons/write.svg" alt=""><p class="text-lightgray text-base">Bookmarks</p></a>
+                    <a href="{{ url_for('write')}}" class="self-start"><img src="/static/icons/bookmark.svg" alt=""></a>
+                    <a href="{{ url_for('write')}}"><p class="text-lightgray text-base">Bookmarks</p></a>
                 </div>
             </article>
             <!-- stories-->
             <article class="my-4 px-8">
                 <div class="flex gap-2 items-center">
-                    <a href="{{ url_for('write')}}"><img src="/static/icons/write.svg" alt=""></a>
+                    <a href="{{ url_for('write')}}" class="self-start"><img src="/static/icons/books.svg" alt=""></a>
                     <p class="text-lightgray text-base">Stories</p>
                 </div>
             </article>
             <!-- Likes -->
             <article class="my-4 px-8">
                 <div class="flex gap-2 items-center">
-                    <a href="{{ url_for('write')}}"><img src="/static/icons/write.svg" alt=""></a>
+                    <a href="{{ url_for('profile', username=username)}}" class="self-start"><img src="/static/icons/like.svg" alt=""></a>
                     <p class="text-lightgray text-base">Likes</p>
                 </div>
             </article>
@@ -48,17 +51,21 @@
         {% include 'divider-black.html' %}
         <article class="mt-8 my-8 px-8">
             <p class="text-black text-base">Terms of Service</p>
-            <p class="text-black text-base my-4">About Us</p>
-            <p class="text-black text-base">Our Story</p>
+            <p class="text-black text-base my-4"><a href="https://storyafrika.live/about-us">About Us</a></p>
+            <p class="text-black text-base"><a href="https://storyafrika.live/out-story">Our Story</a></p>
         </article>
         {% include 'divider-black.html' %}
         <!-- donate -->
         <article class="my-4 px-8">
             <div class="flex gap-2 items-center">
-                <a href="{{ url_for('write')}}"><img src="/static/icons/write.svg" alt=""></a>
-                <p class="text-lightgray text-base">Donate</p>
+                <a href="{{ url_for('write')}}"><img src="/static/icons/donate.svg" alt="" class="self-start"></a>
+                <p class="text-lightgray text-base"><a href="https://storyafrika.live/donate">Donate</a></p>
             </div>
         </article>
         {% include 'divider-black.html' %}
+        <!-- sign out -->
+        <article class="my-4 px-8 flex justify-center">
+            <a href="/logout" class="text-lightblue">Sign out</a>
+        </article>
     </section>
 </section>

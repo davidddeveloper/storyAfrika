@@ -5,6 +5,7 @@
 
 from flask import request, jsonify, abort
 from flask_login import current_user
+from models.story import Story
 from web_flask.api.v1 import views
 from web_flask.api.v1.helper_func import create_uri
 from web_flask.api.v1.helper_func import check_for_valid_json
@@ -142,13 +143,94 @@ def get_story_of_user():
     if auth.current_user is None:
         abort(404)
 
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 8, type=int)
+    stories = []
+
+    for story in auth.current_user.stories:
+        stories.append(create_uri(get_story_data(story), 'get_story'))
+
+    print(auth.current_user, 'asdfghjkl;nopq')
+    pagination = Story.paginate_list(stories, page, per_page)
+    stories = pagination['items']
+    # re-attach current_user to current session
+    # auth.current_user = storage._session.merge(auth.current_user)
+    print(stories, ' asdf ')
+    return jsonify(
+        {
+            'total_items': pagination['total_items'],
+            'total_pages': pagination['total_pages'],
+            'page': pagination['page'],
+            'per_page': pagination['per_page'],
+            'stories': stories
+        }
+    ), 200
+
+
+@views.route(
+    '/users/bookmarks/',
+    methods=['GET'],
+    strict_slashes=False
+)
+@auth_guard
+def get_bookmarks_of_user():
+    if auth.current_user is None:
+        abort(404)
+
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 8, type=int)
+    stories = []
+
+    for bookmark in auth.current_user.bookmarks:
+        stories.append(create_uri(get_story_data(bookmark.story), 'get_story'))
+
+    pagination = Story.paginate_list(stories, page, per_page)
+    stories = pagination['items']
     # re-attach current_user to current session
     # auth.current_user = storage._session.merge(auth.current_user)
 
-    return jsonify([
-            create_uri(get_story_data(story), 'get_story') for story in auth.current_user.stories
-        ]), 200
+    return jsonify(
+        {
+            'total_items': pagination['total_items'],
+            'total_pages': pagination['total_pages'],
+            'page': pagination['page'],
+            'per_page': pagination['per_page'],
+            'stories': stories
+        }
+    ), 200
 
+
+@views.route(
+    '/users/likes/',
+    methods=['GET'],
+    strict_slashes=False
+)
+@auth_guard
+def get_likes_of_user():
+    if auth.current_user is None:
+        abort(404)
+
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 8, type=int)
+    stories = []
+
+    for like in auth.current_user.likes:
+        stories.append(create_uri(get_story_data(like.story), 'get_story'))
+
+    pagination = Story.paginate_list(stories, page, per_page)
+    stories = pagination['items']
+    # re-attach current_user to current session
+    # auth.current_user = storage._session.merge(auth.current_user)
+    print(stories, ' asdf ')
+    return jsonify(
+        {
+            'total_items': pagination['total_items'],
+            'total_pages': pagination['total_pages'],
+            'page': pagination['page'],
+            'per_page': pagination['per_page'],
+            'stories': stories
+        }
+    ), 200
 
 @views.route(
     '/users/stories/<int:n>',
@@ -279,6 +361,9 @@ def get_user_following():
 def follow_or_unfollow_user(user_id=None):
     """ Follow or unfollow a user """
     user = storage.get(User, user_id)
+    if user is None:
+        abort(404)
+
     if auth.current_user is None:
         abort(404)
 

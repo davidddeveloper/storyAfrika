@@ -1,14 +1,15 @@
 $(function () {
-    $('.stories-btn').on('click', (e) => {
-        $('.topic-nav').removeClass('before:right-0').addClass('before:left-0');
+    $('.profile-nav button, .topic-nav button').on('click', (e) => {
+        const target = $(e.target);
+
+        $('.profile-nav button, .topic-nav button').removeClass('border-b-2 border-lightgray')
+        target.addClass('border-b-2 border-lightgray')
+
+        
         $('.topic-about-container').hide(500)
         $('.topic-stories-container').show(500)
     })
-    $('.about-btn').on('click', (e) => {
-        $('.topic-nav').removeClass('before:left-0').addClass('before:right-0')
-        $('.topic-about-container').show(500)
-        $('.topic-stories-container').hide(500)
-    })
+    
     
     $('.topic-contributors-btn').on('click', function () {
         $(this).addClass('text-black').removeClass('text-lightgray')

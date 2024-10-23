@@ -372,8 +372,38 @@ def topic(name=None):
     if topic is None:
         abort(404)
 
-    contributors = storage._session.query(User).where(User.id.in_(topic.contributors)).all()
+    #contributors = storage._session.query(User).where(User.id.in_(topic.contributors)).all()
     return render_template('topic/topic.html', topic=topic)
+
+@app.route(
+    '/profile/<string:username>/',
+    methods=['GET'],
+    strict_slashes=False
+)
+def profile(username=None):
+    """
+    Endpoint to render a topic page.
+
+    Parameters:
+        name (str): The name of the topic to render.
+
+    Returns:
+        The rendered HTML page.
+
+    Raises:
+        404: If the topic is not found.
+    """
+    if username is None:
+        abort(404)
+
+    username = username[1:] if username.startswith('@') else username
+
+    user = storage._session.query(User).where(User.username == username).first()
+    if user is None:
+        abort(404)
+
+    return render_template('user/profile.html', user=user)
+
 @app.route('/login_with_google/', methods=['POST'], strict_slashes=False)
 def login_with_google():
     # Retrieve token from the request
@@ -411,7 +441,6 @@ def login_with_google():
             params={'id_token': token}
         )
         user_info = response.json()
-        print('user info', user_info)
         # If the token is invalid, return an error
         if 'error_description' in user_info:
             return jsonify({'success': False, 'message': 'Invalid token'}), 400
@@ -424,7 +453,7 @@ def login_with_google():
         last_name = user_info.get('family_name')
         username = first_name + (last_name if last_name else '')
         username = username.lower()
-        fake_password = user_info.get('jti')
+        temporary_password = 'fake-password'
         picture = user_info['picture']
 
         # Check if the user exists in the database
@@ -433,16 +462,27 @@ def login_with_google():
         if user:
             # User exists, log them in
             login_user(user, remember=True)
-            print('actuaul user', user)
         else:
             # Create a new user
-            new_user = User(email=email, username=username, first_name=first_name, password=fake_password, last_name=last_name, avatar=picture)
-            new_user.save()
-            print(('new user created', new_user))
-            storage.save()
-            login_user(new_user)
+            user = User(email=email, username=username, first_name=first_name, last_name=last_name, avatar=picture)
+            user.set_password(temporary_password)
+            user.save()
+            login_user(user, remember=True)
 
-        return jsonify({'success': True})
+        # generate a jwttoken
+        response = requests.post('http://127.0.0.1:4000/api/v1/auth', json={
+            "email": user.email,
+            "password": temporary_password,
+        }, headers={
+            'Content-Type': 'application/json'
+        },)
+
+        token = response.json()
+
+        response = make_response(jsonify({'success': True, 'redirect_url': url_for('home')}))
+        response.set_cookie('jwt_token', token.get('data'))
+    
+        return response
 
     except Exception as e:
         print(f"Error during Google login: {e}")

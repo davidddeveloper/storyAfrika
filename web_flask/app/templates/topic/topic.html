@@ -41,7 +41,7 @@
     </script>
     <script src="https://apis.google.com/js/platform.js" async defer></script>
 </head>
-<body class="container mx-auto">
+<body class="max-w-screen-md mx-auto">
     {% include 'components/navbar.html' %}
     <!-- hero -->
     <section class="mt-[70px] mb-[50px]">
@@ -52,7 +52,7 @@
         <!-- info: created at created by-->
          <article class="flex items-center justify-center my-[10px] gap-4 text-base">
             <p>created by</p>
-            <a class="text-lightblue" href="">{{topic.creator}} David Conteh</a>
+            <a class="text-lightblue" href="">@{{topic.contributors[0].username}}</a>
             <p>2 years ago</p>
          </article>
          <!-- likes and followers -->
@@ -65,23 +65,20 @@
     </section>
     <section>
         <!-- before:absolute before:inset-0 before:w-[15%] before:block before:border-b-black before:border-b-2 before:mx-auto-->
-        <nav class="topic-nav relative flex justify-center items-center gap-7 w-[130px] mx-auto after:border-b after:block after:inset-0 after:absolute after:mx-auto before:absolute before:right-0 before:bottom-0  before:w-[45%] before:block before:border-b-black before:border-b-2 before:transition-all before:duration-700 before:ease-out">
-            <button class="stories-btn z-10 text-base text-lightgray sm:text-black">
-                Stories
-            </button>
-            <button class="about-btn z-10 text-base sm:text-black ">About</button>
-        </nav>
+        {% set where = 'topic' %}
+        {% set about = topic.description %}
+        {% include 'components/nav-in-topic-and-profile.html' %}
         <!-- about -->
         <article class="topic-about-container my-[50px] relative mx-auto md:px-0 md:w-[600px]">
             <!-- about text -->
-            <p class="topic-about-text text-lightgray text-base px-3">
+            <p class="topic-about-text about-text text-lightgray text-base px-3">
                 Welcome to my exploration of the entrepreneurial journey! In this article, I'll dive into the critical lessons learned from building businesses, the mindset required for success, and actionable strategies you can use to start or grow your own venture. Whether you're a budding entrepreneur or an experienced business owner, you'll find insights that challenge conventional thinking and empower you to innovate. Join me as we discuss the triumphs, failures, and everything in between—because entrepreneurship is more than a career, it's a way of life.
             </p>
             <button class="edit-topic-about-text-btn text-lightblue absolute top-[105%] right-5">
                 Edit
             </button>
         </article>
-        <article class="topic-stories-container h-[200px] .stories-container">
+        <article class="topic-stories-container container stories-container relative mx-auto mt-[20px] mb-20 pt-[25px] pb-[25px] px-5 flex flex-col gap-[50px] shrink-1 h-screen overflow-y-scroll no-scrollbar ">
             
         </article>
     </section>

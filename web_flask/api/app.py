@@ -68,7 +68,7 @@ def get_current_user():
             username = user_data['username']
 
             user = storage._session.query(User).where(
-                username == username
+                User.username == username
             ).first()
             auth.current_user = user
 
