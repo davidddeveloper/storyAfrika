@@ -42,7 +42,7 @@ class User(BaseModel, ImageUpload, Base):
         last_name = Column(String(50), nullable=True)
         full_name = Column(String(50), nullable=True, default=(first_name + ' ' + last_name))
         stories = relationship('Story', backref='writer', lazy=True, passive_deletes=True, cascade='all, delete-orphan')
-        # topics = relationship('Topic', backref='creator', lazy=True, passive_deletes=True, cascade='all, delete-orphan')
+        #my_topics = relationship('Topic', backref='creator', lazy=True, passive_deletes=True, cascade='all, delete-orphan')
         comments = relationship('Comment', backref='commenter', lazy=True, passive_deletes=True, cascade='all, delete-orphan')
         likes = relationship('Like', backref='liker', lazy=True, passive_deletes=True, cascade='all, delete-orphan')
         bookmarks = relationship('Bookmark', backref='bookmarker', lazy=True, passive_deletes=True, cascade='all, delete-orphan')
@@ -69,7 +69,8 @@ class User(BaseModel, ImageUpload, Base):
             backref='user', # I should remember to change users to user here and in my templates
             lazy=True
         )
-        avatar = Column(String(100), nullable=True) # path to avatar
+        avatar = Column(String(200), nullable=True) # path to avatar
+        banner = Column(String(200), nullable=True, default='https://fastly.picsum.photos/id/91/800/500.jpg?hmac=J_kCOn2MZlDuJIb_rU14DYnb6HMv55ynWirbSF9l8f0')
 
     else:
         _username = ''
@@ -108,10 +109,11 @@ class User(BaseModel, ImageUpload, Base):
         except KeyError:
             pass
 
-        try:
-            dictionary.pop('stories')
-        except KeyError:
-            pass
+
+        dictionary.pop('stories', None)
+        dictionary.pop('likes', None)
+        dictionary.pop('bookmarks', None)
+        dictionary.pop('comments', None)
         
         dictionary['roles'] = [role.to_dict() for role in self.roles]
         

@@ -30,9 +30,11 @@ def search():
             #return jsonify({"Error": "Not a valid json"}), 400
 
     except Exception:
+        print('bad request ----------->')
         return jsonify({"Error": "Not a valid json"}), 400
 
     if request.args.get('search') == 'stories':
+        print(data.get('data'), '----------------->')
         search = Story.search(data.get('data'))
 
         # paginate
@@ -54,8 +56,23 @@ def search():
     
     if request.args.get('search') == 'topics':
         search = Topic.search_topics_by_title(data.get('data'))
+        print(search.all(), '----------------->')
 
-        return jsonify([create_uri(get_topic_data(topic), 'get_topic') for topic in search.all()]), 200
+        # paginate
+        topics = []
+        pagination = Topic.paginate_list(search.all(), page, per_page)
+        for topic in pagination['items']:
+            topics.append(create_uri(get_topic_data(topic), 'get_topic'))
+
+        return jsonify(
+            {
+                'total_items': pagination['total_items'],
+                'total_pages': pagination['total_pages'],
+                'page': pagination['page'],
+                'per_page': pagination['per_page'],
+                'topics': topics
+            }
+        ), 200
 
     if request.args.get('search') == 'stories_bookmarked':
         search = auth.current_user.search_stories_bookmarked(data.get('data'))
@@ -101,6 +118,7 @@ def search():
 
     stories = Story.search(search)
     users = User.search_by_username(search)
+    #topics = Topic.search_topics_by_title(data.get('data')).all()
     stories_bookmarked = auth.current_user.search_stories_bookmarked(data.get('data'))
 
     paginated_stories = Story.paginate(stories, page, per_page)

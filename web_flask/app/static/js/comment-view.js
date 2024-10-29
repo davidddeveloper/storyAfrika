@@ -8,7 +8,7 @@ $(function () {
     const jwtToken = getCookie('jwt_token');
 
     let showCommentViewBtn = $('.show-comment-view, .show-all-bookmarks, .show-who-to-follow')
-    let commentView = $('.comments-view, .bookmarks-view, .who-to-follow')
+    let commentView = $('.comments-view, .bookmarks-view, .who-to-follow, .edit-profile-card, .followers-and-contributors-card')
     let $current_user_id = $('body').data('current_user_id')
     let $story_id = $('.story-card').data('story_id')
     let $comment_container = $('.comments-container')
@@ -50,7 +50,7 @@ $(function () {
     }
 
     let hasFetchCommentsState = false
-    $('body').on('click', '.show-comment-view, .show-all-bookmarks, .show-who-to-follow', () => {
+    $('body').on('click', '.show-comment-view, .show-all-bookmarks, .show-who-to-follow, .show-edit-profile-card-btn, .show-followers-card-btn', () => {
         if (!hasFetchCommentsState) {
             commentCardSkeleton()
             setTimeout(() => {
@@ -68,7 +68,7 @@ $(function () {
         }
     })
 
-    $('.divider').on('click', function () {
+    $('.divider, .separator').on('click', function () {
         commentView.removeClass('md:right-0 -bottom-[20%]').addClass('md:-right-[100%] md:-bottom-[100%] -bottom-[100%] is-hidden')
         $('.divider').hide()
         //hide showImages carousel in story.html
@@ -114,7 +114,7 @@ $(function () {
 
         // like the comment
         $.ajax({
-            url: `http://192.168.35.220:4000/api/v1/comments/${$comment_id}/like/`,
+            url: `http://192.168.236.220:4000/api/v1/comments/${$comment_id}/like/`,
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${jwtToken}`
@@ -151,7 +151,7 @@ $(function () {
 
         $.ajax({
             type: "POST",
-            url: `http://192.168.35.220:4000/api/v1/stories/${$story_id}/comments/`,
+            url: `http://192.168.236.220:4000/api/v1/stories/${$story_id}/comments/`,
             headers: {
                 Authorization: `Bearer ${jwtToken}`,
                 contentType: 'application/json'
@@ -198,7 +198,7 @@ $(function () {
                     }
                     
                     <div class="mt-[2px] flex gap-[5px] items-center">
-                        <p class="text-xs">posted ${/* moment(comment.created_at).fromNow()*/""}</p>
+                        <p class="text-xs">posted ${ moment(comment.created_at).fromNow()}</p>
                     </div>
                 </div>
             </div>
@@ -230,8 +230,8 @@ $(function () {
 
     // fetch comments based on sort-type (newest, relevant)
     const fetchComments = (type) => {
-        let url = `http://192.168.35.220:4000/api/v1/stories/${$story_id}/comments/newest/`
-        if (type) url = `http://192.168.35.220:4000/api/v1/stories/${$story_id}/comments/${type}/`
+        let url = `http://192.168.236.220:4000/api/v1/stories/${$story_id}/comments/newest/`
+        if (type) url = `http://192.168.236.220:4000/api/v1/stories/${$story_id}/comments/${type}/`
         //paginate
         //block the request if it is loading/request is in progress
         $.ajax({
@@ -302,7 +302,7 @@ $(function () {
         const newCommentText = comment.text()
 
         $.ajax({
-            url: `http://192.168.35.220:4000/api/v1/${comment_id}/`,
+            url: `http://192.168.236.220:4000/api/v1/${comment_id}/`,
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${jwtToken}`,
@@ -323,7 +323,7 @@ $(function () {
         const comment_id = comment.data('comment_id')
 
         $.ajax({
-            url: `http://192.168.35.220:4000/api/v1/${comment_id}`,
+            url: `http://192.168.236.220:4000/api/v1/${comment_id}`,
             method: 'DELETE',
             headers: {
                 Authorization: `Bearer ${jwtToken}`

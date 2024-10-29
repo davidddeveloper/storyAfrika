@@ -51,12 +51,12 @@
     </section>
 
     <!-- profile card -->
-    <section class="mb-[50px] px-3 sm:px-0">
+    <section class="container mx-auto mb-[50px] px-3 sm:px-0">
         {% include 'user/profile-card.html' %}
     </section>
 
     <!-- nav -->
-    <section>
+    <section class="container mx-auto">
         <!-- before:absolute before:inset-0 before:w-[15%] before:block before:border-b-black before:border-b-2 before:mx-auto-->
         {% set where = 'profile' %}
         {% include 'components/nav-in-topic-and-profile.html' %}
@@ -70,12 +70,13 @@
                 Edit
             </button>
         </article>
-        <article class="profile-stories-container container stories-container relative mx-auto mt-[20px] mb-20 pt-[25px] pb-[25px] px-5 flex flex-col gap-[50px] shrink-1 h-screen overflow-y-scroll no-scrollbar ">
+        <article class="profile-stories-container container stories-container max-w-xl relative mx-auto mt-[20px] mb-20 pt-[25px] pb-[25px] px-5 flex flex-col gap-[50px] shrink-1 h-screen overflow-y-scroll no-scrollbar ">
             
         </article>
     </section>
 
-    {% include 'user/followers-following-card.html' %}
+    {% include 'user/edit-profile-card.html' %}
     {% include 'components/separator.html' %}
+    {{ moment.include_moment() }}
 </body>
 </html>

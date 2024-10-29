@@ -35,7 +35,7 @@ app.register_blueprint(views)
 
 login = LoginManager(app)
 login.login_view = 'login'
-CORS(app, origins=["http://localhost:5000", "http://192.168.212.220:5000", "http://172.20.10.3:5000", "https://special-space-waddle-v6vwgvrvj5q52wq9r-5000.app.github.dev"])
+CORS(app, origins=["http://localhost:5000", "http://192.168.212.220:5000", "http://172.20.10.3:5000", "https://special-space-waddle-v6vwgvrvj5q52wq9r-5000.app.github.dev", "http://192.168.35.220:5000", "http://192.168.195.220:5000", "http://192.168.54.220:5000", "http://192.168.203.220:5000", "http://192.168.236.220:5000"])
 
 #Session(app)
 
@@ -64,7 +64,7 @@ def get_current_user():
         except Exception:
             user_data = None
 
-        if user_data and not auth.current_user:  # get the user in db
+        if user_data:  # get the user in db
             username = user_data['username']
 
             user = storage._session.query(User).where(
@@ -72,8 +72,7 @@ def get_current_user():
             ).first()
             auth.current_user = user
 
-        if auth.current_user:
-            # attached current_user to session
+        
             auth.current_user = storage._session.merge(auth.current_user)
 
 

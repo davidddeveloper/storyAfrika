@@ -31,10 +31,6 @@ def get_story_data(story):
         }
     }
 
-    data.pop('likes', None)
-    data.pop('comments', None)
-    data.pop('bookmarks', None)
-
     return data
 
 def get_topic_data(topic):

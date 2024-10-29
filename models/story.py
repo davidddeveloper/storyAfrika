@@ -31,7 +31,7 @@ class Story(BaseModel, ImageUpload, Base):
         comments = relationship('Comment', backref='story', passive_deletes=True, cascade='all, delete-orphan', lazy=True,)
         likes = relationship('Like', backref='story', passive_deletes=True, cascade='all, delete-orphan', lazy=True)
         bookmarks = relationship('Bookmark', backref='story', passive_deletes=True, cascade='all, delete-orphan', lazy=True)
-        image = Column(String(100), nullable=True) # path to image
+        image = Column(String(200), nullable=True) # path to image
 
     else:
         title = ''
@@ -45,6 +45,12 @@ class Story(BaseModel, ImageUpload, Base):
         dictionary['writer'] = self.writer.to_dict() if self.writer else None
         dictionary['read_time'] = self.read_time
 
+        #dictionary['likes'] = [like.to_dict() for like in dictionary['likes']]
+        #dictionary['bookmarks'] = [bookmark.to_dict() for bookmark in dictionary['bookmarks']]
+        #dictionary['comments'] = [comment.to_dict() for comment in dictionary['comments']]
+        dictionary.pop('likes', None)
+        dictionary.pop('comments', None)
+        dictionary.pop('bookmarks', None)
 
         return dictionary
 

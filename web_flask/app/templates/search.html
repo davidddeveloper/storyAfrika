@@ -1,0 +1,21 @@
+{% extends 'root.html' %}
+
+{% block miscellaneous %}
+    {% include 'components/navbar.html' %}
+    <main class="container mx-auto mt-10 p-5 sm:p-0">
+        <div class="flex items-center md:w-[240px] rounded-3xl bg-offwhite py-3 pl-[15px] gap-5">
+            <img src="/static/icons/search.svg" alt="">
+            <form method="post" action="">
+                <input type="text" name="search" id="search" placeholder="search.." class="input-to-search text-lightgray bg-transparent focus:border-0 focus:outline-none">
+            </form>
+        </div>
+        <h2 class="text-lightgray text-2xl mt-[45px] mb-[70px]">
+            You're searching for <span class="text-black">Kaizen Approach</span>
+        </h2>
+        {% set where = 'search'%}
+        {% include 'components/nav-in-topic-and-profile.html' %}
+        <article class="search-stories-container container stories-container max-w-xl relative mx-auto mt-[20px] mb-20 pt-[25px] pb-[25px] px-5 flex flex-col gap-[50px] shrink-1 h-screen overflow-y-scroll no-scrollbar ">
+
+        </article>
+    </main>
+{% endblock %}

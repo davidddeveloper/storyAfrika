@@ -28,15 +28,13 @@ $(function () {
 
     $('.show-followers-card-btn, .show-edit-profile-card-btn').on('click', function () {
         $('.separator').show()
-        $('.topic-follower-and-contributors-card').hide()
+        $('.topic-follower-and-contributors-card').show()
         $('.edit-profile-card').show()
 
 
     })
     $('.separator').on('click', function () {
-        $(this).hide()
-        $('.topic-follower-and-contributors-card').hide()
-        $('.edit-profile-card').hide()
-
+        $('.separator').hide()
+        
     })
 })

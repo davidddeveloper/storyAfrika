@@ -75,6 +75,16 @@ def home():
                     current_user.email = form.email.data
                     flash("Email changed!")
             
+            if form.first_name:
+                if current_user.first_name != form.first_name.data:
+                    current_user.first_name = form.first_name.data
+                    flash("First Name changed!")
+
+            if form.last_name:
+                if current_user.last_name != form.last_name.data:
+                    current_user.last_name = form.last_name.data
+                    flash("Last Name changed!")
+            
             storage.save()
         else:
             print(form.errors)
@@ -88,6 +98,47 @@ def home():
     return render_template(
         'home.html', users=users, topics=topics, stories=stories, following_stories=following_stories, form=form
     )
+
+
+@app.route('/search', methods=['GET'], strict_slashes=False)
+def search():
+    return render_template('search.html')
+
+@app.route('/edit-profile', methods=['POST'], strict_slashes=False)
+def edit_profile():
+
+    form = UserUpdateForm()
+    if form.validate_on_submit():
+        # change password
+        if current_user.check_password(form.current_password.data):
+            current_user.set_password(form.new_password.data)
+            flash("Password change!")
+
+        if form.username.data:  # update the username
+            if current_user.username != form.username.data:
+                current_user.username = form.username.data
+                flash("Username changed!")
+        
+        if form.email.data:  # update the email
+            if current_user.email != form.email.data:
+                current_user.email = form.email.data
+                flash("Email changed!")
+        
+        if form.first_name:
+            if current_user.first_name != form.first_name.data:
+                current_user.first_name = form.first_name.data
+                flash("First Name changed!")
+
+        if form.last_name:
+            if current_user.last_name != form.last_name.data:
+                current_user.last_name = form.last_name.data
+                flash("Last Name changed!")
+        
+        storage.save()
+    else:
+        print(form.errors)
+
+    return redirect(request.referrer)
 
 
 @app.route(
@@ -393,6 +444,9 @@ def profile(username=None):
     Raises:
         404: If the topic is not found.
     """
+
+    form = UserUpdateForm()
+
     if username is None:
         abort(404)
 
@@ -402,7 +456,7 @@ def profile(username=None):
     if user is None:
         abort(404)
 
-    return render_template('user/profile.html', user=user)
+    return render_template('user/profile.html', user=user, form=form)
 
 @app.route('/login_with_google/', methods=['POST'], strict_slashes=False)
 def login_with_google():

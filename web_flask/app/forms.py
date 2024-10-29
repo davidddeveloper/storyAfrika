@@ -63,6 +63,8 @@ class UserRegistrationForm(FlaskForm):
 class UserUpdateForm(UserRegistrationForm, FlaskForm):
     """ Represents a form to update the user model """
 
+    first_name = StringField('First Name', validators=[])
+    last_name = StringField('Last Name', validators=[])
     username = StringField('Username', validators=[])
     email = EmailField('Email', validators=[Email()])
     current_password = PasswordField('Current Password', validators=[])

@@ -1,0 +1,58 @@
+<!-- topic followers and contributors card -->
+<article class="bookmarks-view edit-profile-card is-hidden fixed z-50 pt-[100px] bg-white transition-all ease-out -bottom-[100%] w-full h-full overflow-y-scroll px-5 pb-[200px] drop-shadow-lg sm:rounded-2xl sm:px-16 sm:pb-[200px] sm:w-[80%] sm:left-[10%] sm:right-[10%] md:rounded-none md:pb-[50px] md:left-auto md:drop-shadow-lg md:top-0 md:overflow-x-hidden md:-right-[100%] md:w-[400px] lg:w-[500px] md:px-[60px] md:border-2 md:h-screen md:overflow-y-scroll no-scrollbar">
+    <header class="container mx-auto flex items-center gap-5">
+        {% set w = 'w-[80px]' %}
+        {% set h = 'h-[80px]' %}
+        {% include 'user/profile-image.html' %}
+        <div class="flex flex-col items-center justify-center">
+            <button class="text-red-500">Remove</button>
+            <button class="text-lightblue image-btn-change block">Update</button>
+        </div>
+        
+    </header>
+    <main>
+        <form method="post" action="/edit-profile" class="mt-[50px]">
+            {{form.hidden_tag()}}
+    
+            {{ form.first_name.label(class="text-lightgray block mb-[5px]") }}
+            {{ form.first_name(class="bg-white text-lightgray border-2 p-1 rounded-lg focus:outline-lightblue w-full sm:w-[290px]", placeholder="Frist Name", value=current_user.first_name) }}
+            {% for error in form.first_name.errors %}
+            <p style="color: bisque;">{{error}}</p>
+            {% endfor %}</br></br>
+
+            {{ form.last_name.label(class="text-lightgray block mb-[5px]") }}
+            {{ form.last_name(class="bg-white text-lightgray border-2 p-1 rounded-lg focus:outline-lightblue w-full sm:w-[290px]", placeholder="Last Name", value=current_user.last_name) }}
+            {% for error in form.last_name.errors %}
+            <p style="color: bisque;">{{error}}</p>
+            {% endfor %}</br></br>
+
+            {{ form.username.label(class="text-lightgray block mb-[5px]") }}
+            {{ form.username(class="bg-white text-lightgray border-2 p-1 rounded-lg focus:outline-lightblue w-full sm:w-[290px]", placeholder="Username", value=current_user.username) }}
+            {% for error in form.username.errors %}
+            <p style="color: bisque;">{{error}}</p>
+            {% endfor %}</br></br>
+    
+            {{ form.email.label(class="text-lightgray block mb-[5px]") }}
+            {{ form.email(class="bg-white text-lightgray border-2 p-1 rounded-lg focus:outline-lightblue w-full sm:w-[290px]", placeholder="Email", value=current_user.email) }}
+            {% for error in form.email.errors %}
+            <p style="color: bisque;">{{error}}</p>
+            {% endfor %}</br></br>
+    
+            {{ form.current_password.label(class="text-lightgray block mb-[5px]") }}
+            {{ form.current_password(class="bg-white text-lightgray border-2 p-1 rounded-lg focus:outline-lightblue w-full sm:w-[290px]", placeholder="Current Password") }}
+            {% for error in form.current_password.errors %}
+            <p style="color: bisque;">{{error}}</p>
+            {% endfor %}</br></br>
+    
+            {{ form.new_password.label(class="text-lightgray block mb-[5px]") }}
+            {{ form.new_password(class="bg-white text-lightgray border-2 p-1 rounded-lg focus:outline-lightblue w-full sm:w-[290px]", placeholder="New Password") }}
+            {% for error in form.new_password.errors %}
+            <p style="color: bisque;">{{error}}</p>
+            {% endfor %}</br></br>
+            <div class="flex justify-between items-center">
+                {{ form.submit(class="text-white px-2 py-1 rounded-sm bg-lightblue") }}</br></br>
+
+            </div>
+        </form>
+    </main>
+</article>

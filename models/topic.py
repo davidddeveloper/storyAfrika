@@ -40,7 +40,7 @@ class Topic(BaseModel, ImageUpload, Base):
         __tablename__ = 'topics'
         name = Column(String(80), nullable=False)
         description = Column(String(200), nullable=True)
-        banner = Column(String(100), nullable=True) # path to image
+        banner = Column(String(200), nullable=True) # path to image
         stories = relationship(
             'Story',
             secondary=story_topic_association,
