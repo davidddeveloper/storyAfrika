@@ -22,7 +22,7 @@ $(function(){
         const story_id = localStorage.getItem('story_id')
         return $.ajax({
             method: 'DELETE',
-            url: `http://192.168.236.220:4000/api/v1/stories/${story_id}/`,
+            url: `http://127.0.0.1:4000/api/v1/stories/${story_id}/`,
             headers: {
                 Authorization: `Bearer ${jwtToken}`
             },
@@ -173,7 +173,7 @@ $(function(){
 
     setTimeout(() => {
         $.ajax({
-            url: `http://192.168.236.220:4000/api/v1/stories/${$story_id}`,
+            url: `http://127.0.0.1:4000/api/v1/stories/${$story_id}`,
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${jwtToken}`
@@ -307,7 +307,7 @@ $(function(){
         <hr class="border-black">
     `)}
 
-    /*$.get(`http://192.168.236.220:4000/api/v1/users/${$current_user_id}/following_stories/`, function ($response, $status) {
+    /*$.get(`http://127.0.0.1:4000/api/v1/users/${$current_user_id}/following_stories/`, function ($response, $status) {
         if ($status == 'success') {
             $response.forEach(story_data => {
                 $stories_container.append($story(story_data))
@@ -362,7 +362,7 @@ $(function(){
     function fetchStories(url, new_tab, method, data={}) {
         if (loading) return;
         loading = true
-        let $url = `http://192.168.236.220:4000/api/v1/topics/foryou_stories?page=${page}&per_page=${perPage}`
+        let $url = `http://127.0.0.1:4000/api/v1/topics/foryou_stories?page=${page}&per_page=${perPage}`
         if (url) {
             $url = url
         }
@@ -498,7 +498,7 @@ $(function(){
         $(this).addClass('border-b')
         loading = false;
         skeleton()
-        fetchStories(`http://192.168.236.220:4000/api/v1/topics/${topic_id}/stories?page=${page}&per_page=${perPage}`, true)
+        fetchStories(`http://127.0.0.1:4000/api/v1/topics/${topic_id}/stories?page=${page}&per_page=${perPage}`, true)
     })
 
     $('.following').on('click', function () {
@@ -509,7 +509,7 @@ $(function(){
         $stories_container.empty()
         skeleton()
         $(this).addClass('border-b')
-        fetchStories(`http://192.168.236.220:4000/api/v1/users/following_stories?page=${page}&per_page=${perPage}`, true)
+        fetchStories(`http://127.0.0.1:4000/api/v1/users/following_stories?page=${page}&per_page=${perPage}`, true)
     })
 
     $('.for-you').on('click', function () {
@@ -543,7 +543,7 @@ $(function(){
         let [$current_user_id, $story_id] = story_and_user_id($story)
 
         $.ajax({
-            url: `http://192.168.236.220:4000/api/v1/stories/${$story_id}/like/`,
+            url: `http://127.0.0.1:4000/api/v1/stories/${$story_id}/like/`,
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${jwtToken}`
@@ -575,7 +575,7 @@ $(function(){
         let $target = $(this)
         let user_id = $target.closest('.follow-card').data('user_id')
         $.ajax({
-            url: `http://192.168.236.220:4000/api/v1/users/follow/${user_id}`,
+            url: `http://127.0.0.1:4000/api/v1/users/follow/${user_id}`,
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${jwtToken}`
@@ -594,7 +594,7 @@ $(function(){
         let $target = $(this)
         let story_id = $target.closest('.story-card').data('story_id')
         $.ajax({
-            url: `http://192.168.236.220:4000/api/v1/stories/${story_id}/bookmark/`,
+            url: `http://127.0.0.1:4000/api/v1/stories/${story_id}/bookmark/`,
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${jwtToken}`
@@ -658,7 +658,7 @@ $(function(){
         e.preventDefault()
         let searchData = bookmarkSearchInput.val()
         $.ajax({
-            url: `http://192.168.236.220:4000/api/v1/search_bookmarked_stories?data=${searchData}`,
+            url: `http://127.0.0.1:4000/api/v1/search_bookmarked_stories?data=${searchData}`,
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${jwtToken}`
@@ -714,7 +714,7 @@ $(function(){
             }
             $.ajax({
                 method: 'POST',
-                url: `http://192.168.236.220:4000/api/v1${getUrl()}`,
+                url: `http://127.0.0.1:4000/api/v1${getUrl()}`,
                 headers: {
                     Authorization: `Bearer ${jwtToken}`
                 },
@@ -729,12 +729,14 @@ $(function(){
                         //$('#story-image').attr('src', `/uploads/${file.name.replaceAll(" ", "_")}/${$current_user_id}`)
                         $('#story-image').attr('src', response.image)
 
-                    } else if (window.location.pathname == '/' || window.location.pathname.includes('/profile/')) {
+                    } else if (window.location.pathname == '/') {
 
                         $('.profile-image').attr('src', response.image)
                         //$('.profile-image').attr('src', `/uploads/${file.name.replaceAll(" ", "_")}/${$current_user_id}`)
                         //$('.home-profile-img').attr('src', `/uploads/${file.name.replaceAll(" ", "_")}`)
 
+                    } else if (window.location.pathname.includes('/profile/')) {
+                        $('.profile-image').attr('src', response.avatar)
                     }
                     //if (!response.includes('/story/write/')) window.location.reload()
                 },
@@ -744,6 +746,21 @@ $(function(){
                 }
             })
         }
+    })
+
+    $('.remove-profile-image').on('click', function () {
+        $.ajax({
+            method: 'POST',
+            url: `http://127.0.0.1:4000/api/v1/users/upload_avatar/default`,
+            headers: {
+                Authorization: `Bearer ${jwtToken}`
+            },
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                $('.profile-image').attr('src', response.avatar)
+            }
+        })
     })
 
 
@@ -865,22 +882,32 @@ $(function(){
         }
 
         if (target.hasClass('profile-nav')) { // for profile
-            $url = `http://192.168.236.220:4000/api/v1/users/stories?page=${page}&per_page=${perPage}`
+            $url = `http://127.0.0.1:4000/api/v1/users/stories?page=${page}&per_page=${perPage}`
 
-            if ($(this).hasClass('profile-bookmarks-btn')) $url = `http://192.168.236.220:4000/api/v1/users/bookmarks?page=${page}&per_page=${perPage}`
-            if ($(this).hasClass('profile-likes-btn')) $url = `http://192.168.236.220:4000/api/v1/users/likes?page=${page}&per_page=${perPage}`
+            if ($(this).hasClass('profile-bookmarks-btn')) $url = `http://127.0.0.1:4000/api/v1/users/bookmarks?page=${page}&per_page=${perPage}`
+            if ($(this).hasClass('profile-likes-btn')) $url = `http://127.0.0.1:4000/api/v1/users/likes?page=${page}&per_page=${perPage}`
 
             if ($(this).hasClass('profile-about-btn')) {
-                $('.stories-container').empty().append(`<p class="text-xl">${$('.profile-about-text').text()}</p>`)
+                $('.stories-container').empty().append(`<article class="topic-about-container relative mx-auto md:px-0 md:w-[500px]">${$('.topic-about-container').html()}</article>`)
+                $('.profile-stories-container .topic-about-container').show()
+                $('.edit-topic-about-text-btn').on('click', function (e) {
+                    if ($(e.target).text() == 'Edit') { // if edit btn is clicked
+                        $('.profile-about-text').attr('contenteditable', true).focus().addClass("border-2 focus:outline-lightblue focus:border-lightblue") // change the p tag to editable
+                        $(e.target).text('Save')  // change to save
+                    } else if ($(e.target).text() == 'Save') {  // if save btn is clicked
+                        $('.about-input').val($('.profile-about-text').text())  // set the hidden input val to the editable text
+                        $('.edit-profile-about-submit-btn').click()  // finally submit the form
+                    }
+                })
                 return
             }
             
         } else if (target.hasClass('search-nav')) { // for search
-            $url = `http://192.168.236.220:4000/api/v1/search?search=stories&page=${page}&per_page=${perPage}`
-            if ($(this).hasClass('search-people-btn')) $url = `http://192.168.236.220:4000/api/v1/search?search=users&page=${page}&per_page=${perPage}`
-            if ($(this).hasClass('search-topics-btn')) $url = `http://192.168.236.220:4000/api/v1/search?search=topics&page=${page}&per_page=${perPage}`
+            $url = `http://127.0.0.1:4000/api/v1/search?search=stories&page=${page}&per_page=${perPage}`
+            if ($(this).hasClass('search-people-btn')) $url = `http://127.0.0.1:4000/api/v1/search?search=users&page=${page}&per_page=${perPage}`
+            if ($(this).hasClass('search-topics-btn')) $url = `http://127.0.0.1:4000/api/v1/search?search=topics&page=${page}&per_page=${perPage}`
         } else { // for topic
-            $url = `http://192.168.236.220:4000/api/v1/topics/${topic_id}/stories?page=${page}&per_page=${perPage}`
+            $url = `http://127.0.0.1:4000/api/v1/topics/${topic_id}/stories?page=${page}&per_page=${perPage}`
             if ($(this).hasClass('topic-about-btn')) {
                 $('.stories-container').empty().append(`<p class="text-xl">${$('.topic-about-text').text()}</p>`)
                 $('.stories-container').append(editBtn)
