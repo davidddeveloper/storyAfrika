@@ -29,21 +29,21 @@
             <!-- bookmark -->
             <article class="my-4 px-8">
                 <div class="flex gap-2 items-center">
-                    <a href="{{ url_for('write')}}" class="self-start"><img src="/static/icons/bookmark.svg" alt=""></a>
-                    <a href="{{ url_for('write')}}"><p class="text-lightgray text-base">Bookmarks</p></a>
+                    <a href="{{ url_for('profile', username='@' + current_user.username)}}" class="self-start"><img src="/static/icons/bookmark.svg" alt=""></a>
+                    <a href="{{ url_for('profile', username='@' + current_user.username)}}"><p class="text-lightgray text-base">Bookmarks</p></a>
                 </div>
             </article>
             <!-- stories-->
             <article class="my-4 px-8">
                 <div class="flex gap-2 items-center">
-                    <a href="{{ url_for('write')}}" class="self-start"><img src="/static/icons/books.svg" alt=""></a>
+                    <a href="{{ url_for('profile', username='@' + current_user.username)}}" class="self-start"><img src="/static/icons/books.svg" alt=""></a>
                     <p class="text-lightgray text-base">Stories</p>
                 </div>
             </article>
             <!-- Likes -->
             <article class="my-4 px-8">
                 <div class="flex gap-2 items-center">
-                    <a href="{{ url_for('profile', username=username)}}" class="self-start"><img src="/static/icons/like.svg" alt=""></a>
+                    <a href="{{ url_for('profile', username='@' + current_user.username)}}" class="self-start"><img src="/static/icons/like.svg" alt=""></a>
                     <p class="text-lightgray text-base">Likes</p>
                 </div>
             </article>

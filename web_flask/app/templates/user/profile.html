@@ -29,6 +29,7 @@
     <script src="/static/js/main.js" defer type="module"></script>
     <script src="/static/js/comment-view.js" defer></script>
     <script src="/static/js/topic/topic.js" defer></script>
+    <script src="/static/js/user/user.js" defer></script>
     
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-FW17L5LYTT"></script>
@@ -61,14 +62,15 @@
         {% set where = 'profile' %}
         {% include 'components/nav-in-topic-and-profile.html' %}
         <!-- about -->
-        <article class="topic-about-container my-[50px] relative mx-auto md:px-0 md:w-[600px]">
+        <article class="topic-about-container hide-this my-[50px] relative mx-auto md:px-0 md:w-[600px]">
             <!-- about text -->
-            <p class="profile-about-text about-text text-lightgray text-lg px-5 md:px-0">
-                Welcome to my exploration of the entrepreneurial journey! In this article, I'll dive into the critical lessons learned from building businesses, the mindset required for success, and actionable strategies you can use to start or grow your own venture. Whether you're a budding entrepreneur or an experienced business owner, you'll find insights that challenge conventional thinking and empower you to innovate. Join me as we discuss the triumphs, failures, and everything in between—because entrepreneurship is more than a career, it's a way of life.
-            </p>
-            <button class="edit-topic-about-text-btn text-lightblue absolute top-[105%] right-5">
-                Edit
-            </button>
+            <p class="profile-about-text about-text text-black text-xl px-5 md:px-0">{{current_user.about}}</p>
+            <button class="edit-topic-about-text-btn text-lightblue absolute top-[105%] right-5">Edit</button>
+            <form action="/edit-profile" method="post" hidden>
+                {{ form.about(class="about-input bg-white text-lightgray border-2 p-1 rounded-lg focus:outline-lightblue w-full sm:w-[290px]", placeholder="Email", value=current_user.about) }}
+                <!--edit-profile-about-submit-btn-->
+                {{ form.submit(class="edit-profile-about-submit-btn text-white px-2 py-1 rounded-sm bg-lightblue") }}</br></br>
+            </form>
         </article>
         <article class="profile-stories-container container stories-container max-w-xl relative mx-auto mt-[20px] mb-20 pt-[25px] pb-[25px] px-5 flex flex-col gap-[50px] shrink-1 h-screen overflow-y-scroll no-scrollbar ">
             
