@@ -5,11 +5,11 @@
         
         {% if current_user.avatar %}
         <button class="rounded-full w-[50px] h-[50px] border home-profile-img">
-            <img class="rounded-full w-full h-full object-cover" src="{{current_user.avatar}}" alt="profile image of the user" srcset="">
+            <img class="profile-image rounded-full w-full h-full object-cover" src="{{current_user.avatar}}" alt="profile image of the user" srcset="">
         </button>
         {% else %}
         <button class="rounded-full w-[50px] h-[50px] border home-profile-img">
-            <img class="rounded-full w-full h-full object-cover" src="/static/images/default-profile-image.png" alt="profile image of the user" srcset="">
+            <img class="profile-image rounded-full w-full h-full object-cover" src="/static/images/default-profile-image.png" alt="profile image of the user" srcset="">
         </button>
         {% endif %}
         {% include 'new_profile_card.html' %}

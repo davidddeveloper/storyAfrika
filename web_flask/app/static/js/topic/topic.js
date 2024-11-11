@@ -6,7 +6,7 @@ $(function () {
         target.addClass('border-b-2 border-lightgray')
 
         
-        $('.topic-about-container').hide(500)
+        $('.hide-this').hide(500)
         $('.topic-stories-container').show(500)
     })
     
