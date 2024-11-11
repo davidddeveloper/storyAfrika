@@ -62,6 +62,14 @@ def upload_avater_for_user():
             print(auth.current_user)
         return jsonify(get_user_data(auth.current_user))
 
+@views.route("/users/upload_avatar/default", methods=['POST'], strict_slashes=False)
+@auth_guard
+def set_default_avatar():
+    auth.current_user.avatar = 'https://res.cloudinary.com/dgns2pj30/image/upload/v1731298523/b98e7e1f-0a6b-4a79-8c13-b7c1340ce7a8/j1jnks2zbfprd3i5gsy0.png'
+    storage.save()
+
+    return jsonify(get_user_data(auth.current_user))
+
 @views.route("/topics/<string:topic_id>/upload_banner/", methods=['POST'], strict_slashes=False)
 @auth_guard
 def upload_image_for_topic(topic_id=None):
