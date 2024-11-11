@@ -71,6 +71,7 @@ class User(BaseModel, ImageUpload, Base):
         )
         avatar = Column(String(200), nullable=True) # path to avatar
         banner = Column(String(200), nullable=True, default='https://fastly.picsum.photos/id/91/800/500.jpg?hmac=J_kCOn2MZlDuJIb_rU14DYnb6HMv55ynWirbSF9l8f0')
+        registeration_finish = Column(Boolean, nullable=False, default=False)
 
     else:
         _username = ''
