@@ -4,7 +4,7 @@
 """
 
 from sqlalchemy.orm import joinedload
-from web_flask.app import app, storage
+from web_flask.app import app, send_welcome_email, storage
 from web_flask.app.forms import LoginForm, UserRegistrationForm, UserUpdateForm
 from flask_login import current_user, login_user
 from flask_login import logout_user, login_required
@@ -311,6 +311,7 @@ def register():
             f'Registration completed successfully \
             for {user.username}', 'success'
         )
+        send_welcome_email(user.email, user.first_name)
         return redirect(url_for('login'))
     return render_template('register.html', form=form)
 
@@ -545,7 +546,7 @@ def login_with_google():
 
         response = make_response(jsonify({'success': True, 'redirect_url': url_for('home')}))
         response.set_cookie('jwt_token', token.get('data'))
-    
+        send_welcome_email(user.email, user.first_name)
         return response
 
     except Exception as e:

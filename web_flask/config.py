@@ -23,3 +23,12 @@ class Config:
     # login or signup with google
     GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
     GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
+
+    # flask mail
+    MAIL_SERVER = 'smtp.gmail.com'  # e.g., 'smtp.gmail.com'
+    MAIL_PORT = 587  # or 465 for SSL
+    MAIL_USE_TLS = True  # Use TLS for security
+    MAIL_USE_SSL = False  # Set to True if using SSL
+    MAIL_USERNAME = os.getenv('MAIL_USERNAME')
+    MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
+    MAIL_DEFAULT_SENDER = ('StoryAfrika Team', os.getenv(MAIL_USERNAME))
