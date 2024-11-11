@@ -134,6 +134,16 @@ def edit_profile():
                 current_user.last_name = form.last_name.data
                 flash("Last Name changed!")
         
+        if form.short_bio:
+            if current_user.short_bio != form.short_bio.data:
+                current_user.short_bio = form.short_bio.data
+                flash("Bio changed successfully")
+        
+        if form.about:
+            if current_user.about != form.about.data:
+                current_user.about = form.about.data
+                flash("About changed successfully")
+        
         storage.save()
     else:
         print(form.errors)
@@ -541,3 +551,10 @@ def login_with_google():
     except Exception as e:
         print(f"Error during Google login: {e}")
         return jsonify({'success': False, 'message': 'Login failed'}), 500
+
+
+@app.route('/complete_registration/', methods=['GET'], strict_slashes=False)
+def complete_registration():
+    # if auth.current_user.registration_complete:
+    #   redirect('/')
+    return render_template("/complete_registration.html")
