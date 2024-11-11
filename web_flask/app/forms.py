@@ -65,6 +65,8 @@ class UserUpdateForm(UserRegistrationForm, FlaskForm):
 
     first_name = StringField('First Name', validators=[])
     last_name = StringField('Last Name', validators=[])
+    short_bio = StringField('Short Bio', validators=[])
+    about = StringField('About', validators=[])
     username = StringField('Username', validators=[])
     email = EmailField('Email', validators=[Email()])
     current_password = PasswordField('Current Password', validators=[])
