@@ -5,7 +5,7 @@
         {% set h = 'h-[80px]' %}
         {% include 'user/profile-image.html' %}
         <div class="flex flex-col items-center justify-center">
-            <button class="text-red-500">Remove</button>
+            <button class="remove-profile-image text-red-500">Remove</button>
             <button class="text-lightblue image-btn-change block">Update</button>
         </div>
         
@@ -23,6 +23,12 @@
             {{ form.last_name.label(class="text-lightgray block mb-[5px]") }}
             {{ form.last_name(class="bg-white text-lightgray border-2 p-1 rounded-lg focus:outline-lightblue w-full sm:w-[290px]", placeholder="Last Name", value=current_user.last_name) }}
             {% for error in form.last_name.errors %}
+            <p style="color: bisque;">{{error}}</p>
+            {% endfor %}</br></br>
+
+            {{ form.short_bio.label(class="text-lightgray block mb-[5px]") }}
+            {{ form.short_bio(class="bg-white text-lightgray border-2 p-1 rounded-lg focus:outline-lightblue w-full sm:w-[290px]", placeholder="Last Name", value=current_user.short_bio) }}
+            {% for error in form.short_bio.errors %}
             <p style="color: bisque;">{{error}}</p>
             {% endfor %}</br></br>
 
