@@ -1,0 +1,66 @@
+{% extends 'root.html' %}
+
+{% block miscellaneous %}
+<div class="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+<div class="w-full max-w-3xl space-y-8">
+    <!-- Step 1: User Details -->
+    <div id="step-1" class="bg-white p-6 shadow-md rounded-lg">
+    <h2 class="text-2xl font-bold text-center text-gray-800 mb-4">Let's Get to Know You</h2>
+    <form class="space-y-4">
+        <div>
+        <label for="first_name" class="block text-sm font-medium text-gray-700">First Name</label>
+        <input type="text" id="first_name" required class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-indigo-500" required aria-required="true">
+        </div>
+        <div>
+        <label for="last_name" class="block text-sm font-medium text-gray-700">Last Name</label>
+        <input type="text" id="last_name" required class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-indigo-500" required aria-required="true">
+        </div>
+        <button type="button" onclick="showStep(2)" class="mt-4 w-full py-2 px-4 bg-lightblue text-white rounded-md hover:bg-indigo-700">Next</button>
+    </form>
+    </div>
+
+    <!-- Step 2: Topics to Follow -->
+    <div id="step-2" class="hidden bg-white p-6 shadow-md rounded-lg">
+    <h2 class="text-2xl font-bold text-center text-gray-800 mb-4">Choose Topics to Follow</h2>
+    <p class="text-sm text-gray-500 mb-2 text-center">Select at least 5 topics to proceed</p>
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-4">
+        <label class="flex items-center space-x-2">
+        <input type="checkbox" name="topics" value="entrepreneurship" class="form-checkbox text-indigo-600">
+        <span class="text-sm text-gray-700">Entrepreneurship</span>
+        </label>
+        <label class="flex items-center space-x-2">
+        <input type="checkbox" name="topics" value="music" class="form-checkbox text-indigo-600">
+        <span class="text-sm text-gray-700">Music</span>
+        </label>
+        <!-- Add more topics here -->
+    </div>
+    <button type="button" onclick="showStep(3)" class="w-full py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">Next</button>
+    </div>
+
+    <!-- Step 3: People to Follow -->
+    <div id="step-3" class="hidden bg-white p-6 shadow-md rounded-lg">
+    <h2 class="text-2xl font-bold text-center text-gray-800 mb-4">People to Follow</h2>
+    <div class="space-y-3">
+        <div class="flex items-center space-x-3">
+        <img src="profile1.jpg" alt="Profile 1" class="w-10 h-10 rounded-full">
+        <div class="flex-1">
+            <p class="text-sm font-semibold text-gray-800">John Doe</p>
+            <p class="text-xs text-gray-500">Entrepreneur</p>
+        </div>
+        <button class="py-1 px-3 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700">Follow</button>
+        </div>
+        <!-- Add more profiles -->
+    </div>
+    <button type="submit" class="mt-4 w-full py-2 px-4 bg-green-600 text-white rounded-md hover:bg-green-700">Complete Onboarding</button>
+    </div>
+</div>
+</div>
+
+<script>
+    function showStep(step) {
+        document.querySelectorAll('[id^="step-"]').forEach(div => div.classList.add('hidden'));
+        document.getElementById(`step-${step}`).classList.remove('hidden');
+    }
+</script>
+
+{% endblock %}

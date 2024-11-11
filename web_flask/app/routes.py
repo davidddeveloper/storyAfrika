@@ -553,8 +553,10 @@ def login_with_google():
         return jsonify({'success': False, 'message': 'Login failed'}), 500
 
 
-@app.route('/complete_registration/', methods=['GET'], strict_slashes=False)
+@app.route('/complete_registration/', methods=['GET', 'POST'], strict_slashes=False)
 def complete_registration():
     # if auth.current_user.registration_complete:
     #   redirect('/')
-    return render_template("/complete_registration.html")
+    if request.method == 'POST':
+        pass
+    return render_template("complete-registration.html")

@@ -2609,6 +2609,10 @@ video {
   outline-width: 0px;
 }
 
+.focus\:outline-indigo-500:focus {
+  outline-color: #6366f1;
+}
+
 .focus\:outline-lightblue:focus {
   outline-color: #2699eb;
 }
