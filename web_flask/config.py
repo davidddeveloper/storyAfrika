@@ -31,4 +31,4 @@ class Config:
     MAIL_USE_SSL = False  # Set to True if using SSL
     MAIL_USERNAME = os.getenv('MAIL_USERNAME')
     MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
-    MAIL_DEFAULT_SENDER = ('StoryAfrika Team', os.getenv(MAIL_USERNAME))
+    MAIL_DEFAULT_SENDER = ('StoryAfrika Team', os.getenv('MAIL_USERNAME'))

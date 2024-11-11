@@ -7,7 +7,10 @@ from flask_moment import Moment
 from flask_wtf.csrf import CSRFProtect
 from flask_session import Session
 from flask_cors import CORS
-from flask_mail import Mail, Message
+#from flask_mail import Mail, Message
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
+import os
 
 app = Flask(__name__)
 init_app(app)
@@ -40,8 +43,24 @@ def send_welcome_email(user_email, first_name):
         The StoryAfrika Team
         """
 
-        msg = Message(subject, recipients=[user_email])
-        msg.body = body
-        mail.send(msg)
+        #msg = Message(subject, recipients=[user_email])
+        #msg.body = body
+        #mail.send(msg)
+
+        message = Mail(
+            from_email=('storyafrika.live@gmail.com', 'StoryAfrika Team'),
+            to_emails=user_email,
+            subject=subject,
+            plain_text_content=body
+        )
+
+        try:
+            sg = SendGridAPIClient(os.getenv('SENDGRID_API_KEY'))
+            response = sg.send(message)
+            print(response.status_code)
+            print(response.body)
+            print(response.headers)
+        except Exception as e:
+            print(f"Error sending email: {e}")
 
 from web_flask.app import routes
