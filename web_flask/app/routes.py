@@ -45,6 +45,9 @@ def home():
     with the current user's data, all users, topics, stories, and stories the
     current user is following.
     """
+    if not current_user.registration_finish:
+        return redirect(url_for('complete_registration'))
+
     form = UserUpdateForm()
 
     if request.method == 'POST':
@@ -106,6 +109,8 @@ def search():
 
 @app.route('/edit-profile', methods=['POST'], strict_slashes=False)
 def edit_profile():
+    if not current_user.registration_finish:
+        return redirect(url_for('complete_registration'))
 
     form = UserUpdateForm()
     if form.validate_on_submit():
@@ -178,6 +183,9 @@ def write():
         - GET: renders a blank page to write a story
         - POST: saves the story with the given image
     """
+    if not current_user.registration_finish:
+        return redirect(url_for('complete_registration'))
+
     if request.method == 'POST':
         story = storage.get(Story, request.form.get('story_id'))
         if request.files:
@@ -326,6 +334,9 @@ def immersive_read(story_id=None):
     
         - story_id: id of the story
     """
+    if not current_user.registration_finish:
+        redirect(url_for('complete_registration'))
+
     story = storage.get(Story, story_id)
     if story is None:
         abort(404)
@@ -427,6 +438,9 @@ def topic(name=None):
     Raises:
         404: If the topic is not found.
     """
+    if not current_user.registration_finish:
+        return redirect(url_for('complete_registration'))
+
     if name is None:
         abort(404)
 
@@ -455,6 +469,8 @@ def profile(username=None):
     Raises:
         404: If the topic is not found.
     """
+    if not current_user.registration_finish:
+        return redirect(url_for('complete_registration'))
 
     form = UserUpdateForm()
 
@@ -556,8 +572,42 @@ def login_with_google():
 
 @app.route('/complete_registration/', methods=['GET', 'POST'], strict_slashes=False)
 def complete_registration():
-    # if auth.current_user.registration_complete:
-    #   redirect('/')
+    if current_user.registration_finish:
+        return redirect('/')
     if request.method == 'POST':
-        pass
-    return render_template("complete-registration.html")
+        # capture first name and last name data
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
+        if first_name and last_name:
+            current_user.first_name = first_name
+            current_user.last_name = last_name
+            #current_user.registration_complete = True
+            storage.save()
+            #return redirect(url_for('home'))
+        
+        # capture which topics the user is interested in
+        topics = request.form.getlist('topics')
+        if topics:
+            current_user.topics = [storage._session.query(Topic).where(Topic.name == topic).first() for topic in topics]
+            current_user.registration_finish = True
+            storage.save()
+            # return redirect(url_for('home'))
+        
+        # # capture which users the user is interested in following
+        # users = request.form.getlist('users')
+        # if users:
+        #     for user in users:
+        #         user_to_follow = storage._session.query(User).where(User.username == user).first()
+        #         if user_to_follow:
+        #             current_user.following.add(user_to_follow)
+        #     storage.save()
+            return jsonify({"message": "registration completed successful", "success": True, "redirect_url": url_for('home')})
+        else:
+            return redirect(url_for('complete_registration'))
+
+    topics = storage._session.query(Topic).limit(10).all()
+    users_suggestions = storage._session.query(User).join(User.topics).where(Topic.id.in_(map(lambda x: x.id, topics))).limit(8).all()
+    contributor_ids = [contributor.id for contributor in topics[0].contributors]  
+
+    #users_suggestions = storage._session.query(User).where(User.id.in_(contributor_ids)).limit(4).all()
+    return render_template("complete-registration.html", topics=topics, users_suggestions=users_suggestions)
