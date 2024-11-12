@@ -37,14 +37,14 @@
             <article class="my-4 px-8">
                 <div class="flex gap-2 items-center">
                     <a href="{{ url_for('profile', username='@' + current_user.username)}}" class="self-start"><img src="/static/icons/books.svg" alt=""></a>
-                    <p class="text-lightgray text-base">Stories</p>
+                    <a href="{{ url_for('profile', username='@' + current_user.username)}}"><p class="text-lightgray text-base">Stories</p></a>
                 </div>
             </article>
             <!-- Likes -->
             <article class="my-4 px-8">
                 <div class="flex gap-2 items-center">
                     <a href="{{ url_for('profile', username='@' + current_user.username)}}" class="self-start"><img src="/static/icons/like.svg" alt=""></a>
-                    <p class="text-lightgray text-base">Likes</p>
+                    <a href="{{ url_for('profile', username='@' + current_user.username)}}"><p class="text-lightgray text-base">Likes</p></a>
                 </div>
             </article>
         </section>

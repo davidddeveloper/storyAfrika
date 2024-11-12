@@ -129,26 +129,26 @@ def edit_profile():
                 current_user.email = form.email.data
                 flash("Email changed!")
         
-        if form.first_name:
+        if form.first_name.data:
             if current_user.first_name != form.first_name.data:
                 current_user.first_name = form.first_name.data
                 flash("First Name changed!")
 
-        if form.last_name:
+        if form.last_name.data:
             if current_user.last_name != form.last_name.data:
                 current_user.last_name = form.last_name.data
                 flash("Last Name changed!")
         
-        if form.short_bio:
+        if form.short_bio.data:
             if current_user.short_bio != form.short_bio.data:
                 current_user.short_bio = form.short_bio.data
                 flash("Bio changed successfully")
         
-        if form.about:
+        if form.about.data:
             if current_user.about != form.about.data:
                 current_user.about = form.about.data
                 flash("About changed successfully")
-        
+        current_user.save()
         storage.save()
     else:
         print(form.errors)
@@ -607,7 +607,8 @@ def complete_registration():
 
     topics = storage._session.query(Topic).limit(10).all()
     users_suggestions = storage._session.query(User).join(User.topics).where(Topic.id.in_(map(lambda x: x.id, topics))).limit(8).all()
-    contributor_ids = [contributor.id for contributor in topics[0].contributors]  
+    #contributor_ids = [contributor.id for contributor in topics[0].contributors]  
 
     #users_suggestions = storage._session.query(User).where(User.id.in_(contributor_ids)).limit(4).all()
+    send_welcome_email(current_user.email, current_user.first_name)
     return render_template("complete-registration.html", topics=topics, users_suggestions=users_suggestions)

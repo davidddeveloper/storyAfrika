@@ -1,36 +1,93 @@
-<div class="who-to-follow mx-auto w-[80%] text-white sm:text-lightgray sm:w-auto">
-    <h3 class="mt-[30px] mb-5 text-xs font-medium">Who to follow?</h3>
-    <div class="slider-wrapper overflow-x-hidden">
-        <div class="slider follow-slider flex items-center justify-between w-full gap-10 transition-transform ease-out" data-current_index=0>
+<div class="who-to-follow mx-auto w-full max-w-3xl text-white sm:text-lightgray relative">
+    <h3 class="mt-10 mb-5 text-sm font-semibold text-black">Who to follow?</h3>
+
+    <!-- Left Arrow Button -->
+    <button class="left-arrow absolute top-1/2 transform -translate-y-1/2 left-[-30px] bg-lightblue text-white p-3 rounded-full hover:bg-blue-500 shadow-lg transition duration-300">
+        &larr;
+    </button>
+    <!-- Right Arrow Button -->
+    <button class="right-arrow absolute top-1/2 transform -translate-y-1/2 right-[-30px] bg-lightblue text-white p-3 rounded-full hover:bg-blue-500 shadow-lg transition duration-300">
+        &rarr;
+    </button>
+
+    <div class="slider-wrapper overflow-hidden relative">
+        <div class="slider follow-slider flex items-center transition-transform ease-out duration-300 gap-5" data-current_index=0>
             {% for the_user in users.values() %}
-            {% if the_user != current_user %}
-            {% if not current_user.is_following(the_user) %}
-            {% if loop.index <= 6 %}
-                <div class="follow-card w-[200px] slider-item flex flex-shrink-0 items-center gap-[15px]" data-user_id={{the_user.id}}>
+            {% if the_user != current_user and not current_user.is_following(the_user) and loop.index <= 6 %}
+                <div class="follow-card w-48 slider-item flex-shrink-0 p-4 rounded-lg bg-gray-800 hover:bg-gray-700 shadow-md transition-transform duration-200" data-user_id={{the_user.id}}>
                     {% if the_user.avatar %}
-                    <div class="h-[50px] w-[50px] flex-shrink-0">
-                        <img class="h-full w-full rounded-full border-2" src="{{ url_for('upload', filename=the_user.avatar, user_id=the_user.id) }}" alt="">
+                    <div class="avatar h-12 w-12 flex-shrink-0 mb-3">
+                        <img class="h-full w-full rounded-full border-2 border-gray-600" src="{{ url_for('upload', filename=the_user.avatar, user_id=the_user.id) }}" alt="">
                     </div>
                     {% else %}
-                    <div class="h-[50px] w-[50px] flex-shrink-0">
-                        <img class="h-full w-full rounded-full border-2" src="https://picsum.photos/200/300" alt="">
+                    <div class="avatar h-12 w-12 flex-shrink-0 mb-3">
+                        <img class="h-full w-full rounded-full border-2 border-gray-600" src="https://picsum.photos/200/300" alt="">
                     </div>
                     {% endif %}
                     <div>
-                        <div class="flex gap-2 items-center">
-                            <h3 class="">{{the_user.username}}</h3>
-                            <button class="flex items-center follow text-sm text-lightblue"><img src="/static/icons/plus.svg" alt="">Follow</button>
+                        <div class="flex justify-between items-center mb-1">
+                            <h3 class="text-sm font-semibold text-gray-100">{{the_user.username}}</h3>
+                            <button class="follow-btn follow flex items-center px-2 py-1 rounded-full text-white text-xs font-medium hover:bg-blue-400 transition duration-200"><img src="/static/icons/plus.svg" class="mr-1" alt="">Follow</button>
                         </div>
-                        <p class="text-xs text-lightgray">{{the_user.short_bio}}</p>
+                        <p class="text-xs text-gray-400">{{the_user.short_bio if the_user.short_bio else ""}}</p>
                     </div>
                 </div>
             {% endif %}
-            {% endif %}
-            {% endif %}
             {% endfor %}
-                
         </div>
     </div>
-    {#show-who-to-follow#}
-    <button class="block mt-5 underline text-lightblue text-sm">More suggestions</button>
+
+    <button class="block mt-6 underline text-lightblue text-sm">More suggestions</button>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const slider = document.querySelector(".follow-slider");
+    const leftArrow = document.querySelector(".left-arrow");
+    const rightArrow = document.querySelector(".right-arrow");
+    const cardWidth = 208; // Adjusted for padding and margins
+    let currentIndex = 0;
+
+    rightArrow.addEventListener("click", () => {
+        const maxIndex = slider.children.length - 1;
+        if (currentIndex < maxIndex) {
+            currentIndex++;
+            slider.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
+        }
+    });
+
+    leftArrow.addEventListener("click", () => {
+        if (currentIndex > 0) {
+            currentIndex--;
+            slider.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
+        }
+    });
+});
+</script>
+
+<style>
+/* Arrow Button Styling */
+.left-arrow, .right-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    cursor: pointer;
+    z-index: 10;
+}
+.slider-wrapper {
+    padding: 10px 40px; /* Space for arrows */
+    overflow: hidden;
+}
+.follow-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.follow-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+}
+.follow-btn {
+    display: flex;
+    align-items: center;
+}
+</style>
