@@ -319,7 +319,6 @@ def register():
             f'Registration completed successfully \
             for {user.username}', 'success'
         )
-        send_welcome_email(user.email, user.first_name)
         return redirect(url_for('login'))
     return render_template('register.html', form=form)
 
