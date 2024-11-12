@@ -1,6 +1,6 @@
-from flask import Flask
+from flask import Flask, redirect, url_for
 from humanize_number.humanize_flask import init_app
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 from models.engine import storage
 from web_flask.config import Config
 from flask_moment import Moment
@@ -11,6 +11,7 @@ from flask_cors import CORS
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 import os
+from .helpers.complete_registration import complete_registration
 
 app = Flask(__name__)
 init_app(app)
@@ -23,6 +24,7 @@ moment = Moment(app)
 #Session(app)
 # mail
 mail = Mail(app)
+
 
 def send_welcome_email(user_email, first_name):
     with app.app_context():
