@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Carousel</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            overflow: hidden;
+        }
+
+        .header {
+            position: absolute;
+            inset: 0 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 60;
+        }
+
+        .header .logo {
+            font-size: 20px;
+            font-weight: bold;
+            color: #000;
+            text-decoration: none;
+        }
+
+        .header .search-bar {
+            flex: 1;
+            margin: 0 20px;
+            display: flex;
+            align-items: center;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            padding: 5px 15px;
+            max-width: 400px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 14px;
+            padding: 5px;
+            width: 100%
+        }
+
+        .search-bar button {
+            border: none;
+            background: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-bar button svg {
+            width: 16px;
+            height: 16px;
+            fill: #888;
+        }
+
+        .header .nav {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav a {
+            text-decoration: none;
+            color: #000;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .nav img.user-profile-img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        nav a.stories-link-mobile, nav a.write-link-mobile {
+            display: none;
+
+        }
+
+        @media (max-width: 630px) {
+            nav a.stories-link, nav a.write-link {
+                display: none;
+
+            }
+            nav a.stories-link-mobile, nav a.write-link-mobile {
+                display: block;
+
+            }
+            .search-bar {
+                display: none;
+            }
+        }
+
+        @media (max-width: 540px) {
+            nav.nav .user-profile-link {
+                display: none;
+            }
+
+            nav a.stories-link-mobile img, nav a.write-link-mobile img {
+                width: 20px;
+                height: 20px;
+            }
+        }
+
+        .carousel-container {
+            position: relative;
+            width: 805px;
+            height: 600px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            /*border: 2px solid lawngreen*/
+        }
+
+        .carousel {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .carousel .item {
+            flex-shrink: 0;
+            width: 500px;
+            height: 400px;
+            transition: transform 0.5s ease, filter 0.5s ease;
+            /*border-radius: 10px;*/
+        }
+        .carousel .item img {
+            flex-shrink: 0;
+            width: 500px;
+            height: 400px;
+            object-fit: cover;
+            /*margin: 0 10px;*/
+            
+            transition: transform 0.5s ease, filter 0.5s ease;
+            /*border-radius: 10px;*/
+        }
+
+        .carousel .item.inactive {
+            transform: scale(0.8);
+            filter: brightness(0.7);
+        }
+
+        .carousel .item.active {
+            transform: scale(1.2555);
+            filter: brightness(1);
+            z-index: 30;
+        }
+
+        .carousel .item.active img {
+            filter: brightness(.5);
+        }
+
+        .dots-container {
+            position: absolute;
+            bottom: 0px;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            gap: 10px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #ccc;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .dot.active {
+            background-color: #333;
+        }
+
+        div.text {
+            position: absolute;
+            inset: 0;
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            margin-top: -60px;
+        }
+
+        div.text .topic {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        div.text .topic a {
+            text-decoration: none;
+            color: #fff;
+            padding: 5px;
+            border: 1px solid #fff;
+            border-radius: 10px;
+        }
+
+        div.text h2 {
+            text-align: center;
+            font-size: 30px;
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        .profile-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            margin-bottom: 1rem;
+            margin-left: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            left: 40%;
+            transform: translateX(-40%);            
+        }
+        .profile-container img.profile-image {
+            display: block;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin: 0 auto;
+            margin-right: .7rem;
+        }
+        .profile-info {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: .5rem;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: small;
+            color: white;
+            flex-shrink: 0;
+        }
+        .profile-info p:first-child {
+            font-weight: bold;
+        }
+        .profile-info p:nth-child(2) {
+            margin-right: 0.5rem;
+            font-size: 1rem;
+        }
+        .profile-info .dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            background-color: #fff;
+        }
+        @media (max-width: 800px) {
+            .carousel-container {
+                width: 650px;
+                height: 500px;
+            }
+            .carousel .item {
+                flex-shrink: 0;
+                width: 400px;
+                height: 300px;
+                transition: transform 0.5s ease, filter 0.5s ease;
+                /*border-radius: 10px;*/
+            }
+            .carousel .item img {
+                flex-shrink: 0;
+                width: 400px;
+                height: 300px;
+                object-fit: cover;
+                /*margin: 0 10px;*/
+                
+                transition: transform 0.5s ease, filter 0.5s ease;
+                /*border-radius: 10px;*/
+            }
+            .profile-container img.profile-image {
+                width: 25px;
+                height: 25px;
+            }
+            div.text h2 {
+                text-align: center;
+                font-size: 25px;
+            }
+        }
+        @media (max-width: 600px) {
+            .carousel-container {
+                width: 420px;
+                height: 400px;
+            }
+            .carousel .item img {
+                width: 100%;
+                height: 100%;
+            }
+            .profile-container img.profile-image {
+                width: 25px;
+                height: 25px;
+            }
+            .text {
+                padding-inline: 5px;
+            }
+            .carousel .item.active {
+                transform: scale(1.1);
+                filter: brightness(1);
+                z-index: 30;
+            }
+            div.text h2 {
+                text-align: center;
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .carousel-container {
+                width: 90%;
+                height: 60%;
+            }
+            .carousel .item.active {
+                transform: scale(1);
+                filter: brightness(1);
+                z-index: 30;
+            }
+            div.text h2 {
+                text-align: center;
+                font-size: 24px;
+                margin-left: 0;
+                margin-right: 20px;
+            }
+            .profile-container {
+                margin-left: -5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="#" class=""><img src="assets/svgs/logo.svg" alt=""></a>
+        <div class="search-bar">
+            <input type="text" placeholder="Search for stories, topics and people...">
+            <button aria-label="Search">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.55l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C8.01 14 6 11.99 6 9.5S8.01 5 9.5 5 13 7.01 13 9.5 10.99 14 9.5 14z"></path>
+                </svg>
+            </button>
+        </div>
+        <nav class="nav">
+            <a href="#" class="stories-link"><img src="assets/svgs/stories-icon.svg" alt="icon"> Stories</a>
+            <a href="#" class="write-link"><img src="assets/svgs/write-icon.svg" alt=""> Write</a>
+
+            <!-- mobile -->
+            <a href="#" class="stories-link-mobile"><img src="assets/svgs/stories-icon.svg" alt="icon"></a>
+            <a href="#" class="write-link-mobile"><img src="assets/svgs/write-icon.svg" alt=""></a>
+
+
+            <a href="#" class="user-profile-link"><img class="user-profile-img" src="https://picsum.photos/200/300" alt="User Profile"></a>
+        </nav>
+    </header>
+    <div class="carousel-container">
+        <div class="carousel">
+            <div class="item" class="inactive">
+                <img src="images/nice-banner.jpg" alt="Image 1">
+                
+            </div>
+            <div class="item" class="active">
+                <img src="images/nice-banner.jpg" alt="Image 2">
+                <div class="text">
+                    <p class="topic"><a href="">Music</a></p>
+                    <h2>Unleashing the Spirit of African Music: How Rhythms Shape Our Lives and Cultures</h2>
+                    <div class="profile-container">
+                        <img src="images/nice-banner.jpg" alt="Profile Image" class="profile-image">
+                        <div class="profile-info">
+                            <p>John Doe</p>
+                            <div class="dot"></div>
+                            <p>23rd January, 2022</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="item" class="inactive">
+                <img src="images/nice-banner.jpg" alt="Image 3">
+            </div>
+            <div class="item" class="inactive">
+                <img src="images/nice-banner.jpg" alt="Image 4">
+            </div>
+        </div>
+        <div class="dots-container">
+            <div class="dot"></div>
+            <div class="dot active"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </div>
+    <script>
+        const carousel = document.querySelector('.carousel');
+        const images = Array.from(carousel.children);
+        const dots = Array.from(document.querySelector('.dots-container').children);
+
+        let currentIndex = 1;
+
+        const updateCarousel = () => {
+            images.forEach((img, index) => {
+                img.classList.toggle('active', index === currentIndex);
+                img.classList.toggle('inactive', index !== currentIndex);
+            });
+
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentIndex);
+            });
+
+            const offset = (images[0].offsetWidth + 28) * currentIndex; // Including margin
+            carousel.style.transform = `translateX(calc(40% - ${offset}px))`;
+        };
+
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                currentIndex = index;
+                updateCarousel();
+            });
+        });
+
+        images.forEach((img, index) => {
+            img.addEventListener('click', () => {
+                currentIndex = index;
+                updateCarousel();
+            });
+        });
+
+        updateCarousel(); // Initialize the carousel
+    </script>
+</body>
+</html>
