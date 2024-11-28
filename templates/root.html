@@ -42,7 +42,6 @@
 </head>
 <body data-current_user_id="{{current_user.id}}" class="relative">
     <header>
-      {% with messages = get_flashed_messages() %}
       {% if messages %}
       <ul class="ml-5 float right absolute">
         {% for message in messages %}
@@ -50,7 +49,6 @@
         {% endfor %}
       </ul>
       {% endif %}
-        {% endwith %}
     </header>
     
     
@@ -58,9 +56,6 @@
     {% block story %} {% endblock %}
     {% block write %} {% endblock %}
     {% block miscellaneous %} {% endblock %}
-    {{ moment.include_moment() }}
-
-    {% include 'confirm-deletion.html' %}
 
     <script>
       function handleCredentialResponse(response) {
