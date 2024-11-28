@@ -1,6 +1,11 @@
 from django.db import models
 from .base_model import Base
 
+STATUS_CHOICES = {
+    "d": "Draft",
+    "p": "Published",
+    "w": "Withdrawn",
+}
 
 class Story(Base):
     """ Represents a story
@@ -16,6 +21,8 @@ class Story(Base):
     likes = models.ManyToManyField(to='Profile', blank=True, related_name='likers')
 
     image = models.ImageField(upload_to='media/', null=True)
+
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default="d")
 
     def __str__(self):
         return self.title
