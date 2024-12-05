@@ -1,9 +1,41 @@
+{% load static %}
+{% load humanize %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Custom Carousel</title>
+    
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Storyafrika is a platform showcasing the real-life experiences and stories of individual Africans, highlighting their upbringing, everyday successes, and much more. Our goal is to connect everyday Africans with one another through StoryTelling and Writing." property="og:description">
+    <meta content="storyafrika - Success Stories and Experiences of Everyday Africans" property="og:title">
+    <meta content="https://stories.storyafrika.live" property="og:url">
+    <meta content="/static/images/write.webp" property="og:image">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="storyafrika - Success Stories and Experiences of Everyday Africans">
+    <meta name="twitter:description" content="Storyafrika is a platform showcasing the real-life experiences and stories of individual Africans, highlighting their upbringing, everyday successes, and much more. Our goal is to connect everyday Africans with one another through StoryTelling and Writing.">
+    <meta name="twitter:image" content="./write.webp">
+
+    <!-- google oAuth2 client id -->
+    <meta name="google-signin-client_id" content="25158261190-9emalbugfgsvbn9cv7fao3vp6kmi3h37.apps.googleusercontent.com">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <meta name="Cross-Origin-Opener-Policy" content="">
+
+    <title>storyafrika - Success Stories and Experiences of Everyday Africans</title>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-FW17L5LYTT"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-FW17L5LYTT');
+
+    </script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
     <style>
         body {
             display: flex;
@@ -125,21 +157,25 @@
 
         .carousel-container {
             position: relative;
-            width: 805px;
+            width: 1000px;
             height: 600px;
             display: flex;
-            justify-content: center;
             align-items: center;
             overflow: hidden;
-            /*border: 2px solid lawngreen*/
+            flex-shrink: 0;
         }
 
         .carousel {
             display: flex;
+            gap: 0;
             transition: transform 0.5s ease-in-out;
+            flex-shrink: 0;
+            flex-wrap: nowrap;
+            z-index: 40;
         }
 
         .carousel .item {
+            position: relative;
             flex-shrink: 0;
             width: 500px;
             height: 400px;
@@ -166,10 +202,12 @@
             transform: scale(1.2555);
             filter: brightness(1);
             z-index: 30;
+            flex-shrink: 0;
         }
 
         .carousel .item.active img {
             filter: brightness(.5);
+            flex-shrink: 0;
         }
 
         .dots-container {
@@ -204,6 +242,16 @@
             align-items: center;
             color: #fff;
             margin-top: -60px;
+        }
+
+        div.text::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            backdrop-filter: blur(2px);
+            background-color: rgba(88, 4, 36, 0.123);
+            z-index: -1;
+            margin-top: 60px;
         }
 
         div.text .topic {
@@ -271,21 +319,52 @@
             border-radius: 50%;
             background-color: #fff;
         }
-        @media (max-width: 800px) {
+        @media (max-width: 1000px) {
             .carousel-container {
-                width: 650px;
-                height: 500px;
+                width: 800px;
+                height: 600px;
             }
             .carousel .item {
                 flex-shrink: 0;
                 width: 400px;
-                height: 300px;
+                height: 350px;
                 transition: transform 0.5s ease, filter 0.5s ease;
                 /*border-radius: 10px;*/
             }
             .carousel .item img {
                 flex-shrink: 0;
                 width: 400px;
+                height: 350px;
+                object-fit: cover;
+                /*margin: 0 10px;*/
+                
+                transition: transform 0.5s ease, filter 0.5s ease;
+                /*border-radius: 10px;*/
+            }
+            .profile-container img.profile-image {
+                width: 25px;
+                height: 25px;
+            }
+            div.text h2 {
+                text-align: center;
+                font-size: 25px;
+            }
+        }
+        @media (max-width: 805px) {
+            .carousel-container {
+                width: 700px;
+                height: 500px;
+            }
+            .carousel .item {
+                flex-shrink: 0;
+                width: 350px;
+                height: 300px;
+                transition: transform 0.5s ease, filter 0.5s ease;
+                /*border-radius: 10px;*/
+            }
+            .carousel .item img {
+                flex-shrink: 0;
+                width: 350px;
                 height: 300px;
                 object-fit: cover;
                 /*margin: 0 10px;*/
@@ -302,10 +381,18 @@
                 font-size: 25px;
             }
         }
-        @media (max-width: 600px) {
+        @media (max-width: 700px) {
             .carousel-container {
-                width: 420px;
+                width: 500px;
                 height: 400px;
+                position: relative;
+            }
+            .carousel .item {
+                flex-shrink: 0;
+                width: 250px;
+                transition: transform 0.5s ease, filter 0.5s ease;
+                /*border-radius: 10px;*/
+                position: relative;
             }
             .carousel .item img {
                 width: 100%;
@@ -331,13 +418,23 @@
 
         @media (max-width: 400px) {
             .carousel-container {
-                width: 90%;
+                width: 100vw;
                 height: 60%;
+                gap: 0;
             }
             .carousel .item.active {
                 transform: scale(1);
                 filter: brightness(1);
                 z-index: 30;
+                width: 100%;
+            }
+            .carousel {
+                width: 100%;
+                gap: 0;
+            }
+            .carousel .item {
+                width: 100%;
+                position: relative;
             }
             div.text h2 {
                 text-align: center;
@@ -349,62 +446,76 @@
                 margin-left: -5px;
             }
         }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
     </style>
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
 </head>
 <body>
     <header class="header">
-        <a href="#" class=""><img src="assets/svgs/logo.svg" alt=""></a>
-        <div class="search-bar">
-            <input type="text" placeholder="Search for stories, topics and people...">
-            <button aria-label="Search">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.55l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C8.01 14 6 11.99 6 9.5S8.01 5 9.5 5 13 7.01 13 9.5 10.99 14 9.5 14z"></path>
-                </svg>
-            </button>
-        </div>
-        <nav class="nav">
-            <a href="#" class="stories-link"><img src="assets/svgs/stories-icon.svg" alt="icon"> Stories</a>
-            <a href="#" class="write-link"><img src="assets/svgs/write-icon.svg" alt=""> Write</a>
-
-            <!-- mobile -->
-            <a href="#" class="stories-link-mobile"><img src="assets/svgs/stories-icon.svg" alt="icon"></a>
-            <a href="#" class="write-link-mobile"><img src="assets/svgs/write-icon.svg" alt=""></a>
-
-
-            <a href="#" class="user-profile-link"><img class="user-profile-img" src="https://picsum.photos/200/300" alt="User Profile"></a>
-        </nav>
+        {% include 'components/new-header.html' %}
     </header>
     <div class="carousel-container">
         <div class="carousel">
+            <!--
             <div class="item" class="inactive">
-                <img src="images/nice-banner.jpg" alt="Image 1">
+                <img src="{% static 'assets/images/art.jpg' %}" alt="Image 1">
                 
-            </div>
+            </div>-->
+            {% for story in stories %}
+            {% if forloop.counter <= 5 %}
             <div class="item" class="active">
-                <img src="images/nice-banner.jpg" alt="Image 2">
+                <img src="{{ story.topics.first.banner }}" alt="Image 2">
                 <div class="text">
-                    <p class="topic"><a href="">Music</a></p>
-                    <h2>Unleashing the Spirit of African Music: How Rhythms Shape Our Lives and Cultures</h2>
+                    <p class="topic"><a href="">{{ story.topics.first.name }}</a></p>
+                    <h2><a href="{% url 'app:story' story.id %}" style="text-decoration: none; color: inherit;">{{ story.title }}</a></h2>
                     <div class="profile-container">
-                        <img src="images/nice-banner.jpg" alt="Profile Image" class="profile-image">
+                        <img src="{{ story.writer.avatar }}" alt="Profile Image" class="profile-image">
                         <div class="profile-info">
-                            <p>John Doe</p>
+                            <p>{% if story.writer.user.first_name and story.writer.user.last_name %} {{ story.writer.user.first_name }} {{ story.writer.user.last_name }} {% else %} {{story.writer.user.username}} {% endif %}</p>
                             <div class="dot"></div>
-                            <p>23rd January, 2022</p>
+                            <p>{{ story.created_at | naturaltime}}</p>
                         </div>
                     </div>
                 </div>
             </div>
+            {% endif %}
+            {% endfor %}
+            <div class="item" class="active">
+                <img src="" alt="Image 2" style="position: absolute;">
+                <div class="text" style="
+                    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+                    background-size: 400% 400%;
+                    animation: gradient 15s ease infinite;
+                ">
+                    <img src="{% static 'assets/svgs/stories-icon.svg' %}" alt="">
+                    <h2><a href="" style="text-decoration: none; color: inherit; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">More Stories</a></h2>
+                </div>
+            </div>
+            <!--
             <div class="item" class="inactive">
-                <img src="images/nice-banner.jpg" alt="Image 3">
+                <img src="{% static 'assets/images/dancing.avif' %}" alt="Image 3">
             </div>
             <div class="item" class="inactive">
-                <img src="images/nice-banner.jpg" alt="Image 4">
+                <img src="{% static 'assets/images/entrepreneur.avif' %}" alt="Image 4">
             </div>
+            -->
         </div>
         <div class="dots-container">
             <div class="dot"></div>
             <div class="dot active"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
             <div class="dot"></div>
             <div class="dot"></div>
         </div>
@@ -426,8 +537,25 @@
                 dot.classList.toggle('active', index === currentIndex);
             });
 
-            const offset = (images[0].offsetWidth + 28) * currentIndex; // Including margin
-            carousel.style.transform = `translateX(calc(40% - ${offset}px))`;
+            
+            let offset = ((images[0].offsetWidth / 2) * currentIndex); // Including margin
+            if (currentIndex > 1) {
+                offset += (images[0].offsetWidth / 2) * (currentIndex - 1);
+            }
+            if (currentIndex < 1) {
+                offset += (images[0].offsetWidth) * currentIndex + 5;
+            }
+
+            carousel.style.transform = `translateX(-${offset}px)`;
+            /*console.log(offset);
+            console.log("offsetWidth", images[0].offsetWidth);
+            console.log(carousel.style.transform)
+            console.log('carousel', carousel.offsetWidth)*/
+            const viewportWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+
+            if (carousel.offsetWidth == viewportWidth) {
+                carousel.style.transform = `translateX(-${carousel.offsetWidth * currentIndex}px)`;
+            }
         };
 
         dots.forEach((dot, index) => {
@@ -444,7 +572,7 @@
             });
         });
 
-        updateCarousel(); // Initialize the carousel
+        updateCarousel();  // Initialize the carousel
     </script>
 </body>
 </html>

@@ -1,0 +1,316 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Storyafrika is a platform showcasing the real-life experiences and stories of individual Africans, highlighting their upbringing, everyday successes, and much more." property="og:description">
+    <meta content="storyafrika - Success Stories and Experiences of Everyday Africans" property="og:title">
+    <meta content="https://storyafrika.live" property="og:url">
+    <meta content="/static/images/write.webp" property="og:image">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="storyafrika - {{story.title}}">
+    <meta name="twitter:description" content="{{story.title}} written by {{story.writer.username}} on {{story.created_at}} and updated_at {{story.updated_at}}">
+    <meta name="twitter:image" content="/uploads/{{story.image}}">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/3.3.3/tailwind.min.js" defer></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&display=swap" rel="stylesheet">
+    <title>StoryAfrika | {{story.title}}</title>
+
+    <style>
+        body {
+            display: flex;
+            flex-direction: row;
+        }
+        .left-part {
+            flex: 1;
+        }
+        aside {
+            flex: 0 0 30%;
+            border-left: 2px solid #4a4a4a;
+        }
+        .container {
+            display: flex;
+            justify-content: left;
+            align-items: center;
+            /*height: 100vh;*/
+        }
+
+        .left-part .content {
+            margin-top: 50px;
+        }
+        .left-part .content h2 {
+            font-size: 35px; font-weight: bold; width: 80%; padding-left:30px;
+        }
+
+        .left-part .content h2, .left-part .content div.story-text,
+        aside.right-part h4, aside.right-part h3 {
+            font-family: 'Baloo 2', cursive;
+            line-height: 40px;
+        }
+
+        .left-part .content div.story-text {
+            line-height: 25px;
+            margin-top: 30px; color: #4A4A4A; padding-inline: 25px; font-size: 20px;
+        }
+
+        aside.right-part h3 {
+            font-weight: bolder;
+            line-height: 20px;
+        }
+
+        aside.right-part h4 {
+            line-height: 20px;
+            font-weight: normal;
+            margin-top: 0;
+        }
+
+        .main-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 300px;
+            flex-shrink: 0;
+            overflow: hidden;
+            width: 100%;
+            position: relative;
+            border-radius: 10px;
+        }
+
+        section.content {
+            padding-inline: 35px;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                width: 100%;
+                height: 250px;
+            }
+        }
+
+        .carousel {
+            width: 100%;
+            height: 300px;
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+            z-index: 10;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+            }
+            .left-part{
+                width: 100%;
+            }
+            aside{
+                width: 100%;
+                flex: 1;
+                border-left: 0;
+                padding-inline: 0;
+                border-top: 2px solid black;
+                margin-top: 60px;
+            }
+            .related-stories, .also-by-user, .simillar-writers {
+                padding-inline: 30px;
+                box-sizing: border-box;
+            }
+            .carousel {
+                width: 100%;
+                height: 250px;
+            }
+        }
+
+        .carousel img {
+            width: 100%;
+            height: 100%;
+            flex-shrink: 0;
+            display: block;
+            object-fit: cover;
+            transition: transform 0.5s ease, filter 0.5s ease;
+            border-radius: 10px;
+        }
+
+        .main-container:hover img {
+            transform: scale(1.1);
+            filter: brightness(0.5);
+        }
+
+        .carousel-nav {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            background: transparent;
+        }
+
+        .main-container:hover .carousel-nav, .main-container:hover .profile-container {
+            opacity: 1;
+            z-index: 20;
+        }
+
+        .carousel-nav button {
+            background: none;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .carousel-nav button:hover {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .profile-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            left: 40%;
+            transform: translateX(-40%);
+            flex-shrink: 0;
+        }
+        .profile-image {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-right: 1rem;
+        }
+        .profile-info {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, Helvetica, sans-serif;
+            color: white !important;
+            flex-shrink: 0;
+            gap: 15px;
+        }
+        .profile-info p:first-child {
+            font-weight: bold;
+        }
+        .profile-info p:nth-child(2) {
+            margin-right: 0.5rem;
+            font-size: 1rem;
+        }
+        .profile-info .dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            background-color: #fff;
+        }
+
+        @media (max-width: 500px) {
+            .profile-container {
+                left: 30%;
+                transform: translateX(-30%);
+            }
+            
+        }
+
+        @media (max-width: 370px) {
+            .profile-container {
+                left: 20%;
+                transform: translateX(-20%);
+            }
+            
+        }
+
+        @media (max-width: 900px) {
+            .left-part {
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="left-part">
+        <header>
+            {% include 'components/new-header.html' %}
+        </header>
+        <section class="content">
+            <!--{#<h2>On a very fine Sunday exactly at noon, the Quick Brown Fox! Jumped over the lazy dog!</h2>#}-->
+            <h2>{{ story.title }}</h2>
+            <section class="container">
+                <div class="main-container">
+                    <div class="carousel">
+                        <!--<img src="{% static 'assets/images/books.jpg' %}" alt="Image 1">
+                        <img src="{% static 'assets/images/entrepreneur.avif' %}" alt="Image 2">
+                        <img src="{% static 'assets/images/innovation.jpg' %}" alt="Image 3">
+                        <img src="{% static 'assets/images/writing.jpg' %}" alt="Image 4">-->
+                        {% for image in story.images.all %}
+                        <img src="{{ image.image.url }}" alt="Image {{ forloop.counter }}">
+                        {% endfor %}
+                        <img src="{% static 'assets/images/writing.jpg' %}" alt="Image 4">
+                        
+                    </div>
+                    <div class="carousel-nav">
+                        <button class="carousel-prev" id="carousel-prev"><img src="{% static 'assets/svgs/prev-thick.svg' %}" alt=""></button>
+                        <button class="carousel-next" id="carousel-next"><img src="{% static 'assets/svgs/next-thick.svg' %}" alt=""></button>
+                    </div>
+                    <div class="profile-container">
+                        <img src="{{ story.writer.avatar }}" alt="Profile Image" class="profile-image">
+                        <div class="profile-info">
+                            <p style="color: #fff;">
+                                {% if story.writer.first_name and story.writer.last_name %} {{ story.writer.first_name }} {{ story.writer.last_name }} {% else %} {{story.writer.user.username}} {% endif %}</p>
+                            <div class="dot"></div>
+                            <p style="color: #fff;">{{ story.created_at|naturaltime }}</p>
+                            
+                        </div>
+                    </div>
+                </div>
+            </section>
+            {#<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim, ex corrupti quia excepturi debitis, atque, expedita dolorem veritatis cum asperiores beatae iure. Accusamus culpa, odio perspiciatis ea delectus nemo, accusantium ipsam magnam corporis qui consequuntur deserunt provident ipsa. Facilis excepturi quidem temporibus velit, cum enim unde minima nihil. Error, veniam.</p>#}
+            <div class="story-text" style="color: #4a4a4a">{{ story.text|safe }}</div>
+        </section>
+    </div>
+    {% include 'story/aside.html' %}
+
+    <script>
+        const carousel = document.querySelector('.carousel');
+        const carouselNext = document.querySelector('#carousel-next');
+        const carouselPrev = document.querySelector('#carousel-prev');
+
+        let currentSlide = 0;
+
+        carouselNext.addEventListener('click', () => {
+            currentSlide++;
+            if (currentSlide >= carousel.children.length - 1) {
+                currentSlide = 0;
+            }
+            carousel.style.transform = `translateX(-${currentSlide * 100}%)`;
+        });
+
+        carouselPrev.addEventListener('click', () => {
+            currentSlide--;
+            if (currentSlide < 0) {
+                currentSlide = carousel.children.length - 2;
+            }
+            carousel.style.transform = `translateX(-${currentSlide * 100}%)`;
+        });
+    </script>
+</body>
+</html>

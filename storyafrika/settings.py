@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+
+load_dotenv()  # load environments variables from .env
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +29,7 @@ SECRET_KEY = 'django-insecure-z5-c%u7_0_jtw7u8%0wh4&in#+b@tflc5%ckhrm5j2*q@3!#(+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.73.204', '192.168.100.176', '192.168.0.58', '127.0.0.1']
 
 
 # Application definition
@@ -39,6 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
+    'ckeditor_uploader',
+    'tinymce'
 ]
 
 MIDDLEWARE = [
@@ -121,7 +127,7 @@ STATIC_ROOT = Path(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 
 MEDIA_ROOT = Path(BASE_DIR, 'images')
-MEDIA_URL = '/images/'
+MEDIA_URL = '/media/'
 
 STATICFILES_DIRS = [
     Path(BASE_DIR, 'static')
@@ -131,3 +137,39 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# sending emails
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
+
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_HOST_USER = 'apikey'
+EMAIL_HOST_PASSWORD = SENDGRID_API_KEY
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'storyafrika@mail.storyafrika.live'
+
+# CKEDITOR SETTINGS
+CKEDITOR_UPLOAD_PATH = 'media/'
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+        'height': 300,
+        'width': 'auto',
+        'extraPlugins': ','.join(['image2']),  # Enable additional plugins like image handling
+    },
+}
+
+# Tinymce SETTINGS
+TINYMCE_DEFAULT_CONFIG = {
+    "height": 500,
+    "width": "auto",
+    "menubar": "file edit view insert format tools table help",
+    "plugins": "advlist autolink lists link image charmap print preview anchor "
+               "searchreplace visualblocks code fullscreen "
+               "insertdatetime media table paste code help wordcount",
+    "toolbar": "undo redo | formatselect | bold italic backcolor | "
+               "alignleft aligncenter alignright alignjustify | "
+               "bullist numlist outdent indent | removeformat | help",
+}

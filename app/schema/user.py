@@ -44,3 +44,12 @@ class Profile(Base):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+    def set_default_profile(self, path=None):
+        if path is None:
+            self.avatar = f'https://api.dicebear.com/9.x/initials/svg?seed={self.user.username}'
+        else:
+            self.avatar = path
+        self.save()
+
+        return self.avatar
