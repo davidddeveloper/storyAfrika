@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import first_home_page, sign_in, sign_out, join_us, story
+from .views import first_home_page, sign_in, sign_out, join_us, story, stories
 
 app_name = 'app'
 
@@ -10,5 +10,6 @@ urlpatterns = [
 
     path('join_us', view=join_us, name='join_us'),
 
-    path('story/<str:story_id>', view=story, name='story')
+    path('story/<str:story_id>', view=story, name='story'),
+    path('stories', view=stories, name='stories')
 ]

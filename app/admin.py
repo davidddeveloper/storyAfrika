@@ -13,7 +13,7 @@ class StoryImageInline(admin.TabularInline):  # or admin.StackedInline for a dif
 class StoryAdmin(admin.ModelAdmin):
     inlines = [StoryImageInline]
     list_display = ('title', 'writer', 'status')
-    exclude = common_field + [ 'likes', ]
+    exclude = common_field + [ 'likes', 'views']
 
 
 @admin.register(Topic)

@@ -1,8 +1,9 @@
 import django.contrib
+import django
 from django.db import models
 from uuid import uuid4
 from datetime import datetime
-import django
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 class Base(models.Model):
     """ represents the blueprint for other clases
@@ -22,3 +23,16 @@ class Base(models.Model):
         abstract = True
 
     # pagination
+    @classmethod
+    def paginate(cls, page_number, page_size=10, order_by=None):
+        queryset = cls._default_manager.all()
+        if order_by:
+            queryset = queryset.order_by(order_by)
+        paginator = Paginator(queryset, page_size)
+        try:
+            page = paginator.page(page_number)
+        except PageNotAnInteger:
+            page = paginator.page(1)
+        except EmptyPage:
+            page = paginator.page(paginator.num_pages)
+        return page

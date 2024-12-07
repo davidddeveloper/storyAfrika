@@ -4,6 +4,7 @@ from .base_model import Base
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
+from django.db.models import Count
 
 @receiver(post_save, sender=User)
 def create_or_update_user_profile(sender, instance, created, **kwargs):
@@ -26,7 +27,7 @@ class Profile(Base):
     """
     from app.schema.story import Story
 
-    user = models.OneToOneField(to=User, null=False, on_delete=models.CASCADE)
+    user = models.OneToOneField(to=User, null=False, on_delete=models.CASCADE, related_name='profile')
     short_bio= models.CharField(max_length=160, null=True, blank=True)
     about = models.TextField(max_length=500, null=True, blank=True)
     # full_name = models.CharField(max_length=50, null=True, default=(first_name + ' ' + last_name))
@@ -53,3 +54,9 @@ class Profile(Base):
         self.save()
 
         return self.avatar
+
+    @classmethod
+    def top_writers(self):
+        writers = Profile.objects.annotate(num_stories=Count('stories')).order_by('-num_stories')[:5]
+
+        return writers

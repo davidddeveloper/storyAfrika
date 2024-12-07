@@ -1,7 +1,11 @@
 from django.db import models
 from .base_model import Base
-from ckeditor_uploader.fields import RichTextUploadingField
 from tinymce.models import HTMLField
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from hitcount.models import HitCountMixin, HitCount
+from hitcount.utils import get_hitcount_model
+from django.contrib.contenttypes.fields import GenericRelation
+
 
 STATUS_CHOICES = {
     "d": "Draft",
@@ -25,6 +29,9 @@ class Story(Base):
     likes = models.ManyToManyField(to='Profile', blank=True, related_name='likers')
 
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default="d")
+    unique_views = models.ManyToManyField(to='Profile', blank=True, related_name='viewers')
+    hit_count_generic = GenericRelation(HitCount)
+    
 
     def get_related_stories(self, max_results=10):
         """Retrieve related stories with unique writers."""
@@ -84,6 +91,40 @@ class Story(Base):
         ).distinct()[:max_results]
 
         return similar_writers
+    
+    @property
+    def plain_text(self):
+        from bs4 import BeautifulSoup
+        soup = BeautifulSoup(self.text, 'html.parser')
+        return soup.get_text()
+
+    @property
+    def read_time(self):
+        """Returns the estimated read time of the story in minutes."""
+        num_of_words = len(self.plain_text.split())
+        # Average reading speed is 225 words per minute
+        read_time_in_minutes = int(num_of_words / 225 + 0.5)
+
+        return read_time_in_minutes
+
+    @classmethod
+    def paginate_queryset(cls, queryset, page_number, page_size=10):
+        paginator = Paginator(queryset, page_size)
+        try:
+            page = paginator.page(page_number)
+        except PageNotAnInteger:
+            page = paginator.page(1)
+        except EmptyPage:
+            page = paginator.page(paginator.num_pages)
+        return page
+    
+    @classmethod
+    def increment_generic_hit_count(cls, request, instance):
+        hit_count = get_hitcount_model().objects.get_for_object(instance)
+        print("hit count", hit_count)
+        HitCountMixin.hit_count(request, hit_count)
+
+        return
 
     def __str__(self):
         return self.title

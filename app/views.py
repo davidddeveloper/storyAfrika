@@ -5,14 +5,15 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from .forms import LoginForm, RegistrationForm
 from .helpers import extract_username, send_welcome_email
-from .schema import Story
+from .schema import Story, Profile
 
 # Create your views here.
 def first_home_page(request):
     stories = Story.objects.order_by('-created_at')
     print('These are the stories', stories)
     return render(request, 'home/first_home.html', context={
-        'stories': stories
+        'stories': stories,
+
     })
 
 def story(request):
@@ -24,9 +25,10 @@ def sign_in(request):
         form = LoginForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
+            username = extract_username(email)
             password = form.cleaned_data['password']
 
-            user = User.objects.get(email=email)
+            user = User.objects.get(username=username)
             if user and user.check_password(password):
                 login(request, user)
                 messages.success(request, f'Welcome back {user.username}')
@@ -77,6 +79,14 @@ def sign_out(request):
 
 def story(request, story_id):
     story = get_object_or_404(Story, id=story_id)
+
+    # count unique views
+    if request.user.is_authenticated:
+        story.unique_views.add(request.user.profile)
+    
+    # count generic views
+    # Story.increment_generic_hit_count(request, story)
+
     related_stories = story.get_related_stories(3)
     other_stories_by_writer = story.get_other_stories_by_writer(3)
     similar_writers = story.get_similar_writers(max_results=5)
@@ -85,5 +95,22 @@ def story(request, story_id):
         'story': story,
         'related_stories': related_stories,
         'other_stories_by_writer': other_stories_by_writer,
-        'similar_writers': similar_writers
+        'similar_writers': similar_writers,
+    })
+
+def stories(request):
+    stories = Story.objects.order_by('-created_at')
+    top_writers = Profile.top_writers
+    page_number = request.GET.get('page', 1)
+    page_size = request.GET.get('page_size', 8)
+    stories = Story.paginate(page_number, page_size, order_by='-created_at')
+
+    bookmarks = None
+    if request.user.is_authenticated:
+        bookmarks = request.user.profile.bookmarks.all().order_by('-created_at')[:3]
+
+    return render(request, 'home/home.html', context={
+        'stories': stories,
+        'top_writers': top_writers,
+        'bookmarks': bookmarks
     })
