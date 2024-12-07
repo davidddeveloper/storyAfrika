@@ -1,132 +1,142 @@
+{% load static %}
+{% load humanize %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Header with Slider</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Storyafrika is a platform showcasing the real-life experiences and stories of individual Africans, highlighting their upbringing, everyday successes, and much more. Our goal is to connect everyday Africans with one another through StoryTelling and Writing." property="og:description">
+    <meta content="storyafrika - Success Stories and Experiences of Everyday Africans" property="og:title">
+    <meta content="https://stories.storyafrika.live" property="og:url">
+    <meta content="/static/images/write.webp" property="og:image">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="storyafrika - Success Stories and Experiences of Everyday Africans">
+    <meta name="twitter:description" content="Storyafrika is a platform showcasing the real-life experiences and stories of individual Africans, highlighting their upbringing, everyday successes, and much more. Our goal is to connect everyday Africans with one another through StoryTelling and Writing.">
+    <meta name="twitter:image" content="./write.webp">
+
+    <!-- google oAuth2 client id -->
+    <meta name="google-signin-client_id" content="25158261190-9emalbugfgsvbn9cv7fao3vp6kmi3h37.apps.googleusercontent.com">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <meta name="Cross-Origin-Opener-Policy" content="">
+
+    <title>storyafrika - Success Stories and Experiences of Everyday Africans</title>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-FW17L5LYTT"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-FW17L5LYTT');
+
+    </script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
     <style>
         body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #fff;
-        }
-
-        .header {
             display: flex;
+            flex-direction: row;
+            background-color: #fff !important;
+        }
+        .left-part {
+            flex: 1;
+        }
+        aside {
+            flex: 0 0 30%;
+            border-left: 2px solid #4a4a4a;
+        }
+        .container {
+            display: flex;
+            justify-content: left;
             align-items: center;
-            justify-content: space-between;
-            padding: 10px 20px;
-            position: relative;
+            /*height: 100vh;*/
         }
 
-        .categories-container {
-            display: flex;
-            overflow-x: auto;
-            gap: 20px;
-            scrollbar-width: none; /* For Firefox */
-            padding: 0 20px;
+        .left-part .content {
+            margin-top: 50px;
+        }
+        .left-part .content h2 {
+            font-size: 35px; font-weight: bold; width: 80%; padding-left:30px;
         }
 
-        .categories-container::-webkit-scrollbar {
-            display: none; /* For Chrome, Safari, and Edge */
+        .left-part .content h2, .left-part .content div.story-text,
+        aside.right-part h4, aside.right-part h3 {
+            font-family: 'Baloo 2', cursive;
+            line-height: 40px;
         }
 
-        .category {
-            white-space: nowrap;
-            font-size: 16px;
-            color: #4A4A4A;
-            cursor: pointer;
-            transition: all 0.3s ease;
+        .left-part .content div.story-text {
+            line-height: 25px;
+            margin-top: 30px; color: #4A4A4A; padding-inline: 25px; font-size: 20px;
         }
 
-        .category:hover {
-            color: #000;
+        aside.right-part h3 {
+            font-weight: bolder;
+            line-height: 20px;
         }
 
-        .category.active {
-            color: #000;
-            font-weight: bold;
+        aside.right-part h4 {
+            line-height: 20px;
+            font-weight: normal;
+            margin-top: 0;
         }
-
-        .right-section {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .right-section .profile-img {
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
-        }
-
-        .right-section .profile-img {
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .arrow {
-            font-size: 18px;
-            cursor: pointer;
-            display: none;
-            background-color: transparent;
-            border: none;
-            outline: none;
-            padding: 5px;
-            transition: all 0.3s ease;
-        }
-
-        .arrow:hover {
-            background-color: #f1f1f1;
-        }
-
         @media (max-width: 768px) {
-            .arrow {
-                display: block;
+            body {
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+            }
+            .left-part{
+                width: 100%;
+            }
+            aside{
+                width: 100%;
+                flex: 1;
+                border-left: 0;
+                padding-inline: 0;
+                border-top: 2px solid black;
+                margin-top: 60px;
+            }
+            .related-stories, .also-by-user, .simillar-writers {
+                padding-inline: 30px;
+                box-sizing: border-box;
             }
         }
+        .stories {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin-top: 60px;
+            gap: 30px;
+        }
+
+        @media (max-width: 700px) {
+            .stories {
+                padding-inline: 20px;
+            }
+        }
+        
     </style>
 </head>
 <body>
-    <div class="header">
-        <!-- Left Arrow -->
-        <button class="arrow left-arrow"><img src="assets/svgs/prev.svg" alt=""></button>
-        
-        <!-- Scrollable Categories -->
-        <div class="categories-container">
-            <span class="category active">For you</span>
-            <span class="category">Education</span>
-            <span class="category">Business</span>
-            <span class="category">Life</span>
-            <span class="category">Technology</span>
-        </div>
-
-        <!-- Right Section -->
-        <div class="right-section">
-            <button class="arrow right-arrow"><img src="assets/svgs/next.svg" alt=""></button>
-            <img src="assets/svgs/search-icon.svg" alt="Search Icon" class="search-icon">
-            <img src="https://picsum.photos/200/300" alt="Profile" class="profile-img">
-        </div>
+    <div class="left-part">
+        <header>
+            {% include 'components/new-header.html' %}
+        </header>
+        <!-- stories -->
+        <section class="stories">
+            {% for story in stories %}
+                {% include 'components/story-card.html' %}
+            {% endfor %}
+        </section>
     </div>
-
-    <section id="editor-body">
-        {% include 'editor.html' %}
-
-    </section>
-
-    <script>
-        // Enable slider functionality for smaller screens
-        const categoriesContainer = document.querySelector('.categories-container');
-        const leftArrow = document.querySelector('.left-arrow');
-        const rightArrow = document.querySelector('.right-arrow');
-
-        leftArrow.addEventListener('click', () => {
-            categoriesContainer.scrollBy({ left: -150, behavior: 'smooth' });
-        });
-
-        rightArrow.addEventListener('click', () => {
-            categoriesContainer.scrollBy({ left: 150, behavior: 'smooth' });
-        });
-    </script>
+    {% include 'home/aside.html' %}
 </body>
 </html>

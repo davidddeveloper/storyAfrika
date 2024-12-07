@@ -166,16 +166,16 @@
             <button style="cursor: pointer;"><a href="#" style="text-decoration: none;"><img src="{% static '/assets/svgs/write-icon.svg' %}" alt=""></a></button>
         </header>-->
         <section class="related-stories" style="margin-top: 40px; margin-inline: 30px;">
-            <h3 class="from-title">Related Stories</h3>
-            {% if related_stories %}
+            <h3 class="from-title">Recent bookmarks</h3>
+            {% if bookmarks %}
             <section class="related-stories-container">
-                {% for related_story in related_stories %}
+                {% for bookmark in bookmarks %}
                 <article class="related-story">
                     <header class="">
                         <img src="{{ related_story.writer.avatar }}" alt="" srcset="">
-                        <p class="username">{{ related_story.writer.user.username}}</p>
+                        <p class="username">{{ bookmark.story.writer.user.username}}</p>
                     </header>
-                    <h4 class="story-title"><a href="{% url 'app:story' related_story.id %}" style="text-decoration: none; color: #4a4a4a">{{ related_story.title }}</a></h4>
+                    <h4 class="story-title"><a href="{% url 'app:story' bookmark.story.id %}" style="text-decoration: none; color: #4a4a4a">{{ bookmark.story.title }}</a></h4>
                 </article>
                 {% empty %}
                     <p>Related stories will be displayed here</p>
@@ -193,9 +193,9 @@
             {% endif %}
         </section>
         <section class="also-by-user mt-[40px]">
-            <h3 class="from-title" style="padding-inline: 20px; margin-inline: 30px;">Also by {% if story.writer.user.first_name and story.writer.user.last_name %} {{ story.writer.user.first_name }} {{ story.writer.user.last_name }} {% else %} {{story.writer.user.username}} {% endif %}</h3>
+            <h3 class="from-title" style=" margin-inline: 20px">Previously Featured Stories</h3>
             {% if other_stories_by_writer %}
-            <section class="also-by-user-stories-container" style="margin-inline: 20px;">
+            <section class="also-by-user-stories-container">
                 {% for other_story_by_writer in other_stories_by_writer %}
                 <article class="also-by-user-story">
                     <header class="" style="padding-inline: 20px;">
@@ -211,15 +211,15 @@
         </section>
         <section class="simillar-writers mt-[40px]" style="margin-inline: 30px;">
             <h3 class="from-title">Top Writers</h3>
-            {% if similar_writers %}
+            {% if top_writers %}
             <section class="simillar-writers-profile-container">
-                {% for similar_writer in similar_writers %}
+                {% for top_writer in top_writers %}
                 <article class="">
                     <header class="">
-                        <img src="{{ similar_writer.avatar }}" alt="" srcset="">
+                        <img src="{{ top_writer.avatar }}" alt="" srcset="">
                         <div class="content">
-                            <h4><a href="#" style="text-decoration: none; color: black; font-weight: bold;">{% if similar_writer.user.first_name and similar_writer.user.last_name %} {{ similar_writer.user.first_name }} {{ similar_writer.user.last_name }} {% else %} {{similar_writer.user.username}} {% endif %}</a> <!--<button><span>➕</span>Follow</button>--></h4>
-                            <h4 class="story-title"><a href="#" style="text-decoration: none; color: #4a4a4a;">{{similar_writer.short_bio}}</a></h4>
+                            <h4><a href="#" style="text-decoration: none; color: black; font-weight: bold;">{% if top_writer.user.first_name and top_writer.user.last_name %} {{ top_writer.user.first_name }} {{ top_writer.user.last_name }} {% else %} {{top_writer.user.username}} {% endif %}</a> <!--<button><span>➕</span>Follow</button>--></h4>
+                            <h4 class="story-title"><a href="#" style="text-decoration: none; color: #4a4a4a;">{{top_writer.short_bio}}</a></h4>
                         </div>
                     </header>
                 </article>
