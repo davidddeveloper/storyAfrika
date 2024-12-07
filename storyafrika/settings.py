@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-z5-c%u7_0_jtw7u8%0wh4&in#+b@tflc5%ckhrm5j2*q@3!#(+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.73.204', '192.168.100.176', '192.168.0.58', '127.0.0.1']
+ALLOWED_HOSTS = ['192.168.73.204', '192.168.100.176', '192.168.0.58', '127.0.0.1', '192.168.79.204']
 
 
 # Application definition
@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'ckeditor_uploader',
-    'tinymce'
+    'tinymce',
+    'hitcount'
 ]
 
 MIDDLEWARE = [
