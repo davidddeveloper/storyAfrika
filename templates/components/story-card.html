@@ -104,6 +104,9 @@
             }
         }
         @media (max-width: 400px) {
+            .card {
+                flex-direction: column;
+            }
             .card-description {
             }
             .info-container {
@@ -111,9 +114,11 @@
                 flex-direction: column;
                 gap: 3px;
             }
-            .card > img {
-                width: 110px;
-                height: 140px;
+            .card > a img {
+                width: 100%;
+                height: 150px;
+                object-fit: cover;
+                object-position: top;
             }
             
         }
@@ -137,22 +142,23 @@
             </div>
         </div>
     </div>-->
-    <div class="card">
-        <a href="{% url 'app:story' story.id %}" style="text-decoration: none; color: #000"><img src="{{story.images.first.image.url}}" alt="Story Image"></a>
-        <div class="card-content">
-            <h3 class="card-title"><a href="{% url 'app:story' story.id %}" style="text-decoration: none; color: #000">{{story.title}}</a></h3>
-            <p class="card-description">
-                {{story.plain_text}}
-            </p>
-            <div class="card-footer">
-                <span class="info-container"><span>{% if story.read_time <= 0 %} 1 min read {% else %} {{story.read_time}} min read {% endif %} •</span> <span>{{story.created_at|naturaltime}}</span></span>
-                <div class="author">
-                    <span>by</span> <span>{% if story.writer.user.first_name %} {{story.writer.user.first_name}} {% else %} {{story.writer.user.username}} {% endif %}</span>
-                    <!-- https://via.placeholder.com/25 -->
-                    <img src="{{story.writer.avatar}}" alt="Author">
+        <div class="card">
+            <a href="{% url 'app:story' story.id %}" style="text-decoration: none; color: #000"><img src="{{story.images.first.image.url}}" alt="Story Image"></a>
+            <div class="card-content">
+                <h3 class="card-title"><a href="{% url 'app:story' story.id %}" style="text-decoration: none; color: #000">{{story.title}}</a></h3>
+                <p class="card-description">
+                    {{story.plain_text}}
+                </p>
+                <div class="card-footer">
+                    <span class="info-container"><span>{% if story.read_time <= 0 %} 1 min read {% else %} {{story.read_time}} min read {% endif %} •</span> <span>{{story.created_at|naturaltime}}</span></span>
+                    <div class="author">
+                        <span>by</span> <span>{% if story.writer.user.first_name %} {{story.writer.user.first_name}} {% else %} {{story.writer.user.username}} {% endif %}</span>
+                        <!-- https://via.placeholder.com/25 -->
+                        <img src="{{story.writer.avatar}}" alt="Author">
+                    </div>
                 </div>
             </div>
+
         </div>
-    </div>
 </body>
 </html>
