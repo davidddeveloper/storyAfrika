@@ -35,6 +35,7 @@ class Profile(Base):
     avatar = models.CharField(max_length=200, null=True, blank=True)
     banner = models.CharField(max_length=200, null=True, blank=True, default='https://fastly.picsum.photos/id/91/800/500.jpg?hmac=J_kCOn2MZlDuJIb_rU14DYnb6HMv55ynWirbSF9l8f0')
     registration_finish = models.BooleanField(default=False)
+    newsletter_opt_in = models.BooleanField(default=False)
 
     followers = models.ManyToManyField(to='Profile', blank=True, related_name='following')
 

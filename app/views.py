@@ -3,14 +3,20 @@ from django.contrib.auth import login, logout
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.views import PasswordResetView
+from .schema import EmailList
 from .forms import LoginForm, RegistrationForm
-from .helpers import extract_username, send_welcome_email
-from .schema import Story, Profile
+from .helpers import extract_username, send_welcome_email, serialize_url
+from .schema import Story, Profile, FeaturingStory
+import json
 
 # Create your views here.
 def first_home_page(request):
     stories = Story.objects.order_by('-created_at')
-    print('These are the stories', stories)
+
     return render(request, 'home/first_home.html', context={
         'stories': stories,
 
@@ -28,13 +34,14 @@ def sign_in(request):
             username = extract_username(email)
             password = form.cleaned_data['password']
 
-            user = User.objects.get(username=username)
+            user = get_object_or_404(User, username=username)
+            print(user)
             if user and user.check_password(password):
                 login(request, user)
                 messages.success(request, f'Welcome back {user.username}')
                 return redirect('/')
 
-        messages.error(request, 'Email or Password is incorrect!')
+            messages.error(request, 'Email or Password is incorrect!')
 
     return render(request, 'user/login.html', context={
         'form': form
@@ -55,6 +62,7 @@ def join_us(request):
                 })
             
             user.username = username
+            user.newsletter_opt_in = form.cleaned_data['newsletter_opt_in']
             user.save()
 
             messages.success(request, f'Account created for {user.username}')
@@ -98,12 +106,32 @@ def story(request, story_id):
         'similar_writers': similar_writers,
     })
 
+def story_view(request, story_title):
+    
+    
+    result = serialize_url(story_title)
+    title = result[0]
+    writer = result[1]
+
+    user = User.objects.get(username=writer)
+    profile = Profile.objects.get(user=user)
+
+    story = Story.objects.filter(title__contains=title, writer=profile.id).first()
+    print(story)
+    if story.writer != profile:
+        print('nope exiting')
+        raise ValueError('exitting...')
+    
+    return HttpResponse(f'<h1> {story.title}</h1>')
+
 def stories(request):
     stories = Story.objects.order_by('-created_at')
     top_writers = Profile.top_writers
     page_number = request.GET.get('page', 1)
     page_size = request.GET.get('page_size', 2)
     stories = Story.paginate(page_number, page_size, order_by='-created_at')
+
+    featuring_story = FeaturingStory.objects.filter(status='a').first()
 
     bookmarks = None
     if request.user.is_authenticated:
@@ -112,5 +140,38 @@ def stories(request):
     return render(request, 'home/home.html', context={
         'stories': stories,
         'top_writers': top_writers,
-        'bookmarks': bookmarks
+        'bookmarks': bookmarks,
+        'featuring_story': featuring_story
     })
+
+@csrf_exempt
+@require_POST
+def subscribe(request):
+    data = json.loads(request.body)
+    email = data.get('email').strip() if data.get('email') else ''
+    if not email or '@' not in email:
+        return JsonResponse({'error': 'Invalid email address'}, status=400)
+
+    try:
+        new_email = EmailList(email=email)
+        new_email.save()
+        return JsonResponse({'message': 'Successfully subscribed!', 'success': True}, status=201)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
+
+# password Reset
+
+class CustomPasswordResetView(PasswordResetView):
+    email_template_name = 'emails/password_reset_email.html'
+    subject_template_name = 'emails/password_reset_subject.txt'
+    success_url = 'done'
+
+
+
+def like_story(request, story_id=None):
+    story = get_object_or_404(Story, id=story_id)
+    print(story.likes.count())
+    story.likes.add(request.user.profile)
+
+    return JsonResponse({"ok": True}, status=200)

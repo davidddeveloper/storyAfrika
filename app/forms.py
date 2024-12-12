@@ -10,6 +10,7 @@ class LoginForm(forms.Form):
 
 
 class RegistrationForm(UserCreationForm):
+    newsletter_opt_in = forms.BooleanField(label='Subscribe to newsletter', required=False)
     class Meta:
         model = User
         fields = ['username', 'email', 'password1', 'password2']
