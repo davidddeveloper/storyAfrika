@@ -42,11 +42,23 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            overflow: hidden;
+            overflow-y: scroll;
+        }
+        body .carousel-main-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
             background-color: #f9f9f9;
             overflow: hidden;
+            overflow-y: hidden;
         }
 
         .header {
@@ -248,9 +260,9 @@
             content: '';
             position: absolute;
             inset: 0;
-            backdrop-filter: blur(2px);
+            /*backdrop-filter: blur(2px);*/
             background-color: rgba(88, 4, 36, 0.123);
-            z-index: -1;
+            z-index: -2;
             margin-top: 60px;
         }
 
@@ -458,6 +470,32 @@
                 background-position: 0% 50%;
             }
         }
+
+        .newsletter-request-container {
+            overflow: hidden;
+            width: 100%;
+        }
+        .newsletter-request-container .info-text {
+            font-size: 14px;
+            color: #4a4a4a;
+        }
+        .newsletter-request-container input {
+            padding: 5px;
+            border-radius: 5px;
+            border-color: #23a6d5;
+            outline-color: #23a6d5;
+            color: #4a4a4a;
+            max-width: 250px;
+        }
+        .newsletter-request-container .newsletter-signup-btn {
+            background-color: #23a6d5;
+            border: 0;
+            outline: 0;
+            padding: 5px;
+            border-radius: 5px;
+            color: #fff;
+        }
+        
     </style>
     <link rel="stylesheet" href="{% static 'css/global.css' %}">
 </head>
@@ -465,61 +503,70 @@
     <header class="header">
         {% include 'components/new-header.html' %}
     </header>
-    <div class="carousel-container">
-        <div class="carousel">
-            <!--
-            <div class="item" class="inactive">
-                <img src="{% static 'assets/images/art.jpg' %}" alt="Image 1">
-                
-            </div>-->
-            {% for story in stories %}
-            {% if forloop.counter <= 5 %}
-            <div class="item" class="active">
-                <img src="{{ story.topics.first.banner }}" alt="Image 2">
-                <div class="text">
-                    <p class="topic"><a href="">{{ story.topics.first.name }}</a></p>
-                    <h2><a href="{% url 'app:story' story.id %}" style="text-decoration: none; color: inherit;">{{ story.title }}</a></h2>
-                    <div class="profile-container">
-                        <img src="{{ story.writer.avatar }}" alt="Profile Image" class="profile-image">
-                        <div class="profile-info">
-                            <p>{% if story.writer.user.first_name and story.writer.user.last_name %} {{ story.writer.user.first_name }} {{ story.writer.user.last_name }} {% else %} {{story.writer.user.username}} {% endif %}</p>
-                            <div class="dot"></div>
-                            <p>{{ story.created_at | naturaltime}}</p>
+    <section class="carousel-main-container">
+
+        <div class="carousel-container">
+            <div class="carousel">
+                <!--
+                <div class="item" class="inactive">
+                    <img src="{% static 'assets/images/art.jpg' %}" alt="Image 1">
+                    
+                </div>-->
+                {% for story in stories %}
+                {% if forloop.counter <= 5 %}
+                <div class="item" class="active">
+                    <img src="{{ story.topics.first.banner }}" alt="Image 2">
+                    <div class="text">
+                        <p class="topic"><a href="">{{ story.topics.first.name }}</a></p>
+                        <h2><a href="{% url 'app:story' story.id %}" style="text-decoration: none; color: inherit;">{{ story.title }}</a></h2>
+                        <div class="profile-container">
+                            <img src="{{ story.writer.avatar }}" alt="Profile Image" class="profile-image">
+                            <div class="profile-info">
+                                <p>{% if story.writer.user.first_name and story.writer.user.last_name %} {{ story.writer.user.first_name }} {{ story.writer.user.last_name }} {% else %} {{story.writer.user.username}} {% endif %}</p>
+                                <div class="dot"></div>
+                                <p>{{ story.created_at | naturaltime}}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            {% endif %}
-            {% endfor %}
-            <div class="item" class="active">
-                <img src="" alt="Image 2" style="position: absolute;">
-                <div class="text" style="
-                    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-                    background-size: 400% 400%;
-                    animation: gradient 15s ease infinite;
-                ">
-                    <img src="{% static 'assets/svgs/stories-icon.svg' %}" alt="">
-                    <h2><a href="{% url 'app:stories' %}" style="text-decoration: none; color: inherit; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">More Stories</a></h2>
+                {% endif %}
+                {% endfor %}
+                <div class="item" class="active">
+                    <img src="" alt="Image 2" style="position: absolute;">
+                    <div class="text" style="
+                        background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+                        background-size: 400% 400%;
+                        animation: gradient 15s ease infinite;
+                    ">
+                        <img src="{% static 'assets/svgs/stories-icon.svg' %}" alt="">
+                        <h2><a href="{% url 'app:stories' %}" style="text-decoration: none; color: inherit; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">More Stories</a></h2>
+                    </div>
                 </div>
+                <!--
+                <div class="item" class="inactive">
+                    <img src="{% static 'assets/images/dancing.avif' %}" alt="Image 3">
+                </div>
+                <div class="item" class="inactive">
+                    <img src="{% static 'assets/images/entrepreneur.avif' %}" alt="Image 4">
+                </div>
+                -->
             </div>
-            <!--
-            <div class="item" class="inactive">
-                <img src="{% static 'assets/images/dancing.avif' %}" alt="Image 3">
+            <div class="dots-container">
+                <div class="dot"></div>
+                <div class="dot active"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
             </div>
-            <div class="item" class="inactive">
-                <img src="{% static 'assets/images/entrepreneur.avif' %}" alt="Image 4">
-            </div>
-            -->
         </div>
-        <div class="dots-container">
-            <div class="dot"></div>
-            <div class="dot active"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-        </div>
-    </div>
+    </section>
+    {% if not request.user.is_authenticated %}
+    <section class="newsletter-request-container">
+        <!-- News letter -->
+         {% include 'components/join-us-form.html' %}
+    </section>
+    {% endif %}
     <script>
         const carousel = document.querySelector('.carousel');
         const images = Array.from(carousel.children);

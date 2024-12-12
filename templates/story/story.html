@@ -26,6 +26,7 @@
         body {
             display: flex;
             flex-direction: row;
+            background-color: #fff !important;
         }
         .left-part {
             flex: 1;
@@ -138,6 +139,7 @@
             object-fit: cover;
             transition: transform 0.5s ease, filter 0.5s ease;
             border-radius: 10px;
+            user-select: none;
         }
 
         .main-container:hover img {
@@ -162,6 +164,7 @@
         .main-container:hover .carousel-nav, .main-container:hover .profile-container {
             opacity: 1;
             z-index: 20;
+            user-select: none;
         }
 
         .carousel-nav button {
@@ -244,6 +247,31 @@
             .left-part {
             }
         }
+        .heart {
+            position: absolute;
+            top: 25%;
+            left: 40%;
+            transform: translate(-20%, -30%);
+            font-size: 4rem;
+            color: red;
+            animation: heart 1s ease-in-out;
+            z-index: 80;
+        }
+
+        @keyframes heart {
+            0% {
+                transform: scale(1), translate(-60%, -60%);
+            }
+            50% {
+                transform: scale(1.2), translate(-60%, -60%);
+            }
+            100% {
+                transform: scale(1), translate(-60%, -60%);
+                opacity: 0;
+            }
+        }
+
+    
     </style>
 </head>
 <body>
@@ -253,6 +281,7 @@
         </header>
         <section class="content">
             <!--{#<h2>On a very fine Sunday exactly at noon, the Quick Brown Fox! Jumped over the lazy dog!</h2>#}-->
+            
             <h2>{{ story.title }}</h2>
             <section class="container">
                 <div class="main-container">
@@ -311,6 +340,46 @@
             }
             carousel.style.transform = `translateX(-${currentSlide * 100}%)`;
         });
+
+        // like the story
+        const mainContainer = document.querySelector('.main-container');
+
+        
+        
     </script>
+
+    {% if request.user.is_authenticated %}
+    <script>
+        mainContainer.addEventListener('dblclick', () => {
+            const heart = document.createElement('i');
+            heart.className = 'heart';
+            heart.innerHTML = `❤ <span style="position: absolute; top: 50%; left: 60%; transform: translate(-50%, -50%); font-size: 10px; z-index: 80; color: #fff;">{{story.likes.count}} Likes</span>`;
+
+            
+            mainContainer.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 1500);
+
+        // like the story
+        // send a request to the server to like the story
+            fetch(`/story/{{ story.id }}/like`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            }).then(response => {
+                if (response.ok) {
+                    console.log('Story liked');
+                } else {
+                    console.log('Error liking story');
+                }
+            });
+        });
+    </script>
+    {% endif %}
 </body>
 </html>

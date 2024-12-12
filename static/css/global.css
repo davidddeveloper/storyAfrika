@@ -1,4 +1,4 @@
-.info-message, .success-message {
+.info-message, .success-message, .error-message {
     padding: 4px;
     display: flex;
     justify-content: center;
@@ -25,7 +25,7 @@
     animation: slideOut 10s forwards;
 }
 
-.input-error-message {
+.input-error-message, .error-message {
     color: rgb(77, 8, 3);
 }
 

@@ -130,12 +130,84 @@
         }
         .more-btn {
             background-color: #2699eb;
-            border: 0;
-            padding-inline: 8px;
-            padding-block: 4px;
-            border-radius: 2px;
+            color: #fff;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .more-btn:hover {
+            background-color: #053b61;
+        }
+        .left-part {
+            position: relative;
+            overflow: hidden;
+        }
+        .featuring {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(85, 87, 6, 0.322);
+            overflow: hidden;
+            height: 100vh;
+            width: 70%;
+        }
+        .featuring img {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all .45s ease-in;
+        }
+        .featuring:hover img, img:hover {
+            filter: brightness(.5);
+            transform: scale(1.1);
+        }
+        .featuring .content {
+            position: absolute;
+            top: 20%;
+            left: 10%;
+        }
+        .featuring .content h1.caption {
+            font-size: 50px;
+            /*background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url({{featuring_story.banner.url}});*/
+            /*-webkit-background-clip: text;*/
+            /*background-clip: text;*/
+            /*-webkit-text-fill-color: transparent;*/
+            color: #fff
+        }
+        .storyafrika-present-text {
             color: #fff;
         }
+        .featuring .buttons {
+            display: flex;
+            gap: 15px;
+            display: none;
+        }
+        .featuring:hover .buttons {
+            display: flex;
+        }
+        .featuring button {
+            border: 0;
+            padding: 0;
+            background-color: transparent;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        .featuring button.close-btn {
+            color: #ff4800;
+        }
+        .featuring button.explore-btn,
+        .featuring button.explore-btn a {
+            color: lightblue;
+        }
+        @media (max-width: 768px) {
+            .featuring {
+                position: fixed;
+                width: auto;
+            }
+        }
+
+        
     </style>
 </head>
 <body>
@@ -153,6 +225,19 @@
             <button class="more-btn">Load More</button>
 
         </div>
+
+        {% if featuring_story %}
+        <div class="featuring">
+            <img src="{{featuring_story.banner.url}}" alt="{{featuring_story.caption}}">
+            <div class="content">
+                <p class="storyafrika-present-text">StoryAfrika Presents</p>
+                <h1 class="caption"><a href="{% url 'app:story' featuring_story.story.id %}" style="color: #fff; text-decoration: none;">{{featuring_story.caption}}</a></h1>
+                <div class="buttons">
+                    <button class="close-btn">Close</button><button class="explore-btn"><a style="text-decoration: none;" href="{% url 'app:story' featuring_story.story.id %}">Explore 🚀 </a></button>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
     {% include 'home/aside.html' %}
 
@@ -171,6 +256,19 @@
             //window.history.replaceState(null, '', newUrl);
             window.location.replace(newUrl)
         });
+
+        document.querySelector('.close-btn').addEventListener('click', function() {
+            document.querySelector('.featuring').remove();
+            document.querySelector('.featuring-story-text-container').remove();
+            localStorage.setItem('hasSeenFeaturing', 'true');
+        });
+
+        if (localStorage.getItem('hasSeenFeaturing') === 'true') {
+            document.querySelector('.featuring').remove();
+            document.querySelector('.featuring-story-text-container').remove();
+        }
+
+        
     </script>
 </body>
 </html>

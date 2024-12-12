@@ -20,6 +20,8 @@
 
         aside.story-aside {
             padding-block: 20px;
+            min-height: 100vh;
+            position: relative;
         }
 
         aside.story-aside button, aside.story-aside button:active, aside.story-aside button:focus {
@@ -144,18 +146,63 @@
             overflow-x: auto;
             gap: 20px;
             padding: 0 20px;
-            -ms-overflow-style: none; /* IE and Edge */
-            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: auto; /* IE and Edge */
+            scrollbar-width: auto; /* Firefox */
         }
 
         .simillar-writers-profile-container::-webkit-scrollbar {
-            display: none; /* Chrome, Safari and Opera */
+            display: block; /* Chrome, Safari and Opera */
         }
 
         .simillar-writers-profile-container article {
             flex-shrink: 0;
             user-select: none;
             max-width: 250px;;
+        }
+        .featuring-story-text-container {
+            position: absolute;
+            inset: 0;
+            background-color: #fff;
+            padding: 20px;
+            
+
+        }
+        .featuring-story-text-container .featuring-story-text {
+            color: #4a4a4a;
+            font-size: 18px;
+            line-height: 50px;
+        }
+        .join-us-call-to-action {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin-top: 0px;
+            padding-inline: 20px;
+        }
+        .join-us-call-to-action .question-call-to-action {
+            align-self: flex-start;
+            margin-left: 5px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .join-us-call-to-action .call-to-action-btn {
+            background-color: #2699eb;
+            color: #fff;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .join-us-call-to-action .call-to-action-btn:focus {
+            background-color: #2699eb;
+        }
+        .join-us-call-to-action .call-to-action-btn:hover {
+            background-color: #053b61;
+        }
+        .join-us-call-to-action .answer-call-to-action {
+            font-family: 'Baloo 2', Arial, Helvetica, sans-serif;
+            line-height: 30px;
         }
     </style>
 </head>
@@ -165,6 +212,7 @@
             <button style="cursor: pointer;"><img src="{% static '/assets/svgs/logo.svg' %}"></img></button>
             <button style="cursor: pointer;"><a href="#" style="text-decoration: none;"><img src="{% static '/assets/svgs/write-icon.svg' %}" alt=""></a></button>
         </header>-->
+        {% if current_user.is_authenticated %}
         <section class="related-stories" style="margin-top: 40px; margin-inline: 30px;">
             <h3 class="from-title">Recent bookmarks</h3>
             {% if bookmarks %}
@@ -192,6 +240,13 @@
             </section>
             {% endif %}
         </section>
+        {% else %}
+        <section class="join-us-call-to-action">
+            <p class="question-call-to-action">Why Join us?</p>
+            <h2 class="answer-call-to-action">We are building the biggest writing platform for Africans.</h2>
+            <button class="call-to-action-btn">Join Us Now</button>
+        </section>
+        {% endif %}
         <section class="also-by-user mt-[40px]">
             <h3 class="from-title" style=" margin-inline: 20px">Previously Featured Stories</h3>
             {% if other_stories_by_writer %}
@@ -209,7 +264,7 @@
             </section>
             {% endif %}
         </section>
-        <section class="simillar-writers mt-[40px]" style="margin-inline: 30px;">
+        <section class="simillar-writers mt-[40px]" style="margin-inline: 30px; overflow-x: auto;">
             <h3 class="from-title">Top Writers</h3>
             {% if top_writers %}
             <section class="simillar-writers-profile-container">
@@ -247,6 +302,81 @@
             </section>
             {% endif %}
         </section>
+
+        {% if featuring_story %}
+        <div class="featuring-story-text-container">
+            <p class="featuring-story-text" id="featuring-story-text">
+            </p>
+            
+        </div>
+        {% endif %}
     </aside>
+    <script>
+        const textElement = document.getElementById('featuring-story-text');
+        const htmlString = '{{featuring_story.intro_to_story|safe}}';
+        const readMoreBtn = document.createElement('button');
+        readMoreBtn.classList.add('read-more-btn');
+        readMoreBtn.textContent = 'Read More';
+        readMoreBtn.addEventListener('click', () => {
+            window.location.href = `{{featuring_story.get_absolute_url}}`
+        });
+
+        // Create a temporary container to parse the HTML
+        const container = document.createElement('div');
+        container.innerHTML = htmlString;
+
+        // Recursive function to process and render nodes incrementally
+        function typeWriterEffect(node, parentElement, callback) {
+        if (node.nodeType === Node.TEXT_NODE) {
+            // Render text content character by character
+            const textContent = node.textContent;
+            let charIndex = 0;
+
+            const intervalId = setInterval(() => {
+            if (charIndex < textContent.length) {
+                parentElement.appendChild(document.createTextNode(textContent[charIndex]));
+                charIndex++;
+            } else {
+                clearInterval(intervalId);
+                if (callback) callback();
+            }
+            }, 100);
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+            // Create the element and copy attributes
+            const newElement = document.createElement(node.tagName);
+            Array.from(node.attributes).forEach(attr => {
+            newElement.setAttribute(attr.name, attr.value);
+            });
+            parentElement.appendChild(newElement);
+
+            // Process the child nodes of the element
+            processNextNode(node.firstChild, newElement, () => {
+            if (callback) callback();
+            });
+        } else {
+            if (callback) callback();
+        }
+        }
+
+        function processNextNode(node, parentElement, callback) {
+        if (node) {
+            typeWriterEffect(node, parentElement, () => {
+            processNextNode(node.nextSibling, parentElement, callback);
+            });
+        } else if (callback) {
+            callback();
+        }
+        }
+
+        // Start processing from the first child node of the container
+        processNextNode(container.firstChild, textElement, () => {
+        // Add the "Read More" button once everything is rendered
+        textElement.innerHTML += `<a href="{% url 'app:story' featuring_story.story.id %}">Read More</a>`;
+        });
+
+
+
+
+    </script>
 </body>
 </html>
