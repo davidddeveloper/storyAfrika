@@ -5,6 +5,9 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from hitcount.models import HitCountMixin, HitCount
 from hitcount.utils import get_hitcount_model
 from django.contrib.contenttypes.fields import GenericRelation
+from django.db import models
+from cloudinary.models import CloudinaryField
+import cloudinary.uploader
 
 
 STATUS_CHOICES = {
@@ -135,7 +138,15 @@ class StoryImage(models.Model):
     story = models.ForeignKey(
         Story, on_delete=models.CASCADE, related_name='images'
     )
-    image = models.ImageField(upload_to='media/')
+    image = CloudinaryField('image')
+
+    def save(self, *args, **kwargs):
+        """Override save to upload image to Cloudinary and store its URL."""
+        if self.image and not self.pk:  # If the object is new and has an image
+            upload_result = cloudinary.uploader.upload(self.image)
+            self.image = upload_result['secure_url']  # Store the Cloudinary URL
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Image for {self.story.title}"
