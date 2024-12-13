@@ -311,6 +311,7 @@
         </div>
         {% endif %}
     </aside>
+    {% if featuring_story %}
     <script>
         const textElement = document.getElementById('featuring-story-text');
         const htmlString = '{{featuring_story.intro_to_story|safe}}';
@@ -378,5 +379,6 @@
 
 
     </script>
+    {% endif %}
 </body>
 </html>
