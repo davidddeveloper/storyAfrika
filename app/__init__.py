@@ -1,5 +1,11 @@
-from helpers import ImageUpload
+import os
+from .helpers import ImageUpload
+from dotenv import load_dotenv
 
-from django.conf import settings
+load_dotenv()
 
-image_upload = ImageUpload(settings.cloud_name, settings.api_key, settings.api_secret)
+cloud_name = os.getenv('CLOUDINARY_CLOUD_NAME')
+api_key = os.getenv('CLOUDINARY_API_KEY')
+api_secret = os.getenv('CLOUDINARY_API_SECRET')
+
+image_upload = ImageUpload(cloud_name, api_key, api_secret)
