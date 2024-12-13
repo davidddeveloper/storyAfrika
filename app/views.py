@@ -69,7 +69,7 @@ def join_us(request):
 
             # send email
             # check if the user click on the checkbox to accept us sending weekly emails
-            if request.POST.get('newsletter'):
+            if request.POST.get('newsletter_opt_in'):
                 send_welcome_email(user)
 
             return redirect('/sign_in')
