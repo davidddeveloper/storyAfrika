@@ -44,12 +44,14 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'ckeditor_uploader',
     'tinymce',
-    'hitcount'
+    'hitcount',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -83,16 +85,16 @@ WSGI_APPLICATION = 'storyafrika.wsgi.application'
 
 DATABASES = {
     'default': {
-        # 'ENGINE': 'django.db.backends.sqlite3',
-        # 'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
 
         # mysql
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": 'storyafrika',
-        "USER": os.getenv('MYSQL_USER'),
-        "PASSWORD": os.getenv('MYSQL_PASSWORD'),
-        "HOST": 'localhost',
-        "PORT": 3306,
+        #"ENGINE": "django.db.backends.mysql",
+        #"NAME": 'storyafrika',
+        #"USER": os.getenv('MYSQL_USER'),
+        #"PASSWORD": os.getenv('MYSQL_PASSWORD'),
+        #"HOST": 'localhost',
+        #"PORT": 3306,
     }
 }
 
@@ -157,6 +159,27 @@ EMAIL_HOST_PASSWORD = SENDGRID_API_KEY
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'storyafrika@mail.storyafrika.live'
+
+CORS_ALLOWED_ORIGINS = [
+    "https://storyafrika.live",
+    "https://51.124.245.236",
+    "https://51.124.245.236:443",
+
+]
+
+# Allow specific methods if needed
+CORS_ALLOW_METHODS = [
+    'GET',
+    'POST',
+    'PUT',
+    'PATCH',
+    'DELETE',
+    'OPTIONS',
+]
+
+# Optional: Allow any headers if needed
+CORS_ALLOW_HEADERS = ['*']
+
 
 # CKEDITOR SETTINGS
 CKEDITOR_UPLOAD_PATH = 'media/'
