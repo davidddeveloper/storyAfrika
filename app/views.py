@@ -128,7 +128,7 @@ def stories(request):
     stories = Story.objects.order_by('-created_at')
     top_writers = Profile.top_writers
     page_number = request.GET.get('page', 1)
-    page_size = request.GET.get('page_size', 2)
+    page_size = request.GET.get('page_size', 6)
     stories = Story.paginate(page_number, page_size, order_by='-created_at')
 
     featuring_story = FeaturingStory.objects.filter(status='a').first()
