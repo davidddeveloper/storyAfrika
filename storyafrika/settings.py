@@ -29,7 +29,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'storyafrika.live', 'www.storyafrika.live']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'storyafrika.live', 'www.storyafrika.live', '51.124.245.236']
 
 # Application definition
 
@@ -85,16 +85,16 @@ WSGI_APPLICATION = 'storyafrika.wsgi.application'
 
 DATABASES = {
     'default': {
-        # 'ENGINE': 'django.db.backends.sqlite3',
-        # 'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
 
         # mysql
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": 'storyafrika',
-        "USER": os.getenv('MYSQL_USER'),
-        "PASSWORD": os.getenv('MYSQL_PASSWORD'),
-        "HOST": 'localhost',
-        "PORT": 3306,
+        # "ENGINE": "django.db.backends.mysql",
+        # "NAME": 'storyafrika',
+        # "USER": os.getenv('MYSQL_USER'),
+        # "PASSWORD": os.getenv('MYSQL_PASSWORD'),
+        # "HOST": 'localhost',
+        # "PORT": 3306,
     }
 }
 
@@ -212,3 +212,20 @@ TINYMCE_DEFAULT_CONFIG = {
                "alignleft aligncenter alignright alignjustify | "
                "bullist numlist outdent indent | removeformat | help",
 }
+
+# CLOUDINARY SETTINGS
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
+CLOUDINARY = {
+    'cloud_name': os.getenv('CLOUDINARY_CLOUD_NAME'),
+    'api_key': os.getenv('CLOUDINARY_API_KEY'),
+    'api_secret': os.getenv('CLOUDINARY_API_SECRET'),
+}
+
+cloudinary.config(
+    cloud_name=CLOUDINARY['cloud_name'],
+    api_key=CLOUDINARY['api_key'],
+    api_secret=CLOUDINARY['api_secret'],
+)
