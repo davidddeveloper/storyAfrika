@@ -34,7 +34,7 @@ def sign_in(request):
             username = extract_username(email)
             password = form.cleaned_data['password']
 
-            user = get_object_or_404(User, username=username)
+            user = get_object_or_404(User, email=email)
             print(user)
             if user and user.check_password(password):
                 login(request, user)
