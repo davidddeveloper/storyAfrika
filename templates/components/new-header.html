@@ -138,7 +138,7 @@
             <a href="/admin/app/story/add/" class="write-link-mobile"><img src="{% static 'assets/svgs/write-icon.svg' %}" alt=""></a>
 
 
-            <a href="#" class="user-profile-link"><img class="user-profile-img" src="{{ request.user.profile.image.url }}" alt="User Profile"></a>
+            <a href="#" class="user-profile-link"><img class="user-profile-img" src="{{ request.user.profile.avatar }}" alt="User Profile"></a>
             {% else %}
             <h2><a href="{% url 'app:join_us' %}" style="font-size: 18px;">Join Us.</a></h2>
             {% endif %}
