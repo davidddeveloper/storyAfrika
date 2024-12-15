@@ -212,7 +212,7 @@
             <button style="cursor: pointer;"><img src="{% static '/assets/svgs/logo.svg' %}"></img></button>
             <button style="cursor: pointer;"><a href="#" style="text-decoration: none;"><img src="{% static '/assets/svgs/write-icon.svg' %}" alt=""></a></button>
         </header>-->
-        {% if current_user.is_authenticated %}
+        {% if request.user.is_authenticated %}
         <section class="related-stories" style="margin-top: 40px; margin-inline: 30px;">
             <h3 class="from-title">Recent bookmarks</h3>
             {% if bookmarks %}
