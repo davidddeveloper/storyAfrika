@@ -225,7 +225,7 @@ TINYMCE_DEFAULT_CONFIG = {
     'paste_as_text': True,
     'clipboard_append': True,
     'clipboard_paste_before': True,
-    'setup': 'function(editor) { editor.on("init", function() { navigator.clipboard.readText().then(function(text) { console.log(text); }); }); }',
+    'setup': 'function(editor) { editor.on("paste", function(e) { navigator.clipboard.readText().then(function(text) { editor.execCommand("mceInsertContent", false, text); }); }); }',
 
     'permission': 'clipboard-read',
 }
