@@ -173,7 +173,7 @@
                 {% for related_story in related_stories %}
                 <article class="related-story">
                     <header class="">
-                        <img class="related-story-image" src="{{ related_story.writer.avatar }}" alt="" srcset="">
+                        <img class="change-src-to-http" src="{{ related_story.writer.avatar }}" alt="" srcset="">
                         <p class="username">{{ related_story.writer.user.username}}</p>
                     </header>
                     <h4 class="story-title"><a href="{% url 'app:story' related_story.id %}" style="text-decoration: none; color: #4a4a4a">{{ related_story.title }}</a></h4>
@@ -200,7 +200,7 @@
                 {% for other_story_by_writer in other_stories_by_writer %}
                 <article class="also-by-user-story">
                     <header class="" style="padding-inline: 20px;">
-                        <img src="{{ other_story_by_writer.images.first.image.url }}" alt="" srcset="">
+                        <img class="change-src-to-http" src="{{ other_story_by_writer.images.first.image.url }}" alt="" srcset="">
                         <h4 class="story-title"><a href="{% url 'app:story' other_story_by_writer.id %}" style="text-decoration: none; color: #000">{{ other_story_by_writer.title }}</a></h4>
                     </header>
                 </article>
@@ -250,7 +250,7 @@
         </section>
     </aside>
     <script>
-        const relatedStoryImage = document.querySelector('.related-story-image');
+        const relatedStoryImage = document.querySelector('.change-src-to-http');
         relatedStoryImage.src = relatedStoryImage.src.replace('http://', 'https://');
     </script>
 </body>
