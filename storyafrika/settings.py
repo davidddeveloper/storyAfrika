@@ -209,13 +209,13 @@ TINYMCE_DEFAULT_CONFIG = {
     "plugins": "advlist autolink lists link image charmap print preview anchor "
                "searchreplace visualblocks code fullscreen "
                "insertdatetime media table paste code help wordcount",
-    "toolbar": "undo redo | custom_copy custom_paste formatselect | bold italic underline backcolor cut copy paste | "
+    "toolbar": "undo redo |  cut custom_copy custom_paste formatselect | bold italic underline backcolor | "
                "alignleft aligncenter alignright alignjustify | "
                "bullist numlist outdent indent | removeformat | help",
     "paste_as_text": True,  # Ensures pasted content is clean
     "mobile": {
         "plugins": "autosave lists autolink paste table code wordcount help",
-        "toolbar": "undo redo | custom_copy custom_paste bold italic underline | bullist numlist | cut copy paste"
+        "toolbar": "undo redo |  cut custom_copy custom_paste bold italic underline | bullist numlist |"
     },
     "contextmenu": "link copy paste",
     "browser_spellcheck": True,  # Enable browser spellcheck for better UX
@@ -225,7 +225,8 @@ TINYMCE_DEFAULT_CONFIG = {
     'paste_as_text': True,
     'clipboard_append': True,
     'clipboard_paste_before': True,
-
+    'setup': 'function(editor) { editor.ui.registry.addButton("custom_copy", { text: "Copy", onAction: function() { navigator.clipboard.writeText(editor.getContent()); } }); editor.ui.registry.addButton("custom_paste", { text: "Paste", onAction: function() { navigator.clipboard.readText().then(function(text) { editor.execCommand("mceInsertContent", false, text); }); } }); }',
+    
     'permission': 'clipboard-read',
 }
 
