@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .schema import Profile, Story, Topic, Comment, StoryImage, FeaturingStory, EmailList, NewsLetter
 from django.contrib.auth.models import User
-
+from .admin_actions import publish_stories, withdraw_stories
 # Register your models here.
 
 common_field = ['id', 'created_at', 'updated_at']
@@ -15,7 +15,11 @@ class StoryAdmin(admin.ModelAdmin):
     inlines = [StoryImageInline]
     list_display = ('title', 'writer', 'status')
     search_fields = ['title', 'writer__user__username']
+    list_filter = ['status']
     exclude = common_field + [ 'likes', 'views']
+    readonly_fields = ['unique_views']
+    list_select_related = ['writer']
+    actions = [publish_stories, withdraw_stories]
 
 
 @admin.register(Topic)
