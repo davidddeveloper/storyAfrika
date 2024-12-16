@@ -250,8 +250,10 @@
         </section>
     </aside>
     <script>
-        const relatedStoryImage = document.querySelector('.change-src-to-http');
-        relatedStoryImage.setAttribute('src', relatedStoryImage.getAttribute('src').replace('http://', 'https://'));
+        const relatedStoryImages = document.querySelectorAll('.change-src-to-http');
+        relatedStoryImages.forEach(image => {
+            image.setAttribute('src', image.getAttribute('src').replace('http://', 'https://'));
+        });
     </script>
 </body>
 </html>
