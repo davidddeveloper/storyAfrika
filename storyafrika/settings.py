@@ -201,23 +201,35 @@ CKEDITOR_CONFIGS = {
 }
 
 
-# Tinymce SETTINGS
 TINYMCE_DEFAULT_CONFIG = {
+    'script_url': '/static/js/tinymce_hacks.js',
     "height": 500,
     "width": "auto",
     "menubar": "file edit view insert format tools table help",
     "plugins": "advlist autolink lists link image charmap print preview anchor "
                "searchreplace visualblocks code fullscreen "
                "insertdatetime media table paste code help wordcount",
-    "toolbar": "undo redo | formatselect | bold italic underline backcolor copy paste | "
+    "toolbar": "undo redo | formatselect | bold italic underline backcolor cut copy paste | "
                "alignleft aligncenter alignright alignjustify | "
                "bullist numlist outdent indent | removeformat | help",
-    # "mobile": {
-    #     "plugins": "autosave lists autolink",
-    #     "toolbar": "undo redo | bold italic underline | bullist numlist | copy paste"
-    # },
-    "contextmenu": "link copy paste"
+    "paste_as_text": True,  # Ensures pasted content is clean
+    "mobile": {
+        "plugins": "autosave lists autolink paste table code wordcount help",
+        "toolbar": "undo redo | bold italic underline | bullist numlist | cut copy paste"
+    },
+    "contextmenu": "link copy paste",
+    "browser_spellcheck": True,  # Enable browser spellcheck for better UX
+    "paste_data_images": True,
+
+    # copy / paste fixing
+    'paste_as_text': True,
+    'clipboard_append': True,
+    'clipboard_paste_before': True,
+    'setup': 'function(editor) { editor.on("init", function() { navigator.clipboard.readText().then(function(text) { console.log(text); }); }); }',
+
+    'permission': 'clipboard-read',
 }
+
 
 # CLOUDINARY SETTINGS
 import cloudinary
