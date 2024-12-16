@@ -151,7 +151,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # sending emails
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
+SENDGRID_API_KEY = os.getenv('# ')
 
 EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_HOST_USER = 'apikey'
@@ -200,6 +200,7 @@ CKEDITOR_CONFIGS = {
     },
 }
 
+
 # Tinymce SETTINGS
 TINYMCE_DEFAULT_CONFIG = {
     "height": 500,
@@ -208,9 +209,14 @@ TINYMCE_DEFAULT_CONFIG = {
     "plugins": "advlist autolink lists link image charmap print preview anchor "
                "searchreplace visualblocks code fullscreen "
                "insertdatetime media table paste code help wordcount",
-    "toolbar": "undo redo | formatselect | bold italic backcolor | "
+    "toolbar": "undo redo | formatselect | bold italic underline backcolor copy paste | "
                "alignleft aligncenter alignright alignjustify | "
                "bullist numlist outdent indent | removeformat | help",
+    # "mobile": {
+    #     "plugins": "autosave lists autolink",
+    #     "toolbar": "undo redo | bold italic underline | bullist numlist | copy paste"
+    # },
+    "contextmenu": "link copy paste"
 }
 
 # CLOUDINARY SETTINGS
