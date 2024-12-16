@@ -217,7 +217,7 @@
                 {% for similar_writer in similar_writers %}
                 <article class="">
                     <header class="">
-                        <img src="{{ similar_writer.avatar }}" alt="" srcset="">
+                        <img class="change-src-to-http" src="{{ similar_writer.avatar }}" alt="" srcset="">
                         <div class="content">
                             <h4><a href="#" style="text-decoration: none; color: black; font-weight: bold;">{% if similar_writer.user.first_name and similar_writer.user.last_name %} {{ similar_writer.user.first_name }} {{ similar_writer.user.last_name }} {% else %} {{similar_writer.user.username}} {% endif %}</a> <!--<button><span>➕</span>Follow</button>--></h4>
                             <h4 class="story-title"><a href="#" style="text-decoration: none; color: #4a4a4a;">{{similar_writer.short_bio}}</a></h4>
