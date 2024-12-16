@@ -38,7 +38,6 @@ class Story(Base):
     class Meta:
         verbose_name = 'Story'
         verbose_name_plural = 'Stories'
-        ordering = ["-title"]
     
 
     def get_related_stories(self, max_results=10):
