@@ -251,7 +251,7 @@
     </aside>
     <script>
         const relatedStoryImage = document.querySelector('.change-src-to-http');
-        relatedStoryImage.src = relatedStoryImage.src.replace('http://', 'https://');
+        relatedStoryImage.setAttribute('src', relatedStoryImage.getAttribute('src').replace('http://', 'https://'));
     </script>
 </body>
 </html>
