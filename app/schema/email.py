@@ -10,6 +10,9 @@ class EmailList(models.Model):
     email = models.EmailField(unique=True, max_length=255)
     subscribed_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        verbose_name_plural = 'Email Lists'
+
     def __str__(self):
         return self.email
 
@@ -20,6 +23,9 @@ class NewsLetter(models.Model):
     message = HTMLField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = 'NewsLetters'
 
     def send_email(self, recipients : list=None):
         subject = self.subject

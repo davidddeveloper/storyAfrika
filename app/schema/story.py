@@ -34,6 +34,11 @@ class Story(Base):
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default="d")
     unique_views = models.ManyToManyField(to='Profile', blank=True, related_name='viewers')
     hit_count_generic = GenericRelation(HitCount)
+
+    class Meta:
+        verbose_name = 'Story'
+        verbose_name_plural = 'Stories'
+        ordering = ["-title"]
     
 
     def get_related_stories(self, max_results=10):

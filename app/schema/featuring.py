@@ -13,5 +13,9 @@ class FeaturingStory(models.Model):
     intro_to_story = HTMLField()
     status = models.CharField(max_length=1, choices=STATUS, default="a")
 
+    class Meta:
+        verbose_name = 'Featuring Story'
+        verbose_name_plural = 'Featuring Stories'
+
     def __str__(self):
         return self.caption
