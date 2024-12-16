@@ -217,7 +217,7 @@ TINYMCE_DEFAULT_CONFIG = {
         "plugins": "autosave lists autolink paste table code wordcount help",
         "toolbar": "undo redo |  cut custom_copy custom_paste bold italic underline | bullist numlist |"
     },
-    "contextmenu": "link copy paste",
+    "contextmenu": "link custom_copy custom_paste",
     "browser_spellcheck": True,  # Enable browser spellcheck for better UX
     "paste_data_images": True,
 
