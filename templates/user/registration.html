@@ -155,7 +155,7 @@
         <p class="text-white text-base text-center mt-[35px]">Join us to be a part of our journey</p>
         <form action="" method="POST" class="space-y-4 w-[550px] mt-20">
             {% csrf_token %}
-            <div class="w-80" hidden>
+            <div class="max-w-80" hidden>
                 <div class="floating-label-group">
                   <input
                     autofocus
@@ -173,7 +173,7 @@
                 <span class="input-error-message">{{form.username.errors}}</span>
             </div>
 
-            <div class="w-80">
+            <div class="max-w-80">
                 <div class="floating-label-group">
                   <input
                     autofocus

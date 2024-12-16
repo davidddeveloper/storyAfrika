@@ -120,7 +120,7 @@
         <form action="/sign_in" method="POST" class="space-y-4 w-[550px] mt-20">
             {% csrf_token %}
             
-            <div class="w-80">
+            <div class="max-w-80">
                 <div class="floating-label-group">
                   <input
                     autofocus
@@ -135,7 +135,7 @@
                 </div>
                 <span class="input-error-message">{{form.email.errors}}</span>
             </div>
-            <div class="w-80">
+            <div class="max-w-80">
                 <div class="floating-label-group mt-8 relative">
                   <input
                     
