@@ -572,15 +572,22 @@
 
         let currentIndex = 1;
 
-        const updateCarousel = () => {
+        const updateDots = () => {
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentIndex);
+            });
+        }
+
+        const updateItems = () => {
             images.forEach((img, index) => {
                 img.classList.toggle('active', index === currentIndex);
                 img.classList.toggle('inactive', index !== currentIndex);
             });
+        }
+        const updateCarousel = () => {
+            updateItems();
 
-            dots.forEach((dot, index) => {
-                dot.classList.toggle('active', index === currentIndex);
-            });
+            updateDots();
 
             
             let offset = ((images[0].offsetWidth / 2) * currentIndex); // Including margin
@@ -598,7 +605,47 @@
             console.log('carousel', carousel.offsetWidth)*/
             const viewportWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
 
-            if (carousel.offsetWidth == viewportWidth) {
+            if (carousel.offsetWidth == viewportWidth) { // for mobile
+                // implement swapping to view carousel items
+                let startX = 0;
+                let endX = 0;
+                let isDragging = false;
+
+                carousel.addEventListener('touchstart', function (e) {
+                    startX = e.touches[0].pageX;
+                    isDragging = true;
+                });
+
+                carousel.addEventListener('touchmove', function (e) {
+                    if (isDragging) {
+                        endX = e.touches[0].pageX;
+                        let diff = startX - endX;
+                        
+                        if (diff > 50) { //swips left
+                            if (currentIndex < images.length - 1) {
+                                currentIndex++;
+                                //updateCarousel();
+                                carousel.style.transform = `translateX(-${carousel.offsetWidth * currentIndex}px)`;
+                                updateItems();
+                                updateDots();
+                            }
+                            isDragging = false;
+                        } else if (diff < -50) { // swips right
+                            if (currentIndex > 0) {
+                                currentIndex--;
+                                //updateCarousel();
+                                carousel.style.transform = `translateX(-${carousel.offsetWidth * currentIndex}px)`;
+                                updateItems();
+                                updateDots();
+                            }
+                            isDragging = false;
+                        }
+                    }
+                });
+
+                carousel.addEventListener('touchend', function() {
+                    isDragging = false;
+                });
                 carousel.style.transform = `translateX(-${carousel.offsetWidth * currentIndex}px)`;
             }
         };
