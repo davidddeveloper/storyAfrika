@@ -206,17 +206,17 @@ TINYMCE_DEFAULT_CONFIG = {
     "height": 500,
     "width": "auto",
     "menubar": "file edit view insert format tools table help",
-    "plugins": "advlist autolink lists link image charmap print preview anchor "
+    "plugins": "autosave advlist autolink lists link image charmap print preview anchor "
                "searchreplace visualblocks code fullscreen "
                "insertdatetime media table paste code help wordcount",
     "toolbar": "undo redo |  cut custom_copy custom_paste formatselect | bold italic underline backcolor | "
                "alignleft aligncenter alignright alignjustify | "
                "bullist numlist outdent indent | removeformat | help",
     "paste_as_text": True,  # Ensures pasted content is clean
-    "mobile": {
-        "plugins": "autosave lists autolink paste table code wordcount help",
-        "toolbar": "undo redo |  cut custom_copy custom_paste bold italic underline | bullist numlist |"
-    },
+    # "mobile": {
+    #     "plugins": "autosave lists autolink paste table code wordcount help",
+    #     "toolbar": "undo redo |  cut custom_copy custom_paste bold italic underline | bullist numlist |"
+    # },
     "contextmenu": "link custom_copy custom_paste",
     "browser_spellcheck": True,  # Enable browser spellcheck for better UX
     "paste_data_images": True,
