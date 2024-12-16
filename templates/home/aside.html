@@ -314,7 +314,7 @@
     {% if featuring_story %}
     <script>
         const textElement = document.getElementById('featuring-story-text');
-        const htmlString = '{{featuring_story.intro_to_story|safe}}';
+        const htmlString = `{{featuring_story.intro_to_story|safe}}`;
         const readMoreBtn = document.createElement('button');
         readMoreBtn.classList.add('read-more-btn');
         readMoreBtn.textContent = 'Read More';
