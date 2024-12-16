@@ -209,15 +209,15 @@ TINYMCE_DEFAULT_CONFIG = {
     "plugins": "advlist autolink lists link image charmap print preview anchor "
                "searchreplace visualblocks code fullscreen "
                "insertdatetime media table paste code help wordcount",
-    "toolbar": "undo redo | custom_copy custom_paste formatselect | bold italic underline backcolor cut | "
+    "toolbar": "undo redo | custom_copy custom_paste formatselect | bold italic underline backcolor cut copy paste | "
                "alignleft aligncenter alignright alignjustify | "
                "bullist numlist outdent indent | removeformat | help",
     "paste_as_text": True,  # Ensures pasted content is clean
     "mobile": {
         "plugins": "autosave lists autolink paste table code wordcount help",
-        "toolbar": "undo redo | custom_copy custom_paste bold italic underline | bullist numlist | cut"
+        "toolbar": "undo redo | custom_copy custom_paste bold italic underline | bullist numlist | cut copy paste"
     },
-    "contextmenu": "link custom_copy custom_paste",
+    "contextmenu": "link copy paste",
     "browser_spellcheck": True,  # Enable browser spellcheck for better UX
     "paste_data_images": True,
 
