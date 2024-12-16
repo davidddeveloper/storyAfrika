@@ -203,7 +203,6 @@ CKEDITOR_CONFIGS = {
 
 TINYMCE_DEFAULT_CONFIG = {
     'script_url': '/static/js/tinymce_hacks.js',
-    'setup': 'function(editor) { editor.ui.registry.addButton("custom_copy", { text: "Copy", onAction: function() { navigator.clipboard.writeText(editor.getContent()); } }); editor.ui.registry.addButton("custom_paste", { text: "Paste", onAction: function() { navigator.clipboard.readText().then(function(text) { editor.execCommand("mceInsertContent", false, text); }); } }); }',
     "height": 500,
     "width": "auto",
     "menubar": "file edit view insert format tools table help",
@@ -226,6 +225,7 @@ TINYMCE_DEFAULT_CONFIG = {
     'paste_as_text': True,
     'clipboard_append': True,
     'clipboard_paste_before': True,
+    'setup': 'function(editor) { editor.ui.registry.addButton("custom_copy", { text: "Copy", onAction: function() { navigator.clipboard.writeText(editor.getContent()); } }); editor.ui.registry.addButton("custom_paste", { text: "Paste", onAction: function() { navigator.clipboard.readText().then(function(text) { editor.execCommand("mceInsertContent", false, text); }); } }); }',
     
     'permission': 'clipboard-read',
 }
