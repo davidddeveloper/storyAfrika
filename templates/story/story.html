@@ -293,7 +293,7 @@
                         {% for image in story.images.all %}
                         <img src="{{ image.image.url }}" alt="Image {{ forloop.counter }}">
                         {% endfor %}
-                        <img src="{% static 'assets/images/writing.jpg' %}" alt="Image 4">
+                        <img src="{{story.topics.first.banner}}" alt="Image 4">
                         
                     </div>
                     <div class="carousel-nav">
