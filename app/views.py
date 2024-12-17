@@ -7,10 +7,11 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.views import PasswordResetView
+from django.db.models import Q
 from .schema import EmailList
 from .forms import LoginForm, RegistrationForm
 from .helpers import extract_username, send_welcome_email, serialize_url
-from .schema import Story, Profile, FeaturingStory
+from .schema import Story, Profile, FeaturingStory, Topic
 import json
 
 # Create your views here.
@@ -175,3 +176,26 @@ def like_story(request, story_id=None):
     story.likes.add(request.user.profile)
 
     return JsonResponse({"ok": True}, status=200)
+
+
+def unlike_story(request, story_id=None):
+    story = get_object_or_404(Story, id=story_id)
+    story.likes.remove(request.user.profile)
+
+    return JsonResponse({"ok": True}, status=200)
+
+def search(request):
+    query = request.GET.get('q')
+    category = request.GET.get('category')
+    print(query)
+    if category == 'stories':
+        stories = Story.objects.filter(Q(title__icontains=query) | Q(text__icontains=query))
+        return render(request, 'home/search.html', {'stories': stories, 'query': query})
+    elif category == 'topics':
+        topics = Topic.objects.filter(name__icontains=query)
+        return render(request, 'home/search.html', {'topics': topics, 'query': query})
+    elif category == 'people':
+        profiles = Profile.objects.filter(Q(user__username__icontains=query) | Q(user__first_name__icontains=query) | Q(user__last_name__icontains=query))
+        return render(request, 'home/search.html', {'profiles': profiles, 'query': query})
+    else:
+        return render(request, 'home/search.html')

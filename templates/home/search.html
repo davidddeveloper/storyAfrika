@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #fff !important;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none; /* IE and Edge */
+            scrollbar-width: none; /* Firefox */
+        }
+
+        .truncate-ellipsis {
+            display: -webkit-box;
+            -webkit-line-clamp: 3; /* Change this to the number of lines you want */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        nav button.active {
+                color: black;
+                font-weight: bold;
+            }
+    </style>
+</head>
+<body>
+    {% include 'components/new-header.html' %}
+    <main class="container mx-auto mt-10 p-5 px-3 sm:p-10">
+        <div class="flex items-center md:w-[240px] rounded-3xl bg-[#f5f5f5] py-3 pl-[15px] gap-5">
+            <img src="/assets/svgs/search-icon.svg" alt="">
+            <form class="search-form" method="post" action="/">
+                <input type="text" name="search" id="search" placeholder="search.." class="input-to-search text-[#4a4a4a] bg-transparent focus:border-0 focus:outline-none">
+            </form>
+        </div>
+        <h2 class="text-[#4a4a4a] text-2xl mt-[45px] mb-[70px]">
+            You're searching for <span class="text-black">{{query}}</span>
+            <!-- Kaizen Approach -->
+        </h2>
+        
+        <nav class="relative flex items-center gap-7 mx-auto">
+            <button class="z-10 text-base text-lightgray active sm:text-black">Stories</button>
+            <button class="z-10 text-base text-lightgray sm:text-black ">People</button>
+            <button class=" z-10 text-base text-lightgray sm:text-black ">Topics</button>
+        </nav>
+        <article class="search-stories-container container stories-container max-w-xl relative mx-auto mt-[20px] mb-20 pt-[25px] pb-[25px] px-5 flex flex-col gap-[50px] shrink-1 h-screen overflow-y-scroll no-scrollbar ">
+            {% if stories %}
+                {% for story in stories %}
+                    {% include 'components/story-card.html' %}
+                {% endfor %}
+
+            {% elif topics %}
+                {% for topic in topics %}
+                    <p>{{ topic.name }}</p>
+                {% endfor %}
+            {% elif profiles %}
+                {% for profile in profiles %}
+                    <p>{{ profile.user.username }}</p>
+                {% endfor %}
+            {% endif %}
+        </article>
+    </main>
+    <script>
+
+        const searchForm = document.querySelector('.search-form')
+        const searchInput = document.getElementById('search');
+        const search_url = window.location.href.split(window.location.origin + '/')[1]
+        const category = search_url.split('category=')[1]
+
+        searchForm.addEventListener('submit', (e) => {
+            e.preventDefault()
+            const searchQuery = searchInput.value;
+            window.location.href = `/search?q=${searchQuery}&category=${category}`
+
+        })
+        
+        const buttons = document.querySelectorAll('nav button');
+
+        buttons.forEach(button => {
+            if (button.innerText.toLowerCase() == category) {
+                buttons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+            }
+            button.addEventListener('click', () => {
+                buttons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                if (button.innerText == 'Stories') {
+                    window.location.href = `/search?q={{query}}&category=stories`
+                } else if (button.innerText == 'People') {
+                    window.location.href = `/search?q={{query}}&category=people`
+                } else if (button.innerText == 'Topics') {
+                    window.location.href = `/search?q={{query}}&category=topics`
+                }
+            });
+        });
+
+        /*// fetch search results for story when user clicks on search button and on the stories nav
+        const searchInput = document.getElementById('search');
+        const searchResultsContainer = document.querySelector('.search-stories-container');
+
+        searchInput.addEventListener('input', async () => {
+            const searchQuery = searchInput.value;
+            const response = await fetch(`/search?search=${searchQuery}`);
+            const data = await response.json();
+            searchResultsContainer.innerHTML = '';
+            data.forEach(story => {
+                const storyElement = document.createElement('div');
+                storyElement.innerHTML = `
+                    <a href="/story/${story.id}">
+                        <img src="${story.image}" alt="${story.title}">
+                        <h3>${story.title}</h3>
+                        <p class="truncate-ellipsis">${story.description}</p>
+                    </a>
+                `;
+                searchResultsContainer.appendChild(storyElement);
+            });
+        });
+
+        // fetch search results for people when user clicks on the people nav
+        buttons[1].addEventListener('click', async () => {
+            const searchQuery = searchInput.value;
+            const response = await fetch(`/search?search=${searchQuery}`);
+            const data = await response.json();
+            searchResultsContainer.innerHTML = '';
+            data.forEach(story => {
+                const storyElement = document.createElement('div');
+                storyElement.innerHTML = `
+                    <a href="/story/${story.id}">
+                        <img src="${story.image}" alt="${story.title}">
+                        <h3>${story.title}</h3>
+                        <p class="truncate-ellipsis">${story.description}</p>
+                    </a>
+                `;
+                searchResultsContainer.appendChild(storyElement);
+            });
+        })
+        // fetch search results for topics when user clicks on the topics nav
+        buttons[2].addEventListener('click', async () => {
+            const searchQuery = searchInput.value;
+            const response = await fetch(`/search?search=${searchQuery}`);
+            const data = await response.json();
+            searchResultsContainer.innerHTML = '';
+            data.forEach(story => {
+                const storyElement = document.createElement('div');
+                storyElement.innerHTML = `
+                    <a href="/story/${story.id}">
+                        <img src="${story.image}" alt="${story.title}">
+                        <h3>${story.title}</h3>
+                        <p class="truncate-ellipsis">${story.description}</p>
+                    </a>
+                `;
+                searchResultsContainer.appendChild(storyElement);
+            });
+        })*/
+    </script>
+</body>
+</html>

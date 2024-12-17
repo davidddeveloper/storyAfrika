@@ -10,6 +10,7 @@ from .views import (
     stories,
     story_view,
     subscribe,
+    search,
     CustomPasswordResetView
 )
 
@@ -30,6 +31,7 @@ urlpatterns = [
 
     path('subscribe-to-newsletter', view=subscribe, name='subscribe'),
 
+    path('search', view=search, name='search'),
     # Password reset URLs
     #path('password-reset/', 
     #     auth_views.PasswordResetView.as_view(template_name='user/password_reset.html'), 
