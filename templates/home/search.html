@@ -31,12 +31,12 @@
 <body>
     {% include 'components/new-header.html' %}
     <main class="container mx-auto mt-10 p-5 px-3 sm:p-10">
-        <div class="flex items-center md:w-[240px] rounded-3xl bg-[#f5f5f5] py-3 pl-[15px] gap-5">
+        <!--<div class="flex items-center md:w-[240px] rounded-3xl bg-[#f5f5f5] py-3 pl-[15px] gap-5">
             <img src="/assets/svgs/search-icon.svg" alt="">
             <form class="search-form" method="post" action="/">
                 <input type="text" name="search" id="search" placeholder="search.." class="input-to-search text-[#4a4a4a] bg-transparent focus:border-0 focus:outline-none">
             </form>
-        </div>
+        </div>-->
         <h2 class="text-[#4a4a4a] text-2xl mt-[45px] mb-[70px]">
             You're searching for <span class="text-black">{{query}}</span>
             <!-- Kaizen Approach -->
@@ -66,8 +66,8 @@
     </main>
     <script>
 
-        const searchForm = document.querySelector('.search-form')
-        const searchInput = document.getElementById('search');
+        //const searchForm = document.querySelector('.search-form')
+        //const searchInput = document.getElementById('search');
         const search_url = window.location.href.split(window.location.origin + '/')[1]
         const category = search_url.split('category=')[1]
 
