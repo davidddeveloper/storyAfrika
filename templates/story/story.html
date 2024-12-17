@@ -477,80 +477,79 @@
 
         // love and loved the story
         document.querySelector('.love-btn').addEventListener('click', () => {
-            const lovedBtn = document.querySelector('.loved-btn');
-            lovedBtn.style.display = 'block';
-            lovedBtn.style.opacity = 0;
-            lovedBtn.style.transform = 'scale(0)';
-            lovedBtn.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out';
-            setTimeout(() => {
-                lovedBtn.style.transform = 'scale(1)';
-                lovedBtn.style.opacity = 1;
+            
                 
-                // send a request to the server to love the story
-                fetch(`/story/{{ story.id }}/like`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': '{{ csrf_token }}',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({})
-                }).then(response => {
-                    if (response.ok) {
-                        
-                    } else {
-                        console.log('Error loving story');
-                    }
-                    return response.json();
-                }).then(json => {
-                    const loveCounts = document.querySelectorAll('.love-count');
-                    loveCounts.forEach(count => {
-                        //const currentCount = parseInt(count.textContent);
-                        //count.textContent = currentCount + 1;
-                        count.textContent = humanizeNumber(json.love_count); 
-                    });
+            // send a request to the server to love the story
+            fetch(`/story/{{ story.id }}/like`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            }).then(response => {
+                if (response.ok) {
+                    const lovedBtn = document.querySelector('.loved-btn');
+                    lovedBtn.style.display = 'block';
+                    lovedBtn.style.opacity = 0;
+                    lovedBtn.style.transform = 'scale(0)';
+                    lovedBtn.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out';
+                    setTimeout(() => {
+                        lovedBtn.style.transform = 'scale(1)';
+                        lovedBtn.style.opacity = 1;
+                    }, 50);
+                } else {
+                    console.log('Error loving story');
+                }
+                return response.json();
+            }).then(json => {
+                const loveCounts = document.querySelectorAll('.love-count');
+                loveCounts.forEach(count => {
+                    //const currentCount = parseInt(count.textContent);
+                    //count.textContent = currentCount + 1;
+                    count.textContent = humanizeNumber(json.love_count); 
                 });
-            }, 50);
+            });
             document.querySelector('.love-btn').style.display = 'none';
         })
 
         // unlove and unloved the story
         document.querySelector('.loved-btn').addEventListener('click', () => {
-            const loveBtn = document.querySelector('.love-btn');
-            loveBtn.style.display = 'block';
-            loveBtn.style.opacity = 0;
-            loveBtn.style.transform = 'scale(0)';
-            loveBtn.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out';
-            setTimeout(() => {
-                loveBtn.style.transform = 'scale(1)';
-                loveBtn.style.opacity = 1;
+            
+            // send a request to the server to unloved the story
+            fetch(`/story/{{ story.id }}/unlike`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            }).then(response => {
+                if (response.ok) {
+                    const loveBtn = document.querySelector('.love-btn');
+                    loveBtn.style.display = 'block';
+                    loveBtn.style.opacity = 0;
+                    loveBtn.style.transform = 'scale(0)';
+                    loveBtn.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out';
+                    setTimeout(() => {
+                        loveBtn.style.transform = 'scale(1)';
+                        loveBtn.style.opacity = 1;
+                    }, 50);
                 
                 
 
-                // send a request to the server to unloved the story
-                fetch(`/story/{{ story.id }}/unlike`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': '{{ csrf_token }}',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({})
-                }).then(response => {
-                    if (response.ok) {
-                        console.log(response)
-                    } else {
-                        console.log('Error loving story');
-                    }
-                    return response.json();
-                }).then(json => {
-                    const loveCounts = document.querySelectorAll('.love-count');
-                    loveCounts.forEach(count => {
-                        //const currentCount = parseInt(count.textContent);
-                        //count.textContent = currentCount + 1;
-                        count.textContent = json.love_count === 0 ? '0' : humanizeNumber(json.love_count);
-                    });
+                } else {
+                    console.log('Error loving story');
+                }
+                return response.json();
+            }).then(json => {
+                const loveCounts = document.querySelectorAll('.love-count');
+                loveCounts.forEach(count => {
+                    //const currentCount = parseInt(count.textContent);
+                    //count.textContent = currentCount + 1;
+                    count.textContent = json.love_count === 0 ? '0' : humanizeNumber(json.love_count);
                 });
-                
-            }, 50);
+            });
             document.querySelector('.loved-btn').style.display = 'none';
         })
     </script>
