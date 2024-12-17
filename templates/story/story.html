@@ -351,7 +351,7 @@
                         <img src="{% static 'assets/images/innovation.jpg' %}" alt="Image 3">
                         <img src="{% static 'assets/images/writing.jpg' %}" alt="Image 4">-->
                         {% for image in story.images.all %}
-                        <img class="story-carousel-image image" src="{{ image.image.url }}" alt="Image {{ forloop.counter }}">
+                        <img class="story-carousel-image image" src="{{ image.image.url }}" alt="{{story.title}}"> <!--Image {{ forloop.counter }} -->
                         {% endfor %}
                         <img src="{{story.topics.first.banner}}" alt="Image 4">
                         
@@ -391,7 +391,7 @@
     <div class="modal" id="myModal">
         <span class="close">&times;</span>
         <img class="modal-content" id="img01">
-        <div id="caption"></div>
+        <div id="caption" style="display: block; text-align: center; color: #333; font-size: 16px; margin-top: 10px;"></div>
       </div>
 
       <script>
