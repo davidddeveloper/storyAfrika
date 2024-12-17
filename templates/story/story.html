@@ -6,14 +6,25 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="Storyafrika is a platform showcasing the real-life experiences and stories of individual Africans, highlighting their upbringing, everyday successes, and much more." property="og:description">
-    <meta content="storyafrika - Success Stories and Experiences of Everyday Africans" property="og:title">
-    <meta content="https://storyafrika.live" property="og:url">
-    <meta content="/static/images/write.webp" property="og:image">
+    <meta name="title" content="StoryAfrika - {{story.title}}">
+    <meta name="description" content="{{story.text|truncatechars:200}}">
+    <meta name="keywords" content="{% for topic in story.topics.all %}{{ topic.name }}{% if not forloop.last %}, {% endif %}{% endfor %} African stories, African experiences, African achievements, StoryAfrika">
+    <meta property="og:title" content="storyafrika - {{story.title}}">
+    <meta property="og:description" content="{{story.text|truncatechars:200}}">
+    <meta property="og:url" content="{{request.build_absolute_uri}}">
+    <meta property="og:image" content="{{story.images.first.url}}">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="storyafrika - {{story.title}}">
-    <meta name="twitter:description" content="{{story.title}} written by {{story.writer.username}} on {{story.created_at}} and updated_at {{story.updated_at}}">
-    <meta name="twitter:image" content="/uploads/{{story.image}}">
+    <meta name="twitter:description" content="{{story.text|truncatechars:200}}">
+    <meta name="twitter:image" content="{{story.images.first.url}}">
+    <meta name="twitter:creator" content="@{{story.writer.user.username}}">
+    <meta name="twitter:site" content="@StoryAfrika">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="">
+    
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/3.3.3/tailwind.min.js" defer></script>
 
