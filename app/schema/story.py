@@ -147,6 +147,7 @@ class StoryImage(models.Model):
         Story, on_delete=models.CASCADE, related_name='images'
     )
     image = CloudinaryField('image')
+    alt = models.CharField(max_length=100)
 
     def save(self, *args, **kwargs):
         """Override save to upload image to Cloudinary and store its URL."""

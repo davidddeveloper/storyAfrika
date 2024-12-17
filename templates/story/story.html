@@ -351,7 +351,7 @@
                         <img src="{% static 'assets/images/innovation.jpg' %}" alt="Image 3">
                         <img src="{% static 'assets/images/writing.jpg' %}" alt="Image 4">-->
                         {% for image in story.images.all %}
-                        <img class="story-carousel-image image" src="{{ image.image.url }}" alt="{{story.title}}"> <!--Image {{ forloop.counter }} -->
+                        <img class="story-carousel-image image" src="{{ image.image.url }}" alt="{{image.alt}}"> <!--Image {{ forloop.counter }} -->
                         {% endfor %}
                         <img src="{{story.topics.first.banner}}" alt="Image 4">
                         
