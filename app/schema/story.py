@@ -38,7 +38,11 @@ class Story(Base):
     class Meta:
         verbose_name = 'Story'
         verbose_name_plural = 'Stories'
-    
+
+
+    @property
+    def love_count(self):
+        return self.likes.count()
 
     def get_related_stories(self, max_results=10):
         """Retrieve related stories with unique writers."""

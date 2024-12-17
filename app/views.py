@@ -175,14 +175,14 @@ def like_story(request, story_id=None):
     print(story.likes.count())
     story.likes.add(request.user.profile)
 
-    return JsonResponse({"ok": True}, status=200)
+    return JsonResponse({"ok": True, "love_count": story.love_count}, status=200)
 
 
 def unlike_story(request, story_id=None):
     story = get_object_or_404(Story, id=story_id)
     story.likes.remove(request.user.profile)
 
-    return JsonResponse({"ok": True}, status=200)
+    return JsonResponse({"ok": True, "love_count": story.love_count}, status=200)
 
 def search(request):
     query = request.GET.get('q')

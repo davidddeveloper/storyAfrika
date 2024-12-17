@@ -144,7 +144,7 @@
             background-repeat: repeat;
         }
 
-        .main-container:hover img {
+        .main-container:hover img.story-carousel-image {
             transform: scale(1.1);
             filter: brightness(0.5);
         }
@@ -152,8 +152,10 @@
         .carousel-nav {
             position: absolute;
             width: 100%;
-            height: 100%;
-            top: 0;
+            /*height: 100%;*/
+
+            top: 50%;
+            transform: translateY(-50%);
             left: 0;
             display: flex;
             justify-content: space-between;
@@ -163,10 +165,13 @@
             background: transparent;
         }
 
+        
+
         .main-container:hover .carousel-nav, .main-container:hover .profile-container {
             opacity: 1;
             z-index: 20;
             user-select: none;
+            
         }
 
         .carousel-nav button {
@@ -185,6 +190,34 @@
 
         .carousel-nav button:hover {
             background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .carousel-nav .love-btn:hover, .carousel-nav .loved-btn:hover {
+            background-color: transparent;
+            transform: scale(1.1, 1.1);
+        }
+
+        .carousel-nav .love-btn, .carousel-nav .loved-btn {
+            position: relative;
+        }
+
+        .carousel-nav .love-count {
+            position: absolute;
+            top: -3px;
+            left: 55%;
+            transform: translateX(-50%);
+            font-size: 16px;
+            color: black;
+            opacity: 0;
+        }
+
+        .carousel-nav .love-btn:hover .love-count, .carousel-nav .loved-btn:hover .love-count {
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .carousel-nav .loved-btn .love-count {
+            color: #fff;
         }
 
         .profile-container {
@@ -249,30 +282,6 @@
             .left-part {
             }
         }
-        .heart {
-            position: absolute;
-            top: 25%;
-            left: 40%;
-            transform: translate(-20%, -30%);
-            font-size: 4rem;
-            color: red;
-            animation: heart 1s ease-in-out;
-            z-index: 80;
-        }
-
-        @keyframes heart {
-            0% {
-                transform: scale(1), translate(-60%, -60%);
-            }
-            50% {
-                transform: scale(1.2), translate(-60%, -60%);
-            }
-            100% {
-                transform: scale(1), translate(-60%, -60%);
-                opacity: 0;
-            }
-        }
-
     
     </style>
 </head>
@@ -293,13 +302,22 @@
                         <img src="{% static 'assets/images/innovation.jpg' %}" alt="Image 3">
                         <img src="{% static 'assets/images/writing.jpg' %}" alt="Image 4">-->
                         {% for image in story.images.all %}
-                        <img src="{{ image.image.url }}" alt="Image {{ forloop.counter }}">
+                        <img class="story-carousel-image" src="{{ image.image.url }}" alt="Image {{ forloop.counter }}">
                         {% endfor %}
                         <img src="{{story.topics.first.banner}}" alt="Image 4">
                         
                     </div>
                     <div class="carousel-nav">
                         <button class="carousel-prev" id="carousel-prev"><img src="{% static 'assets/svgs/prev-thick.svg' %}" alt=""></button>
+                        {% if request.user.is_authenticated and request.user.profile in story.likes.all %}
+                        <button class="loved-btn" style="display: block; background-color: transparent;"><img class="loved-svg" src="{% static 'assets/svgs/loved.svg' %}" alt="loved btn"><p class="love-count">{{story.love_count|intword}}</p></button>
+                        <button class="love-btn" style="display: none; background-color: transparent;" data-story-id="{{ story.id }}"><img class="love-svg" src="{% static 'assets/svgs/love.svg' %}" alt="love svg"></button>
+                        {% elif request.user.is_authenticated %}
+                        <button class="loved-btn" style="display: none; background-color: transparent;"><img class="loved-svg" src="{% static 'assets/svgs/loved.svg' %}" alt="loved btn"><p class="love-count">{{story.love_count|intword}}</p></button>
+                        <button class="love-btn" style="display: block; background-color: transparent;" data-story-id="{{ story.id }}"><img class="love-svg" src="{% static 'assets/svgs/love.svg' %}" alt="love svg"><p class="love-count">{{story.love_count|intword}}</p></button>
+                        {% else %}
+                        <button class="love-btn"><img class="love-svg" src="{% static 'assets/svgs/love.svg' %}" alt="love btn"></button>
+                        {% endif %}
                         <button class="carousel-next" id="carousel-next"><img src="{% static 'assets/svgs/next-thick.svg' %}" alt=""></button>
                     </div>
                     <div class="profile-container">
@@ -352,35 +370,99 @@
 
     {% if request.user.is_authenticated %}
     <script>
-        mainContainer.addEventListener('dblclick', () => {
-            const heart = document.createElement('i');
-            heart.className = 'heart';
-            heart.innerHTML = `❤ <span style="position: absolute; top: 50%; left: 60%; transform: translate(-50%, -50%); font-size: 10px; z-index: 80; color: #fff;">{{story.likes.count}} Likes</span>`;
+        function humanizeNumber(number) {
+            if (number >= 1e9) { // Billion
+                return (number / 1e9).toFixed(1).replace(/\.0$/, '') + 'B';
+            } else if (number >= 1e6) { // Million
+                return (number / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
+            } else if (number >= 1e3) { // Thousand
+                return (number / 1e3).toFixed(1).replace(/\.0$/, '') + 'K';
+            } else {
+                return number.toString();
+            }
+        }
+        document.querySelector('.story-carousel-image').addEventListener('click', () => {
+            console.log('clicked')
+        })
 
-            
-            mainContainer.appendChild(heart);
-
+        // love and loved the story
+        document.querySelector('.love-btn').addEventListener('click', () => {
+            const lovedBtn = document.querySelector('.loved-btn');
+            lovedBtn.style.display = 'block';
+            lovedBtn.style.opacity = 0;
+            lovedBtn.style.transform = 'scale(0)';
+            lovedBtn.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out';
             setTimeout(() => {
-                heart.remove();
-            }, 1500);
+                lovedBtn.style.transform = 'scale(1)';
+                lovedBtn.style.opacity = 1;
+                
+                // send a request to the server to love the story
+                fetch(`/story/{{ story.id }}/like`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({})
+                }).then(response => {
+                    if (response.ok) {
+                        
+                    } else {
+                        console.log('Error loving story');
+                    }
+                    return response.json();
+                }).then(json => {
+                    const loveCounts = document.querySelectorAll('.love-count');
+                    loveCounts.forEach(count => {
+                        //const currentCount = parseInt(count.textContent);
+                        //count.textContent = currentCount + 1;
+                        count.textContent = humanizeNumber(json.love_count); 
+                    });
+                });
+            }, 50);
+            document.querySelector('.love-btn').style.display = 'none';
+        })
 
-        // like the story
-        // send a request to the server to like the story
-            fetch(`/story/{{ story.id }}/like`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({})
-            }).then(response => {
-                if (response.ok) {
-                    console.log('Story liked');
-                } else {
-                    console.log('Error liking story');
-                }
-            });
-        });
+        // unlove and unloved the story
+        document.querySelector('.loved-btn').addEventListener('click', () => {
+            const loveBtn = document.querySelector('.love-btn');
+            loveBtn.style.display = 'block';
+            loveBtn.style.opacity = 0;
+            loveBtn.style.transform = 'scale(0)';
+            loveBtn.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out';
+            setTimeout(() => {
+                loveBtn.style.transform = 'scale(1)';
+                loveBtn.style.opacity = 1;
+                
+                
+
+                // send a request to the server to unloved the story
+                fetch(`/story/{{ story.id }}/unlike`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({})
+                }).then(response => {
+                    if (response.ok) {
+                        console.log(response)
+                    } else {
+                        console.log('Error loving story');
+                    }
+                    return response.json();
+                }).then(json => {
+                    const loveCounts = document.querySelectorAll('.love-count');
+                    loveCounts.forEach(count => {
+                        //const currentCount = parseInt(count.textContent);
+                        //count.textContent = currentCount + 1;
+                        count.textContent = json.love_count === 0 ? '0' : humanizeNumber(json.love_count);
+                    });
+                });
+                
+            }, 50);
+            document.querySelector('.loved-btn').style.display = 'none';
+        })
     </script>
     {% endif %}
 </body>
