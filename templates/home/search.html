@@ -47,7 +47,7 @@
             <button class="z-10 text-base text-lightgray sm:text-black ">People</button>
             <button class=" z-10 text-base text-lightgray sm:text-black ">Topics</button>
         </nav>
-        <article class="search-stories-container container stories-container max-w-xl relative mx-auto mt-[20px] mb-20 pt-[25px] pb-[25px] px-5 flex flex-col gap-[50px] shrink-1 overflow-y-scroll no-scrollbar ">
+        <article class="search-stories-container container stories-container items-start  relative mx-auto mt-[20px] mb-20 pt-[25px] pb-[25px] flex flex-col gap-[50px] shrink-1 overflow-y-scroll no-scrollbar ">
             {% if stories %}
                 {% for story in stories %}
                     {% include 'components/story-card.html' %}
@@ -61,7 +61,7 @@
                 {% for profile in profiles %}
                     <article class="user-profile mt-10">
                         <header class="flex gap-3 items-start">
-                            <img class="change-src-to-http rounded-full object-cover shrink-0" src="{{ profile.avatar }}" alt="" srcset="">
+                            <img class="change-src-to-http rounded-full object-cover shrink-0 w-12 h-12 border-2" src="{{ profile.avatar }}" alt="" srcset="">
                             <div class="content cursor-pointer text-blue-500">
                                 <h4 class="m-0"><a href="#" style="text-decoration: none; color: black; font-weight: bold;">{% if profile.user.first_name and profile.user.last_name %} {{ profile.user.first_name }} {{ profile.user.last_name }} {% else %} {{profile.user.username}} {% endif %}</a> <!--<button><span>➕</span>Follow</button>--></h4>
                                 <h4 class="story-title"><a href="#" style="text-decoration: none; color: #4a4a4a;">{{profile.short_bio}}</a></h4>
