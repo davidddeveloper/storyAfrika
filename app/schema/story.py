@@ -29,7 +29,7 @@ class Story(Base):
 
     contributors = models.ManyToManyField(to='Profile', blank=True, related_name='stories_contributed_to')
 
-    likes = models.ManyToManyField(to='Profile', blank=True, related_name='likers')
+    likes = models.ManyToManyField(to='Profile', blank=True, related_name='stories_liked')
 
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default="d")
     unique_views = models.ManyToManyField(to='Profile', blank=True, related_name='viewers')

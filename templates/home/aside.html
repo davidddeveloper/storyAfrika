@@ -214,16 +214,16 @@
         </header>-->
         {% if request.user.is_authenticated %}
         <section class="related-stories" style="margin-top: 40px; margin-inline: 30px;">
-            <h3 class="from-title">Recent bookmarks</h3>
-            {% if bookmarks %}
+            <h3 class="from-title">Your recent likes</h3>
+            {% if stories_liked %}
             <section class="related-stories-container">
-                {% for bookmark in bookmarks %}
+                {% for story in stories_liked %}
                 <article class="related-story">
                     <header class="">
-                        <img src="{{ related_story.writer.avatar }}" alt="" srcset="">
-                        <p class="username">{{ bookmark.story.writer.user.username}}</p>
+                        <img src="{{ story.writer.avatar }}" alt="" srcset="">
+                        <p class="username">{{ story.writer.user.username}}</p>
                     </header>
-                    <h4 class="story-title"><a href="{% url 'app:story' bookmark.story.id %}" style="text-decoration: none; color: #4a4a4a">{{ bookmark.story.title }}</a></h4>
+                    <h4 class="story-title"><a href="{% url 'app:story' story.id %}" style="text-decoration: none; color: #4a4a4a">{{ story.title }}</a></h4>
                 </article>
                 {% empty %}
                     <p>Related stories will be displayed here</p>

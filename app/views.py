@@ -134,14 +134,14 @@ def stories(request):
 
     featuring_story = FeaturingStory.objects.filter(status='a').first()
 
-    bookmarks = None
+    stories_liked = None
     if request.user.is_authenticated:
-        bookmarks = request.user.profile.bookmarks.all().order_by('-created_at')[:3]
+        stories_liked = request.user.profile.stories_liked.all().order_by('-created_at')[:3]
 
     return render(request, 'home/home.html', context={
         'stories': stories,
         'top_writers': top_writers,
-        'bookmarks': bookmarks,
+        'stories_liked': stories_liked,
         'featuring_story': featuring_story
     })
 
