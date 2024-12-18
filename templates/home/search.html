@@ -1,9 +1,27 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search Results</title>
+    <meta name="title" content="storyafrika - search results">
+    <meta name="description" content="You're searching for {{query}}">
+    <meta name="keywords" content="{% for topic in story.topics.all %}{{ topic.name }}{% if not forloop.last %}, {% endif %}{% endfor %} African stories, African experiences, African achievements, StoryAfrika">
+    <meta property="og:title" content="storyafrika - You're searching for {{query}}">
+    <meta property="og:description" content="You're searching for {{query}}">
+    <meta property="og:url" content="{{request.build_absolute_uri}}">
+    <meta property="og:image" content="{% static 'images/write.webp'%}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="storyafrika - You're searching for {{query}}">
+    <meta name="twitter:description" content="You're searching for {{query}}">
+    <meta name="twitter:image" content="{% static 'images/write.webp'%}">
+    <meta name="twitter:creator" content="@{{story.writer.user.username}}">
+    <meta name="twitter:site" content="@StoryAfrika">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+<link rel="icon" type="image/jpeg" href="{% static 'images/logo.jpg' %}">
+    <title>storyafrika - Search Results</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>

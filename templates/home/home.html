@@ -5,26 +5,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="Storyafrika is a platform showcasing the real-life experiences and stories of individual Africans, highlighting their upbringing, everyday successes, and much more. Our goal is to connect everyday Africans with one another through StoryTelling and Writing." property="og:description">
-    <meta content="storyafrika - Success Stories and Experiences of Everyday Africans" property="og:title">
-    <meta content="https://stories.storyafrika.live" property="og:url">
-    <meta content="/static/images/write.webp" property="og:image">
+    <meta name="title" content="storyafrika - Success Stories and Experiences of Everyday Africans">
+    <meta name="description" content="Storyafrika is a platform showcasing the real-life experiences and stories of individual Africans, highlighting their upbringing, everyday successes, and much more. Our goal is to connect everyday Africans with one another through StoryTelling and Writing.">
+    <meta name="keywords" content="{% for topic in story.topics.all %}{{ topic.name }}{% if not forloop.last %}, {% endif %}{% endfor %} African stories, African experiences, African achievements, StoryAfrika">
+    <meta property="og:title" content="storyafrika - Success Stories and Experiences of Everyday Africans">
+    <meta property="og:description" content="Storyafrika is a platform showcasing the real-life experiences and stories of individual Africans, highlighting their upbringing, everyday successes, and much more. Our goal is to connect everyday Africans with one another through StoryTelling and Writing.">
+    <meta property="og:url" content="{{request.build_absolute_uri}}">
+    <meta property="og:image" content="{% static 'images/write.webp'%}">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="storyafrika - Success Stories and Experiences of Everyday Africans">
     <meta name="twitter:description" content="Storyafrika is a platform showcasing the real-life experiences and stories of individual Africans, highlighting their upbringing, everyday successes, and much more. Our goal is to connect everyday Africans with one another through StoryTelling and Writing.">
-    <meta name="twitter:image" content="./write.webp">
+    <meta name="twitter:image" content="{% static 'images/write.webp'%}">
+    <meta name="twitter:creator" content="@{{story.writer.user.username}}">
+    <meta name="twitter:site" content="@StoryAfrika">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
 
     <!-- google oAuth2 client id -->
     <meta name="google-signin-client_id" content="25158261190-9emalbugfgsvbn9cv7fao3vp6kmi3h37.apps.googleusercontent.com">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <meta name="referrer" content="no-referrer-when-downgrade">
     <meta name="Cross-Origin-Opener-Policy" content="">
-    <link rel="icon" type="image/png" href="/static/images/logo.jpg">
+    <link rel="icon" type="image/jpeg" href="{% static 'images/logo.jpg' %}">
     <title>storyafrika - Success Stories and Experiences of Everyday Africans</title>
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-FW17L5LYTT"></script>
