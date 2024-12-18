@@ -275,7 +275,17 @@
                 left: 30%;
                 transform: translateX(-30%);
             }
-            
+
+            .main-container .carousel-nav, .main-container .profile-container {
+                opacity: 1;
+                z-index: 20;
+                user-select: none;
+            }
+
+            .main-container img.story-carousel-image {
+                transform: scale(1.1);
+                filter: brightness(0.5);
+            }
         }
 
         @media (max-width: 370px) {
@@ -407,14 +417,17 @@
         var modal = document.getElementById("myModal");
         
         // Get the image and insert it inside the modal
-        var img = document.getElementsByClassName("image")[0];
+        var images = document.querySelectorAll(".image");
         var modalImg = document.getElementById("img01");
         var captionText = document.getElementById("caption");
-        img.onclick = function(){
-          modal.style.display = "block";
-          modalImg.src = this.src;
-          captionText.innerHTML = this.alt;
-        }
+
+        images.forEach(img => {
+            img.onclick = function(){
+                modal.style.display = "block";
+                modalImg.src = this.src;
+                captionText.innerHTML = this.alt;
+            }
+        })
         
         // Get the <span> element that closes the modal
         var span = document.getElementsByClassName("close")[0];
