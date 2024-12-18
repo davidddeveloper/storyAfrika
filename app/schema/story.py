@@ -49,12 +49,14 @@ class Story(Base):
 
         # Stories sharing topics
         topic_related = Story.objects.filter(
-            topics__in=self.topics.all()
+            topics__in=self.topics.all(),
+            status='p'
         ).exclude(id=self.id)
 
         # Stories with shared contributors
         contributor_related = Story.objects.filter(
-            contributors__in=self.contributors.all()
+            contributors__in=self.contributors.all(),
+            status='p'
         ).exclude(id=self.id)
 
         # Combine the results
@@ -72,7 +74,8 @@ class Story(Base):
     def get_other_stories_by_writer(self, max_results=10):
         """Retrieve other stories written by the same writer, excluding the current story."""
         return Story.objects.filter(
-            writer=self.writer
+            writer=self.writer,
+            status='p'
         ).exclude(id=self.id).order_by('-id')[:max_results]
     
     def get_similar_writers(self, max_results=10):
@@ -80,7 +83,8 @@ class Story(Base):
         # Writers sharing topics
         from . import Topic, Profile
         topic_ids = Topic.objects.filter(
-            stories__writer=self.writer
+            stories__writer=self.writer,
+            stories__status='p'
         ).values_list('id', flat=True)
 
         similar_writers_by_topics = Profile.objects.filter(

@@ -16,7 +16,7 @@ import json
 
 # Create your views here.
 def first_home_page(request):
-    stories = Story.objects.order_by('-created_at')
+    stories = Story.objects.filter(status='p').order_by('-created_at')
 
     return render(request, 'home/first_home.html', context={
         'stories': stories,
@@ -126,7 +126,7 @@ def story_view(request, story_title):
     return HttpResponse(f'<h1> {story.title}</h1>')
 
 def stories(request):
-    stories = Story.objects.order_by('-created_at')
+    stories = Story.objects.filter(status='p').order_by('-created_at')
     top_writers = Profile.top_writers
     page_number = request.GET.get('page', 1)
     page_size = request.GET.get('page_size', 6)

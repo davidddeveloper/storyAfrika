@@ -25,7 +25,7 @@ class Base(models.Model):
     # pagination
     @classmethod
     def paginate(cls, page_number, page_size=10, order_by=None):
-        queryset = cls._default_manager.all()
+        queryset = cls._default_manager.filter(status='p')
         if order_by:
             queryset = queryset.order_by(order_by)
         paginator = Paginator(queryset, page_size)
