@@ -259,13 +259,19 @@
             window.location.replace(newUrl)
         });
 
+        const oneDayInMilliseconds = 24 * 60 * 60 * 1000;
+
         document.querySelector('.close-btn').addEventListener('click', function() {
             document.querySelector('.featuring').remove();
             document.querySelector('.featuring-story-text-container').remove();
-            localStorage.setItem('hasSeenFeaturing', 'true');
+            const expiryDate = new Date().getTime() + oneDayInMilliseconds;
+            localStorage.setItem('hasSeenFeaturing', expiryDate.toString());
         });
 
-        if (localStorage.getItem('hasSeenFeaturing') === 'true') {
+        const hasSeenFeaturing = localStorage.getItem('hasSeenFeaturing');
+        const currentTime = new Date().getTime();
+
+        if (hasSeenFeaturing && currentTime < parseInt(hasSeenFeaturing)) {
             document.querySelector('.featuring').remove();
             document.querySelector('.featuring-story-text-container').remove();
         }
