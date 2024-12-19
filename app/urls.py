@@ -8,6 +8,7 @@ from .views import (
     story,
     like_story,
     unlike_story,
+    comment,
     stories,
     story_view,
     subscribe,
@@ -30,6 +31,8 @@ urlpatterns = [
     path('stories', view=stories, name='stories'),
 
     path('story_with_title/<str:story_title>', view=story_view,),
+
+    path('story/<str:story_id>/comment', view=comment, name='comment'),
 
     path('subscribe-to-newsletter', view=subscribe, name='subscribe'),
 

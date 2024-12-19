@@ -28,6 +28,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&display=swap" rel="stylesheet">
+
+    <!-- Emoji picker -->
+    <!--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/emoji-picker@3.0.0/dist/css/emoji-picker.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@emoji-picker/emoji-picker@3.0.0/dist/js/emoji-picker.min.js"></script>-->
+    <script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.2/dist/emoji-button.min.js" defer></script>
+
     <title>StoryAfrika | {{story.title}}</title>
 
     <style>
@@ -411,6 +417,7 @@
             {#<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim, ex corrupti quia excepturi debitis, atque, expedita dolorem veritatis cum asperiores beatae iure. Accusamus culpa, odio perspiciatis ea delectus nemo, accusantium ipsam magnam corporis qui consequuntur deserunt provident ipsa. Facilis excepturi quidem temporibus velit, cum enim unde minima nihil. Error, veniam.</p>#}
             <div class="story-text" style="color: #4a4a4a">{{ story.text|safe }}</div>
         </section>
+        {% include 'components/comments-section.html' %}
     </div>
     {% include 'story/aside.html' %}
 
@@ -418,7 +425,7 @@
     <div class="modal" id="myModal">
         <span class="close">&times;</span>
         <img class="modal-content" id="img01">
-        <div id="caption" style="display: block; text-align: center; color: #333; font-size: 16px; margin-top: 10px;"></div>
+        <div id="caption" style="display: block; text-align: center; color: #fff; font-size: 16px; margin-top: 10px;"></div>
       </div>
 
       <script>
@@ -568,6 +575,70 @@
             });
             document.querySelector('.loved-btn').style.display = 'none';
         })
+
+        // comments 
+        const input = document.querySelector('.type-comment-input')
+        const button = document.querySelector('.submit-comment-btn')
+        input.addEventListener('input', () => {
+            if (input.value.length > 0) {
+                button.style.display = 'block'
+            } else {
+                button.style.display = 'none'
+            }
+        })
+
+        button.addEventListener('click', (e) => {
+            e.preventDefault()
+            fetch(`/story/{{ story.id }}/comment`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    comment: input.value
+                })
+            }).then(response => {
+                if (response.ok) {
+                    input.value = '';
+                }
+                return response.json();
+            }).then(json => {
+                const comments = document.querySelector('.comments');
+                const comment = document.createElement('div');
+                comment.classList.add('comment');
+                comment.innerHTML = `
+                    <div class="top">
+                        <img class="comment-profile" src="{{request.user.profile.avatar}}" alt="">
+                        <p>You Said</p>
+                        <img src="{% static 'assets/svgs/you_commented.svg' %}" alt="" srcset="">
+                    </div>
+                    <div class="comment-text">
+                        <p>${json.comment}</p>
+                    </div>`
+                comments.prepend(comment);
+                })
+            })
+
+        // emoji picker in comments
+        /*const emojiBtn = document.querySelector('.emoji-btn');
+        const emojiPickerContainer = document.querySelector('.emoji-picker-container');
+
+        const emojiPicker = new EmojiPicker({
+        emojiable_selector: ['.type-comment-input'],
+        events: {
+            emojiPickerDidShow: function() {
+            emojiPickerContainer.style.display = 'block';
+            },
+            emojiPickerDidHide: function() {
+            emojiPickerContainer.style.display = 'none';
+            }
+        }
+        });
+
+            emojiBtn.addEventListener('click', () => {
+            emojiPicker.togglePicker();
+        });*/
     </script>
     {% endif %}
 </body>

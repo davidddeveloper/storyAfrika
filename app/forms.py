@@ -2,6 +2,7 @@ from django import forms
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
+from .schema import Comment
 from django.contrib.auth.forms import UserCreationForm
 
 class LoginForm(forms.Form):

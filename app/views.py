@@ -8,7 +8,8 @@ from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.views import PasswordResetView
 from django.db.models import Q
-from .schema import EmailList
+import bleach
+from .schema import EmailList, Comment
 from .forms import LoginForm, RegistrationForm
 from .helpers import extract_username, send_welcome_email, serialize_url
 from .schema import Story, Profile, FeaturingStory, Topic
@@ -100,11 +101,15 @@ def story(request, story_id):
     other_stories_by_writer = story.get_other_stories_by_writer(3)
     similar_writers = story.get_similar_writers(max_results=5)
 
+    # comments and comments count
+    comments = story.comments.all().order_by('-created_at')
+
     return render(request, 'story/story.html', context={
         'story': story,
         'related_stories': related_stories,
         'other_stories_by_writer': other_stories_by_writer,
         'similar_writers': similar_writers,
+        'comments': comments
     })
 
 def story_view(request, story_title):
@@ -199,3 +204,21 @@ def search(request):
         return render(request, 'home/search.html', {'profiles': profiles, 'query': query})
     else:
         return render(request, 'home/search.html')
+
+def comment(request, story_id=None):
+    story = get_object_or_404(Story, id=story_id)
+
+    if request.method == 'POST':
+        print(request.body.decode('utf-8'))
+        data = json.loads(request.body.decode('utf-8'))
+        comment_text = data.get('comment')
+        if not comment_text:
+            return JsonResponse({"ok": False, "message": "Please provide a comment"}, status=400)
+
+        comment_text = bleach.clean(comment_text)
+
+        comment = Comment(comment=comment_text, commenter=request.user.profile, story=story)
+        comment.save()
+
+        return JsonResponse({"ok": True, "message": "Comment added successfully", "comment": comment.comment}, status=200)
+    return JsonResponse({"ok": False, "message": "Please provide valid data"}, status=400)
