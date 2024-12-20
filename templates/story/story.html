@@ -24,14 +24,14 @@
     <meta property="og:title" content="StoryAfrika - {{ story.title }}">
     <meta property="og:description" content="{{ story.plain_text|truncatechars:200 }}">
     <meta property="og:url" content="{{ request.build_absolute_uri }}">
-    <meta property="og:image" content="{{ story.images.first.url }}">
+    <meta property="og:image" content="{{ story.images.first.image }}">
     <meta property="og:site_name" content="StoryAfrika">
 
     <!-- Twitter Metadata -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="StoryAfrika - {{ story.title }}">
     <meta name="twitter:description" content="{{ story.plain_text|truncatechars:200 }}">
-    <meta name="twitter:image" content="{{ story.images.first.url }}">
+    <meta name="twitter:image" content="{{ story.images.first.image }}">
     <meta name="twitter:creator" content="@{{ story.writer.user.username }}">
     <meta name="twitter:site" content="@StoryAfrika">
 
