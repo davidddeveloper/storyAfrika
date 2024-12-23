@@ -33,7 +33,7 @@ class Story(Base):
 
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default="d")
     unique_views = models.ManyToManyField(to='Profile', blank=True, related_name='viewers')
-    hit_count_generic = GenericRelation(HitCount)
+    #hit_count_generic = GenericRelation(HitCount)
 
     class Meta:
         verbose_name = 'Story'
@@ -160,6 +160,11 @@ class StoryImage(models.Model):
             self.image = upload_result['secure_url']  # Store the Cloudinary URL
 
         super().save(*args, **kwargs)
+    
+    def delete(self, *args, **kwargs):
+        if self.image:
+            cloudinary.uploader.destroy(self.image.public_id)
+        super().delete(*args, **kwargs)
 
     def __str__(self):
         return f"Image for {self.story.title}"

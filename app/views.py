@@ -12,8 +12,10 @@ import bleach
 from .schema import EmailList, Comment
 from .forms import LoginForm, RegistrationForm
 from .helpers import extract_username, send_welcome_email, serialize_url
-from .schema import Story, Profile, FeaturingStory, Topic
-import json
+from .schema import Story, StoryImage, Profile, FeaturingStory, Topic
+import json, os
+from django.conf import settings
+from PIL import Image
 
 # Create your views here.
 def first_home_page(request):
@@ -222,3 +224,104 @@ def comment(request, story_id=None):
 
         return JsonResponse({"ok": True, "message": "Comment added successfully", "comment": comment.comment}, status=200)
     return JsonResponse({"ok": False, "message": "Please provide valid data"}, status=400)
+
+
+def super_editor(request):
+    if not request.user.is_authenticated:
+        messages.error(request, 'You must be logged in to access this page.')
+        return redirect('login')
+    
+    example_story = None
+    if request.method == 'GET':
+        example_story = Story.objects.create(
+        title='The Beat That Crossed Oceans (Example Story)',
+        text='This is an example story.',
+        status='d',
+        writer=request.user.profile
+        )
+        example_story_image = StoryImage.objects.create(
+            story=example_story,
+            image = open(os.path.join(settings.STATIC_ROOT, 'assets/images/african-load-carrying.jpg'), 'rb')
+        )
+        example_story.images.add(example_story_image)
+        topics = Topic.objects.all()
+        return render(request, 'story/super_editor.html', context={
+            'story': example_story,
+            'topics': topics
+        })
+
+
+def super_editor_save(request, story_id=None):
+    if not request.user.is_authenticated:
+        messages.error(request, 'You must be logged in to access this page.')
+        return redirect('login')
+    
+    story = Story.objects.get(id=story_id)
+    if story_id is None or story is None:
+        return JsonResponse({'status': 'error', 'message': 'Story ID is required'}, status=400)
+    
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        story.title = data.get('title')
+        story.text = data.get('text')
+        story.status = data.get('status')
+        story.save()
+
+        return JsonResponse({'status': 'success'})
+
+def editor_save_images(request, story_id=None):
+    if not request.user.is_authenticated:
+        messages.error(request, 'You must be logged in to access this page.')
+        return redirect('login')
+
+    if story_id is None:
+        return JsonResponse({'status': 'error', 'message': 'Story ID is required'}, status=400)
+    
+    story = Story.objects.get(id=story_id)
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        images = data.get('images')
+        
+        if images:
+            for image in images:
+                current_images = story.images.all()
+                
+                is_current = False
+                for current_image in current_images:
+                    print(current_image.image.url, image['src'])
+                    if current_image.image.url == image['src']:
+                        is_current = True
+                        break
+                if not is_current:
+                    story_image = StoryImage(story_id=story_id, image=image['src'], alt=image['alt']).save()
+
+        return JsonResponse({'status': 'success'})
+
+def editor_save_topics(request, story_id=None):
+    if not request.user.is_authenticated:
+        messages.error(request, 'You must be logged in to access this page.')
+        return redirect('login')
+    
+    if story_id is None:
+        return JsonResponse({'status': 'error', 'message': 'Story ID is required'}, status=400)
+    
+    story = Story.objects.get(id=story_id)
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        topics = data.get('topics')
+        story.topics.set(Topic.objects.filter(id__in=topics))
+
+        return JsonResponse({'status': 'success'})
+
+def editor_delete_story(request, story_id=None):
+    if not request.user.is_authenticated:    
+        messages.error(request, 'You must be logged in to access this page.')
+        return redirect('login')
+    
+    if story_id is None:
+        return JsonResponse({'status': 'error', 'message': 'Story ID is required'}, status=400)
+    
+    story = Story.objects.get(id=story_id)
+    if request.method == 'POST':
+        story.delete()
+        return JsonResponse({'status': 'success'})
