@@ -139,6 +139,7 @@
     const capitalizeBtn = document.querySelector('.capitalize');
     
     storyTextContent.addEventListener('mouseup', (event) => {
+        event.preventDefault()
         const tooltip = document.querySelector('.tooltip');
         const selection = window.getSelection();
         const range = selection.getRangeAt(0);
