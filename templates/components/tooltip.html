@@ -147,6 +147,10 @@
         tooltip.style.visibility = 'visible';
         tooltip.style.top = `${rect.top + window.scrollY - 30}px`;
         tooltip.style.left = `${rect.left + window.scrollX}px`;
+
+        setTimeout(() => {
+            selection.removeAllRanges();
+        }, 100);
     })
 
 
