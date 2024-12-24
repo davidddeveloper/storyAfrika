@@ -139,7 +139,7 @@
     const capitalizeBtn = document.querySelector('.capitalize');
     
     storyTextContent.addEventListener('mouseup', (event) => {
-        event.preventDefault()
+        
         const tooltip = document.querySelector('.tooltip');
         const selection = window.getSelection();
         const range = selection.getRangeAt(0);
@@ -148,9 +148,7 @@
         tooltip.style.top = `${rect.top + window.scrollY - 30}px`;
         tooltip.style.left = `${rect.left + window.scrollX}px`;
 
-        setTimeout(() => {
-            selection.removeAllRanges();
-        }, 100);
+        
     })
 
 
