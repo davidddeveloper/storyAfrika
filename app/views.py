@@ -229,7 +229,7 @@ def comment(request, story_id=None):
 def super_editor(request):
     if not request.user.is_authenticated:
         messages.error(request, 'You must be logged in to access this page.')
-        return redirect('login')
+        return redirect('app:sign_in')
     
     example_story = None
     if request.method == 'GET':
@@ -254,7 +254,7 @@ def super_editor(request):
 def super_editor_save(request, story_id=None):
     if not request.user.is_authenticated:
         messages.error(request, 'You must be logged in to access this page.')
-        return redirect('login')
+        return redirect('app:sign_in')
     
     story = Story.objects.get(id=story_id)
     if story_id is None or story is None:
@@ -272,7 +272,7 @@ def super_editor_save(request, story_id=None):
 def editor_save_images(request, story_id=None):
     if not request.user.is_authenticated:
         messages.error(request, 'You must be logged in to access this page.')
-        return redirect('login')
+        return redirect('sign_in')
 
     if story_id is None:
         return JsonResponse({'status': 'error', 'message': 'Story ID is required'}, status=400)
@@ -300,7 +300,7 @@ def editor_save_images(request, story_id=None):
 def editor_save_topics(request, story_id=None):
     if not request.user.is_authenticated:
         messages.error(request, 'You must be logged in to access this page.')
-        return redirect('login')
+        return redirect('app:sign_in')
     
     if story_id is None:
         return JsonResponse({'status': 'error', 'message': 'Story ID is required'}, status=400)
@@ -316,7 +316,7 @@ def editor_save_topics(request, story_id=None):
 def editor_delete_story(request, story_id=None):
     if not request.user.is_authenticated:    
         messages.error(request, 'You must be logged in to access this page.')
-        return redirect('login')
+        return redirect('app:sign_in')
     
     if story_id is None:
         return JsonResponse({'status': 'error', 'message': 'Story ID is required'}, status=400)

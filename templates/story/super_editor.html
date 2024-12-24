@@ -389,6 +389,18 @@
             width: 100%;
         }
 
+        .tooltip {
+            position: absolute;
+            background-color: #fff;
+            border-radius: 4px;
+            padding: 5px;
+            font-size: 14px;
+            font-style: italic;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+
     </style>
 </head>
 <body class="editor">
@@ -439,7 +451,14 @@
                 </div>
             </section>
             {#<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim, ex corrupti quia excepturi debitis, atque, expedita dolorem veritatis cum asperiores beatae iure. Accusamus culpa, odio perspiciatis ea delectus nemo, accusantium ipsam magnam corporis qui consequuntur deserunt provident ipsa. Facilis excepturi quidem temporibus velit, cum enim unde minima nihil. Error, veniam.</p>#}
-            <div id="story-text-content" class="story-text" style="color: #4a4a4a" contenteditable="true">{{ story.text|safe }}</div>
+            
+            <div class="story-content">
+                <div id="story-text-content" class="story-text story-text-content" style="color: #4a4a4a" contenteditable="true">{{ story.text|safe }}</div>
+                {% include 'components/tooltip.html' %}
+
+            </div>
+    
+        
             <div id="delete-card" style="display: none; position: absolute; top: 0; left: 0; width: 100%; background-color: #fff; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); padding: 1rem; text-align: center; animation: slideDown 0.5s ease forwards; z-index: 100;">
                 <h2>Are you sure you want to leave and delete this story?</h2>
                 <button class="yes-btn" onclick="">Yes</button>
@@ -473,6 +492,8 @@
       </div>
 
       <script>
+
+
         // Get the modal
         var modal = document.getElementById("myModal");
         
