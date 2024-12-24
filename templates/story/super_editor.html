@@ -454,7 +454,7 @@
             
             <div class="story-content">
                 <div id="story-text-content" class="story-text story-text-content" style="color: #4a4a4a" contenteditable="true">{{ story.text|safe }}</div>
-                {% include 'components/tooltip.html' %}
+                
 
             </div>
     
@@ -490,6 +490,8 @@
         </div>
         <div id="caption" style="display: block; text-align: center; color: #fff; font-size: 16px; margin-top: 10px;"></div>
       </div>
+
+      {% include 'components/tooltip.html' %}
 
       <script>
 

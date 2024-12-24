@@ -140,9 +140,12 @@
     
     storyTextContent.addEventListener('mouseup', (event) => {
         const tooltip = document.querySelector('.tooltip');
+        const selection = window.getSelection();
+        const range = selection.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
         tooltip.style.visibility = 'visible';
-        tooltip.style.top = `${event.clientY - tooltip.offsetHeight - 10}px`;
-        tooltip.style.left = `${event.clientX}px`;
+        tooltip.style.top = `${rect.top + window.scrollY - 30}px`;
+        tooltip.style.left = `${rect.left + window.scrollX}px`;
     })
 
 
