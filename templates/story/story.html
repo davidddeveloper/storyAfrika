@@ -50,7 +50,8 @@
     <!-- Styles and Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/3.3.3/tailwind.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.2/dist/emoji-button.min.js" defer></script>
-
+    <!-- Quill --> 
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
     <!-- Additional Meta for SEO -->
     <meta name="author" content="{{ story.writer.user.get_full_name }}">
     <meta name="theme-color" content="#ffffff">
@@ -385,6 +386,9 @@
           cursor: pointer;
         }
 
+        .ql-tooltip {
+            display: none;
+        }
 
     </style>
 </head>
@@ -450,6 +454,9 @@
       </div>
 
       <script>
+        // change ql-editor to false
+        const qlEditor = document.querySelector('.ql-editor');
+        qlEditor.setAttribute('contenteditable', false);
         // Get the modal
         var modal = document.getElementById("myModal");
         

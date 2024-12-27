@@ -153,6 +153,24 @@
             window.location.href = `/search?q=${searchQuery}&category=stories`
 
         })
+
+        // delete stories that the user was editing but did not save and leave the editing page
+        /*window.addEventListener('beforeunload', () => {
+            const storyId = localStorage.getItem('storyId');
+            if (storyId) {
+                fetch(`/delete_story/${storyId}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json'    
+                    },    
+                }).then(response => {
+                    if (response.ok) {
+                        localStorage.removeItem('storyId');
+                    }
+                });
+            }
+                    }*/
     </script>
 </body>
 </html>

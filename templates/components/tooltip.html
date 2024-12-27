@@ -90,7 +90,7 @@
 <div class="tooltip-container">
     <div class="tooltip">
         <button class="capitalize">Aa</button>
-        <button class="choose-font-size-btn">16px</button>
+        <!--<button class="choose-font-size-btn">16px</button>
         <div class="font-sizes-dropdown">
             <button data-size="4">12px</button>
             <button data-size="5">16px</button>
@@ -98,7 +98,7 @@
             <button data-size="6.5">24px</button>
             <button data-size="7">28px</button>
             <button data-size="7.5">32px</button>
-        </div>
+        </div>-->
         <button id="bold">B</button>
         <button id="italic" style="rotate: 25deg;">I</button>
         <!--<div id="text-color">
@@ -120,22 +120,22 @@
 
 <script>
 
-    const chooseFontSizeBtn = document.querySelector('.choose-font-size-btn');
+    /*const chooseFontSizeBtn = document.querySelector('.choose-font-size-btn');*/
     const chooseColorsBtn = document.querySelector('#choose-colors-btn');
 
     /*chooseColorsBtn.addEventListener('click', () => {
         const colorsDropdown = document.querySelector('#colors-dropdown');
         colorsDropdown.style.visibility = colorsDropdown.style.visibility === 'visible' ? 'hidden' : 'visible';
     })*/
-    chooseFontSizeBtn.addEventListener('click', () => {
+    /*chooseFontSizeBtn.addEventListener('click', () => {
         const fontSizesDropdown = document.querySelector('.font-sizes-dropdown');
         fontSizesDropdown.style.visibility = fontSizesDropdown.style.visibility === 'visible' ? 'hidden' : 'visible';
-    })
+    })*/
 
     const storyTextContent = document.querySelector('.story-text-content');
     const bold = document.querySelector('#bold');
     const italic = document.querySelector('#italic');
-    const fontSizesBtn = document.querySelectorAll('.font-sizes-dropdown button');
+    /*const fontSizesBtn = document.querySelectorAll('.font-sizes-dropdown button');*/
     const capitalizeBtn = document.querySelector('.capitalize');
     
     storyTextContent.addEventListener('mouseup', (event) => {
@@ -161,11 +161,11 @@
         document.execCommand('italic');
     });
 
-    fontSizesBtn.forEach(btn => {
+    /*fontSizesBtn.forEach(btn => {
         btn.addEventListener('click', () => {
-            document.execCommand('fontSize', false, btn.getAttribute('data-size'));
+            document.execCommand('fontSize', false, `${btn.getAttribute('data-size')}`);
         })
-    })
+    })*/
 
 
     capitalizeBtn.addEventListener('click', () => {

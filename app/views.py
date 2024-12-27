@@ -234,16 +234,16 @@ def super_editor(request):
     example_story = None
     if request.method == 'GET':
         example_story = Story.objects.create(
-        title='The Beat That Crossed Oceans (Example Story)',
+        title='Enter the title of the Story here',
         text='This is an example story.',
         status='d',
         writer=request.user.profile
         )
-        example_story_image = StoryImage.objects.create(
-            story=example_story,
-            image = open(os.path.join(settings.STATIC_ROOT, 'assets/images/african-load-carrying.jpg'), 'rb')
-        )
-        example_story.images.add(example_story_image)
+        #example_story_image = StoryImage.objects.create(
+        #    story=example_story,
+        #    #image = open(os.path.join(settings.STATIC_ROOT, 'assets/images/african-load-carrying.jpg'), 'rb')
+        #)
+        #example_story.images.add(example_story_image)
         topics = Topic.objects.all()
         return render(request, 'story/super_editor.html', context={
             'story': example_story,
