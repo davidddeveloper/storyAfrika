@@ -51,6 +51,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/3.3.3/tailwind.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.2/dist/emoji-button.min.js" defer></script>
 
+    <!-- Quill --> 
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
     <!-- Additional Meta for SEO -->
     <meta name="author" content="{{ story.writer.user.get_full_name }}">
     <meta name="theme-color" content="#ffffff">
@@ -400,7 +402,18 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
+        #story-title:focus {
+            border: 0;
+            outline: 0;
+        }
 
+        .text-editor-main-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding-top: 30px;
+        }
     </style>
 </head>
 <body class="editor">
@@ -411,7 +424,7 @@
         <section class="content">
             <!--{#<h2>On a very fine Sunday exactly at noon, the Quick Brown Fox! Jumped over the lazy dog!</h2>#}-->
             
-            <h2 id="story-title" contenteditable="true">{{ story.title }}</h2>
+            <h2 id="story-title" contenteditable="true" autocapitalize="sentences" autocorrect="on" autofocus aria-placeholder="{{ story.title }}"><p class="placeholder">{{ story.title }}</p></h2>
             <section class=" main-carousel story-container container">
                 <div class="main-container">
                     <div class="carousel">
@@ -422,6 +435,7 @@
                         {% for image in story.images.all %}
                         <img class="story-carousel-image image" src="{{ image.image.url }}" alt="{{image.alt}}"> <!--Image {{ forloop.counter }} -->
                         {% endfor %}
+                        <img src="{% static 'assets/images/welcome_email.png' %}" alt="Example Image" class="story-carousel-image image default-editor-story-img">
                         <!--<img src="{{story.topics.first.banner}}" alt="Image 4">-->
                         
                     </div>
@@ -452,10 +466,13 @@
             </section>
             {#<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim, ex corrupti quia excepturi debitis, atque, expedita dolorem veritatis cum asperiores beatae iure. Accusamus culpa, odio perspiciatis ea delectus nemo, accusantium ipsam magnam corporis qui consequuntur deserunt provident ipsa. Facilis excepturi quidem temporibus velit, cum enim unde minima nihil. Error, veniam.</p>#}
             
-            <div class="story-content">
+            <!--<div class="story-content">
                 <div id="story-text-content" class="story-text story-text-content" style="color: #4a4a4a" contenteditable="true">{{ story.text|safe }}</div>
                 
 
+            </div>-->
+            <div class="text-editor-main-container">
+                {% include 'story/text-editor-with-tools.html' %}
             </div>
     
         
@@ -494,6 +511,32 @@
       {% include 'components/tooltip.html' %}
 
       <script>
+        // title
+        const editorStoryTitle = document.querySelector('#story-title');
+        editorStoryTitle.addEventListener('input', () => {
+            const placeholder = editorStoryTitle.querySelector('.placeholder')
+            if (placeholder) {
+                const firstletterusertype = placeholder.textContent.charAt(0);
+                placeholder.remove();
+                editorStoryTitle.textContent = firstletterusertype
+
+            }
+        // Move the cursor to the end of the content
+        function moveCursorToEnd(element) {
+            const range = document.createRange();
+            const sel = window.getSelection();
+            range.selectNodeContents(element);
+            range.collapse(false);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+
+
+            moveCursorToEnd(editorStoryTitle);
+
+        });
+       
+        
 
 
         // Get the modal
@@ -503,6 +546,19 @@
         
         var modalImg = document.getElementById("img01");
         var captionText = document.getElementById("caption");
+
+        // Show or Hide toolbar 
+        // show toolbar when editor is focus/editable and when the screen size is less than 500px
+        /*const editorTextContainer = document.querySelector('.story-text-content');
+        editorTextContainer.addEventListener('focus', () => {
+            const toolbar = document.getElementById('toolbar');
+            toolbar.style.display = 'flex';
+            console.log('visible...')
+        });*/
+        /*editorContainer.addEventListener('blur', () => {
+            const toolbar = document.getElementById('toolbar');
+            toolbar.style.display = 'none';
+        });*/
 
         
 
@@ -719,7 +775,7 @@
     <script>
         const publishBtn = document.querySelector('.publish-btn');
         const storyTitleElement = document.querySelector('#story-title');
-        const storyTextElement = document.querySelector('#story-text-content');
+        const storyTextElement = document.querySelector('.story-text-content');
         
         // auto save status update
         function showAutoSaveStatus() {
@@ -732,7 +788,7 @@
         }
         const submitStory = (status) => {
             const storyTitle = storyTitleElement.textContent;
-            const storyText = storyTextElement.textContent;
+            const storyText = storyTextElement.outerHTML;
             
             showAutoSaveStatus();
             fetch('/editor/{{story.id}}/save', {
@@ -756,7 +812,15 @@
         };
 
         publishBtn.addEventListener('click', () => {
+            const storyTitle = storyTitleElement.textContent;
+            storyTextElement.setAttribute('contentenditable', false)
+            storyTextElement.classList.remove('ql-editor')
+            storyTextElement.classList.remove('ql-container')
+            storyTextElement.classList.remove('ql-snow')
             submitStory(status='publish');
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 1000);
         });
 
         let timeoutId = null;
@@ -791,14 +855,27 @@
             });
             
         }
-        window.addEventListener('beforeunload', (event) => {
-            event.preventDefault();
-            
-            document.querySelector('#delete-card').style.display = 'block';
 
-            document.querySelector('.yes-btn').addEventListener('click', () => {
-                comfirmDeleteBeforeLeaving();
-            })
+        window.addEventListener('beforeunload', (event) => {
+            if (!document.querySelector('.publish-btn').disabled) {
+                const storyTitle = document.querySelector('#story-title').textContent;
+                const storyText = document.querySelector('.story-text-content').outerHTML;
+                localStorage.setItem('storyTitle', storyTitle);
+                localStorage.setItem('storyText', storyText);
+                localStorage.setItem('storyId', '{{ story.id }}');
+            } else {
+                fetch(`/editor/{{story.id}}/delete`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json'
+                    },
+                }).then(response => {
+                    if (response.ok) {
+                        localStorage.removeItem('storyId');
+                    }
+                });
+            }
         });
 
     </script>
