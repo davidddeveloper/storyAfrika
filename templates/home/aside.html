@@ -223,7 +223,7 @@
                         <img src="{{ story.writer.avatar }}" alt="" srcset="">
                         <p class="username">{{ story.writer.user.username}}</p>
                     </header>
-                    <h4 class="story-title"><a href="{% url 'app:story' story.id %}" style="text-decoration: none; color: #4a4a4a">{{ story.title }}</a></h4>
+                    <h4 class="story-title"><a href="{% url 'app:build_story_detail' story.slug story.id %}" style="text-decoration: none; color: #4a4a4a">{{ story.title }}</a></h4>
                 </article>
                 {% empty %}
                     <p>Related stories will be displayed here</p>
@@ -255,7 +255,7 @@
                 <article class="also-by-user-story">
                     <header class="" style="padding-inline: 20px;">
                         <img src="{{ other_story_by_writer.images.first.image.url }}" alt="" srcset="">
-                        <h4 class="story-title"><a href="{% url 'app:story' other_story_by_writer.id %}" style="text-decoration: none; color: #000">{{ other_story_by_writer.title }}</a></h4>
+                        <h4 class="story-title"><a href="{% url 'app:build_story_detail' other_story_by_writer.slug other_story_by_writer.id %}" style="text-decoration: none; color: #000">{{ other_story_by_writer.title }}</a></h4>
                     </header>
                 </article>
                 {% empty %}
@@ -372,7 +372,7 @@
         // Start processing from the first child node of the container
         processNextNode(container.firstChild, textElement, () => {
         // Add the "Read More" button once everything is rendered
-        textElement.innerHTML += `<a href="{% url 'app:story' featuring_story.story.id %}">Read More</a>`;
+        textElement.innerHTML += `<a href="{% url 'app:build_story_detail' featuring_story.story.slug featuring_story.story.id %}">Read More</a>`;
         });
 
 

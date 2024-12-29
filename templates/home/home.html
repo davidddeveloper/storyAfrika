@@ -233,7 +233,7 @@
             <img src="{{featuring_story.banner.url}}" alt="{{featuring_story.caption}}">
             <div class="content">
                 <p class="storyafrika-present-text">StoryAfrika Presents</p>
-                <h1 class="caption"><a href="{% url 'app:story' featuring_story.story.id %}" style="color: #fff; text-decoration: none;">{{featuring_story.caption}}</a></h1>
+                <h1 class="caption"><a href="{% url 'app:build_story_detail' featuring_story.story.slug featuring_story.story.id %}" style="color: #fff; text-decoration: none;">{{featuring_story.caption}}</a></h1>
                 <div class="buttons">
                     <button class="close-btn">Close</button><button class="explore-btn"><a style="text-decoration: none;" href="{% url 'app:story' featuring_story.story.id %}">Explore 🚀 </a></button>
                 </div>

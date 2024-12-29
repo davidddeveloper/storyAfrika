@@ -40,6 +40,9 @@
     <link rel="apple-touch-icon" href="{% static 'images/logo.jpg' %}">
     <link rel="manifest" href="{% static 'manifest.json' %}">
 
+    <!-- Canonical -->
+    <link rel="canonical" href="{% url 'app:story_detail' username=story.writer.user.username slug=story.slug %}">
+
     <!-- Preconnect for Performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

@@ -5,12 +5,14 @@ from .views import (
     sign_in,
     sign_out,
     join_us,
-    story,
+    old_story_view,
     like_story,
     unlike_story,
     comment,
     stories,
     story_view,
+    build_story_detail,
+    story_detail,
     subscribe,
     search,
     super_editor,
@@ -30,12 +32,14 @@ urlpatterns = [
 
     path('join_us', view=join_us, name='join_us'),
 
-    path('story/<str:story_id>', view=story, name='story'),
+    path('story/<str:story_id>', view=old_story_view, name='story'),
     path('story/<str:story_id>/like', view=like_story, name='like_story'),
     path('story/<str:story_id>/unlike', view=unlike_story, name='unlike_story'),
     path('stories', view=stories, name='stories'),
 
     path('story_with_title/<str:story_title>', view=story_view,),
+    path('<slug:slug>/<str:story_id>', view=build_story_detail, name='build_story_detail'),
+    path('@<str:username>/<slug:slug>', view=story_detail, name='story_detail'),
 
     path('story/<str:story_id>/comment', view=comment, name='comment'),
 

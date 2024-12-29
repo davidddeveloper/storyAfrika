@@ -6,6 +6,7 @@ from hitcount.models import HitCountMixin, HitCount
 from hitcount.utils import get_hitcount_model
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
+from django.utils.text import slugify
 from cloudinary.models import CloudinaryField
 import cloudinary.uploader
 
@@ -23,6 +24,7 @@ class Story(Base):
     title = models.CharField(max_length=200, null=False)
     #text = RichTextUploadingField()
     #text = models.TextField(max_length=5000, null=False)
+    slug = models.SlugField(max_length=255, unique=True, blank=True, null=True)
     text = HTMLField()
     writer = models.ForeignKey(to='Profile', on_delete=models.CASCADE, null=False, related_name='stories')
     topics = models.ManyToManyField(to='Topic', blank=True, related_name='stories')
@@ -39,6 +41,13 @@ class Story(Base):
         verbose_name = 'Story'
         verbose_name_plural = 'Stories'
 
+    def save(self, *args, **kwargs):
+        if not self.slug:  # Generate slug only if it doesn't exist
+            base_slug = slugify(self.title)
+            unique_suffix = str(self.id)[:8]  # Use the first 8 characters of the UUID
+            self.slug = f"{base_slug}-{unique_suffix}"
+
+        super().save(*args, **kwargs)
 
     @property
     def love_count(self):

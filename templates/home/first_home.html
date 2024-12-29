@@ -523,7 +523,7 @@
                     <img src="{{ story.topics.first.banner }}" alt="Image 2">
                     <div class="text">
                         <p class="topic"><a href="">{{ story.topics.first.name }}</a></p>
-                        <h2><a href="{% url 'app:story' story.id %}" style="text-decoration: none; color: inherit;">{{ story.title }}</a></h2>
+                        <h2><a href="{% url 'app:build_story_detail' story.slug story.id %}" style="text-decoration: none; color: inherit;">{{ story.title }}</a></h2>
                         <div class="profile-container">
                             <img src="{{ story.writer.avatar }}" alt="Profile Image" class="profile-image">
                             <div class="profile-info">

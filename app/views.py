@@ -4,6 +4,7 @@ from django.core.mail import send_mail
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.http import JsonResponse
+from django.urls import reverse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.views import PasswordResetView
@@ -16,6 +17,7 @@ from .schema import Story, StoryImage, Profile, FeaturingStory, Topic
 import json, os
 from django.conf import settings
 from PIL import Image
+
 
 # Create your views here.
 def first_home_page(request):
@@ -89,7 +91,7 @@ def sign_out(request):
     return redirect('/sign_in')
 
 
-def story(request, story_id):
+def old_story_view(request, story_id):
     story = get_object_or_404(Story, id=story_id)
 
     # count unique views
@@ -114,23 +116,47 @@ def story(request, story_id):
         'comments': comments
     })
 
-def story_view(request, story_title):
+def story_view(request, story_title, story_uuid=None):
     
-    
-    result = serialize_url(story_title)
-    title = result[0]
-    writer = result[1]
+    if not story_uuid:
+        raise ValueError('story_uuid is required')
 
-    user = User.objects.get(username=writer)
-    profile = Profile.objects.get(user=user)
+    story = Story.objects.filter(title__contains=story_title, uuid__endswith=story_uuid).first()
+    if not story:
+        raise ValueError('story not found')
 
-    story = Story.objects.filter(title__contains=title, writer=profile.id).first()
-    print(story)
-    if story.writer != profile:
-        print('nope exiting')
-        raise ValueError('exitting...')
-    
     return HttpResponse(f'<h1> {story.title}</h1>')
+
+
+def build_story_detail(request, slug=None, story_id=None):
+
+    story = get_object_or_404(Story, id=story_id, slug=slug)
+
+    return redirect(reverse('app:story_detail', kwargs={'username': story.writer.user.username, 'slug': story.slug}))
+
+def story_detail(request, username=None, slug=None):
+    # Fetch the story based on slug
+    story = get_object_or_404(Story, slug=slug, writer__user__username=username)
+
+    # count unique views
+    if request.user.is_authenticated:
+        story.unique_views.add(request.user.profile)
+
+    # related stories, other stories by writer, etc.
+    related_stories = story.get_related_stories(3)
+    other_stories_by_writer = story.get_other_stories_by_writer(3)
+    similar_writers = story.get_similar_writers(max_results=5)
+
+    # comments and comments count
+    comments = story.comments.all().order_by('-created_at')
+
+    return render(request, 'story/story.html', context={
+        'story': story,
+        'related_stories': related_stories,
+        'other_stories_by_writer': other_stories_by_writer,
+        'similar_writers': similar_writers,
+        'comments': comments
+    })
 
 def stories(request):
     stories = Story.objects.filter(status='p').order_by('-created_at')

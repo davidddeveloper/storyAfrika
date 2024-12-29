@@ -169,7 +169,7 @@ aside.story-aside .simillar-writers-profile-container {
                         <img class="change-src-to-http" src="{{ related_story.writer.avatar }}" alt="" srcset="">
                         <p class="username">{{ related_story.writer.user.username}}</p>
                     </header>
-                    <h4 class="story-title"><a href="{% url 'app:story' related_story.id %}" style="text-decoration: none; color: #4a4a4a">{{ related_story.title }}</a></h4>
+                    <h4 class="story-title"><a href="{% url 'app:build_story_detail' related_story.slug related_story.id %}" style="text-decoration: none; color: #4a4a4a">{{ related_story.title }}</a></h4>
                 </article>
                 {% empty %}
                     <p>Related stories will be displayed here</p>
@@ -194,7 +194,7 @@ aside.story-aside .simillar-writers-profile-container {
                 <article class="also-by-user-story">
                     <header class="" style="padding-inline: 20px;">
                         <img class="change-src-to-http" src="{{ other_story_by_writer.images.first.image.url }}" alt="" srcset="">
-                        <h4 class="story-title"><a href="{% url 'app:story' other_story_by_writer.id %}" style="text-decoration: none; color: #000">{{ other_story_by_writer.title }}</a></h4>
+                        <h4 class="story-title"><a href="{% url 'app:build_story_detail' other_story_by_writer.slug other_story_by_writer.id %}" style="text-decoration: none; color: #000">{{ other_story_by_writer.title }}</a></h4>
                     </header>
                 </article>
                 {% empty %}
