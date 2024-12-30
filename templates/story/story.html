@@ -592,7 +592,9 @@
       <script>
         // change ql-editor to false
         const qlEditor = document.querySelector('.ql-editor');
-        qlEditor.setAttribute('contenteditable', false);
+        if (qlEditor) {
+            qlEditor.setAttribute('contenteditable', false);
+        }
         // Get the modal
         var modal = document.getElementById("myModal");
         
