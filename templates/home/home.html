@@ -244,6 +244,7 @@
     {% include 'home/aside.html' %}
 
     <script>
+        
         document.querySelector('.more-btn').addEventListener('click', function() {
             const urlParams = new URLSearchParams(window.location.search);
             let page = parseInt(urlParams.get('page') || 1);
@@ -276,10 +277,22 @@
             document.querySelector('.featuring-story-text-container').remove();
         }
 
-        if (featuring_story && window.innerWidth < 500) {
-            window.scrollTo(0, 120);
-        }
-        
+    
     </script>
+    {% if featuring %}
+    <script>
+        if (window.innerWidth < 500) {
+            const featuringElement = document.querySelector('.featuring');
+            const featuringStoryTextContainer = document.querySelector('.featuring-story-text-container');
+            if (featuringElement && featuringStoryTextContainer) {
+                const scrollOptions = {
+                    top: featuringElement.offsetTop,
+                    behavior: 'smooth'
+                };
+                window.scrollTo(scrollOptions);
+            }
+        }
+    </script>
+    {% endif %}
 </body>
 </html>
