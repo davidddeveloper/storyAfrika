@@ -543,7 +543,7 @@
                     </div>
                 </div>
             </section>
-            <div class="listen-container">
+            <!--<div class="listen-container">
                 <button class="listen-btn" id="listen-btn">
                     <img src="{% static 'assets/svgs/play.svg' %}" alt="Play button" class="listen-svg">
                     <p>Listen</p>
@@ -558,7 +558,7 @@
                     </div>
                                        
                 </button>
-            </div>
+            </div>-->
             <div class="listen-container bottom">
                 <button class="listen-btn" id="listen-btn">
                     <img src="{% static 'assets/svgs/play.svg' %}" alt="Play button" class="listen-svg">
@@ -657,7 +657,8 @@
             listenPauseBtn.style.display = 'none';
         });
     </script>-->
-    <script>
+    <!-- using browser speech synthesis -->
+    <!--<script>
         const listenBtn = document.getElementById('listen-btn');
         const listenPauseBtn = document.getElementById('listen-pause-btn');
 
@@ -766,7 +767,140 @@
                 synth.cancel();
             }
         });
+    </script>-->
+
+    <!-- uSING AZURE TEXT TO SPEECH -->
+    <!--<script src="https://aka.ms/csspeech/jsbrowserpackageraw"></script>
+    <script>
+        const listenBtn = document.getElementById('listen-btn');
+        const listenPauseBtn = document.getElementById('listen-pause-btn');
+        const bottomContainer = document.querySelector('.listen-container.bottom');
+        const bottomListenBtn = document.querySelector('.listen-container.bottom #listen-btn');
+        const bottomListenPauseBtn = document.querySelector('.listen-container.bottom #listen-pause-btn');
+        const storyText = document.getElementById('story-text');
+    
+        let currentUtterance = null;
+        let isPaused = false;
+        let synthesizer = null;
+        let isSpeaking = false;
+    
+        // Azure setup (replace with your API key and region)
+        const apiKey = '8dcrzZYDDPvJk2dn8C4WHNXLSW17F4R4cFOvYJlTv0xvS9noQRbOJQQJ99ALACYeBjFXJ3w3AAAYACOGWRep';
+        const region = 'eastus';
+    
+        // Split story into words
+        const words = storyText.textContent.split(' ');
+        storyText.innerHTML = words.map((word, index) => `<span id="word-${index}" class="story-word">${word}</span>`).join(' ');
+    
+        let currentWordIndex = 0;
+    
+        // Create the Speech Synthesis instance
+        function createSpeechSynthesis() {
+            const speechConfig = SpeechSDK.SpeechConfig.fromSubscription(apiKey, region);
+            speechConfig.speechSynthesisVoiceName = "en-US-SteffanMultilingualNeural"; // You can change the voice
+            const audioConfig = SpeechSDK.AudioConfig.fromDefaultSpeakerOutput();
+            synthesizer = new SpeechSDK.SpeechSynthesizer(speechConfig, audioConfig);
+        }
+    
+        function playNarration() {
+            if (!synthesizer) {
+                createSpeechSynthesis();
+            }
+            
+            if (isPaused) {
+                synthesizer.resume();
+                isPaused = false;
+                return;
+            }
+    
+            currentWordIndex = 0;
+            const textToSpeak = storyText.innerText;
+            
+            synthesizer.speakTextAsync(textToSpeak,
+                function (result) {
+                    if (result.reason === SpeechSDK.ResultReason.SynthesizingAudioCompleted) {
+                        console.log(synthesizer)
+                        console.log('okx')
+                        resetHighlighting();
+                        listenBtn.style.display = 'flex';
+                        listenPauseBtn.style.display = 'none';
+                    }
+                },
+                function (error) {
+                    console.error(error);
+                }
+            );
+    
+            isSpeaking = true;
+        }
+    
+        function highlightWord(index) {
+            if (index > 0) {
+                document.getElementById(`word-${index - 1}`).classList.remove('highlighted');
+            }
+            const currentWord = document.getElementById(`word-${index}`);
+            if (currentWord) {
+                currentWord.classList.add('highlighted');
+                currentWord.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    
+        function resetHighlighting() {
+            words.forEach((_, index) => {
+                document.getElementById(`word-${index}`).classList.remove('highlighted');
+            });
+        }
+    
+        listenBtn.addEventListener('click', () => {
+            listenBtn.style.display = 'none';
+            listenPauseBtn.style.display = 'flex';
+            bottomContainer.style.display = 'flex';
+            bottomListenBtn.style.display = 'none';
+            bottomListenPauseBtn.style.display = 'flex';
+            playNarration();
+        });
+    
+        listenPauseBtn.addEventListener('click', () => {
+            if (isSpeaking) {
+                synthesizer.pause();
+                isPaused = true;
+                listenBtn.style.display = 'flex';
+                listenPauseBtn.style.display = 'none';
+                bottomContainer.style.display = 'none';
+                bottomListenBtn.style.display = 'flex';
+                bottomListenPauseBtn.style.display = 'none';
+            }
+        });
+    
+        bottomListenBtn.addEventListener('click', () => {
+            listenBtn.style.display = 'none';
+            listenPauseBtn.style.display = 'flex';
+            bottomListenBtn.style.display = 'none';
+            bottomListenPauseBtn.style.display = 'flex';
+            playNarration();
+        });
+    
+        bottomListenPauseBtn.addEventListener('click', () => {
+            if (isSpeaking) {
+                synthesizer.pause();
+                isPaused = true;
+                listenBtn.style.display = 'flex';
+                listenPauseBtn.style.display = 'none';
+                bottomContainer.style.display = 'none';
+                bottomListenBtn.style.display = 'flex';
+                bottomListenPauseBtn.style.display = 'none';
+            }
+        });
+    
+        // Stop narration when the user navigates away
+        window.addEventListener('beforeunload', () => {
+            if (isSpeaking) {
+                synthesizer.stop();
+            }
+        });-->
     </script>
+
+
     
     <script>
         const carousel = document.querySelector('.carousel');
