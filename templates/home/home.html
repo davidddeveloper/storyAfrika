@@ -282,12 +282,12 @@
     {% if featuring_story %}
     <script>
         if (window.innerWidth < 500) {
-            const body = document.body;
+            const container = document.querySelector('.stories');
             const featuringElement = document.querySelector('.featuring');
             const featuringStoryTextContainer = document.querySelector('.featuring-story-text-container');
             if (featuringElement && featuringStoryTextContainer) {
                 const scrollOptions = {
-                    top: body.offsetTop + body.offsetHeight,
+                    top: container.offsetTop + container.offsetHeight,
                     behavior: 'smooth'
                 };
                 window.scrollTo(scrollOptions);
