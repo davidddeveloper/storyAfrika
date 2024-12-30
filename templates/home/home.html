@@ -290,7 +290,9 @@
                     top: container.offsetTop + container.offsetHeight,
                     behavior: 'smooth'
                 };
-                window.scrollTo(scrollOptions);
+                setTimeout(() => {
+                    window.scrollTo(scrollOptions);
+                }, 500); // Add delay to make the scroll slower
             }
         }
     </script>
