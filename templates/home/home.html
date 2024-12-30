@@ -286,7 +286,7 @@
             const featuringStoryTextContainer = document.querySelector('.featuring-story-text-container');
             if (featuringElement && featuringStoryTextContainer) {
                 const scrollOptions = {
-                    top: featuringElement.offsetTop,
+                    top: featuringElement.offsetTop + featuringElement.offsetHeight,
                     behavior: 'smooth'
                 };
                 window.scrollTo(scrollOptions);
