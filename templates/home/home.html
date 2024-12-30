@@ -286,14 +286,31 @@
             const featuringElement = document.querySelector('.featuring');
             const featuringStoryTextContainer = document.querySelector('.featuring-story-text-container');
             if (featuringElement && featuringStoryTextContainer) {
-                const scrollOptions = {
-                    top: container.offsetTop + container.offsetHeight,
-                    behavior: 'smooth'
+            const scrollToTarget = () => {
+                const targetPosition = container.offsetTop + container.offsetHeight;
+                const startPosition = window.scrollY;
+                const distance = targetPosition - startPosition;
+                const duration = 1500; // Adjust duration for slower scroll
+                let startTime = null;
+
+                const animation = (currentTime) => {
+                    if (startTime === null) startTime = currentTime;
+                    const timeElapsed = currentTime - startTime;
+                    const progress = Math.min(timeElapsed / duration, 1); // Cap progress at 1
+                    const ease = progress * (2 - progress); // Ease-out function
+                    window.scrollTo(0, startPosition + distance * ease);
+
+                    if (timeElapsed < duration) {
+                        requestAnimationFrame(animation);
+                    }
                 };
-                setTimeout(() => {
-                    window.scrollTo(scrollOptions);
-                }, 500); // Add delay to make the scroll slower
-            }
+
+                requestAnimationFrame(animation);
+            };
+
+            setTimeout(scrollToTarget, 500); // Add delay to start scrolling
+        }
+
         }
     </script>
     {% endif %}
