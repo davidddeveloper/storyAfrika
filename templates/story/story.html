@@ -168,6 +168,9 @@
                 width: 100%;
                 height: 250px;
             }
+            .listen-container.bottom {
+                left: 50% !important;
+            }
         }
 
         .carousel img {
@@ -323,6 +326,11 @@
             section.content {
                 padding-inline: 15px;
             }
+
+            .listen-container.bottom {
+                left: 50% !important;
+            }
+            
         }
 
         @media (max-width: 370px) {
@@ -393,6 +401,99 @@
             display: none;
         }
 
+        /* Listen to the story styles */
+        .listen-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .listen-container.bottom {
+            display: none;
+        }
+
+        .listen-container.bottom {
+            position: fixed;
+            bottom: 4%;
+            left: 35%;
+            transform: translateX(-50%);
+            z-index: 30;
+            background-color: #fefefe;
+            border-radius: 3px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        
+        }
+
+        .listen-container p {
+            color: #4a4a4a;
+        }
+
+        .listen-btn, .listen-pause-btn {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .listen-svg {
+            width: 20px;
+            height: 20px;
+        }
+
+    .story-word {
+        transition: background-color 0.3s ease;
+    }
+
+    .story-word.highlighted {
+        background-color: #73b9eb;
+        color: #fff;
+    }
+
+    .listening-animation {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .listening-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #4a90e2;
+        animation: rollercoaster 1.5s infinite ease-in-out;
+    }
+
+    .listening-dot:nth-child(1) {
+        animation-delay: 0s;
+    }
+
+    .listening-dot:nth-child(2) {
+        animation-delay: 0.3s;
+    }
+
+    .listening-dot:nth-child(3) {
+        animation-delay: 0.5s;
+    }
+
+    @keyframes rollercoaster {
+        0%, 100% {
+            transform: translateY(0);
+            background-color: #4a90e2;
+        }
+        50% {
+            transform: translateY(-15px);
+            background-color: #1e78c3;
+        }
+    }
+
     </style>
 </head>
 <body>
@@ -442,8 +543,40 @@
                     </div>
                 </div>
             </section>
+            <div class="listen-container">
+                <button class="listen-btn" id="listen-btn">
+                    <img src="{% static 'assets/svgs/play.svg' %}" alt="Play button" class="listen-svg">
+                    <p>Listen</p>
+                </button>
+                <button class="listen-pause-btn" id="listen-pause-btn" style="display: none;">
+                    <img src="{% static 'assets/svgs/pause.svg' %}" alt="Pause button" class="listen-svg">
+                    <p class="listening-animation">Listening</p>
+                    <div class="listening-animation">
+                        <div class="listening-dot"></div>
+                        <div class="listening-dot"></div>
+                        <div class="listening-dot"></div>
+                    </div>
+                                       
+                </button>
+            </div>
+            <div class="listen-container bottom">
+                <button class="listen-btn" id="listen-btn">
+                    <img src="{% static 'assets/svgs/play.svg' %}" alt="Play button" class="listen-svg">
+                    <p>Listen</p>
+                </button>
+                <button class="listen-pause-btn" id="listen-pause-btn" style="display: none;">
+                    <img src="{% static 'assets/svgs/pause.svg' %}" alt="Pause button" class="listen-svg">
+                    <p class="listening-animation">Listening</p>
+                    <div class="listening-animation">
+                        <div class="listening-dot"></div>
+                        <div class="listening-dot"></div>
+                        <div class="listening-dot"></div>
+                    </div>
+                                       
+                </button>
+            </div>
             {#<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim, ex corrupti quia excepturi debitis, atque, expedita dolorem veritatis cum asperiores beatae iure. Accusamus culpa, odio perspiciatis ea delectus nemo, accusantium ipsam magnam corporis qui consequuntur deserunt provident ipsa. Facilis excepturi quidem temporibus velit, cum enim unde minima nihil. Error, veniam.</p>#}
-            <div class="story-text" style="color: #4a4a4a">{{ story.text|safe }}</div>
+            <div id="story-text" class="story-text" style="color: #4a4a4a">{{ story.text|safe }}</div>
         </section>
         {% include 'components/comments-section.html' %}
     </div>
@@ -485,6 +618,139 @@
         }
     </script>
 
+    <!-- Listen to the story -->
+    <!--<script>
+        const listenBtn = document.getElementById('listen-btn');
+        const listenPauseBtn = document.getElementById('listen-pause-btn');
+        const audio = new Audio();
+        audio.src = "{{ story.audio.url }}";
+        audio.preload = 'auto';
+
+        listenBtn.addEventListener('click', function() {
+            if (audio.paused) {
+                audio.play();
+                listenBtn.style.display = 'none';
+                listenPauseBtn.style.display = 'flex';
+            }
+        });
+
+        listenPauseBtn.addEventListener('click', function() {
+            audio.pause();
+            listenBtn.style.display = 'flex';
+            listenPauseBtn.style.display = 'none';
+        });
+    </script>-->
+    <script>
+        const listenBtn = document.getElementById('listen-btn');
+        const listenPauseBtn = document.getElementById('listen-pause-btn');
+
+        const bottomContainer = document.querySelector('.listen-container.bottom');
+        const bottomListenBtn = document.querySelector('.listen-container.bottom #listen-btn')
+        const bottomListenPauseBtn = document.querySelector('.listen-container.bottom #listen-pause-btn')
+        
+        const storyText = document.getElementById('story-text');
+        const synth = window.speechSynthesis;
+    
+        let currentUtterance = null;
+        let isPaused = false;
+    
+        // Split story into words
+        const words = storyText.textContent.split(' ');
+        storyText.innerHTML = words.map((word, index) => `<span id="word-${index}" class="story-word">${word}</span>`).join(' ');
+    
+        let currentWordIndex = 0;
+    
+        function playNarration() {
+            if (isPaused) {
+                synth.resume();
+                isPaused = false;
+                return;
+            }
+    
+            currentWordIndex = 0;
+            const utterance = new SpeechSynthesisUtterance(storyText.innerText);
+            utterance.rate = 1; // Adjust rate if needed
+            utterance.pitch = 1; // Adjust pitch if needed
+            utterance.onboundary = (event) => {
+                if (event.name === "word") {
+                    highlightWord(currentWordIndex++);
+                }
+            };
+    
+            utterance.onend = () => {
+                resetHighlighting();
+                listenBtn.style.display = 'flex';
+                listenPauseBtn.style.display = 'none';
+            };
+    
+            currentUtterance = utterance;
+            synth.speak(utterance);
+        }
+    
+        function highlightWord(index) {
+            if (index > 0) {
+                document.getElementById(`word-${index - 1}`).classList.remove('highlighted');
+            }
+            const currentWord = document.getElementById(`word-${index}`);
+            if (currentWord) {
+                currentWord.classList.add('highlighted');
+                currentWord.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    
+        function resetHighlighting() {
+            words.forEach((_, index) => {
+                document.getElementById(`word-${index}`).classList.remove('highlighted');
+            });
+        }
+    
+        listenBtn.addEventListener('click', () => {
+            listenBtn.style.display = 'none';
+            listenPauseBtn.style.display = 'flex';
+            bottomContainer.style.display = 'flex';
+            bottomListenBtn.style.display = 'none';
+            bottomListenPauseBtn.style.display = 'flex';
+            playNarration();
+        });
+    
+        listenPauseBtn.addEventListener('click', () => {
+            if (synth.speaking) {
+                synth.pause();
+                isPaused = true;
+                listenBtn.style.display = 'flex';
+                listenPauseBtn.style.display = 'none';
+                bottomContainer.style.display = 'none';
+                bottomListenBtn.style.display = 'flex';
+                bottomListenPauseBtn.style.display = 'none';
+            }
+        });
+        bottomListenBtn.addEventListener('click', () => {
+            listenBtn.style.display = 'none';
+            listenPauseBtn.style.display = 'flex';
+            bottomListenBtn.style.display = 'none';
+            bottomListenPauseBtn.style.display = 'flex';
+            playNarration();
+        });
+    
+        bottomListenPauseBtn.addEventListener('click', () => {
+            if (synth.speaking) {
+                synth.pause();
+                isPaused = true;
+                listenBtn.style.display = 'flex';
+                listenPauseBtn.style.display = 'none';
+                bottomListenBtn.style.display = 'flex';
+                bottomListenPauseBtn.style.display = 'none';
+            }
+        });
+    
+        // Stop narration when the user navigates away
+        window.addEventListener('beforeunload', () => {
+            if (synth.speaking) {
+                synth.cancel();
+            }
+        });
+    </script>
+    
     <script>
         const carousel = document.querySelector('.carousel');
         const carouselNext = document.querySelector('#carousel-next');
