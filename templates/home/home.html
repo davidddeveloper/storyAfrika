@@ -276,6 +276,9 @@
             document.querySelector('.featuring-story-text-container').remove();
         }
 
+        if (featuring_story && window.innerWidth < 500) {
+            window.scrollTo(0, 120);
+        }
         
     </script>
 </body>
