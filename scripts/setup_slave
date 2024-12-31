@@ -20,7 +20,7 @@ log_bin                 = /var/log/mysql/mysql-bin.log
 binlog_do_db            = replica_user
 relay-log               = /var/log/mysql/mysql-relay-bin.log
 "
-sql_command="CHANGE MASTER TO MASTER_HOST='$master_ip', MASTER_USER='replica_user', MASTER_PASSWORD='$pwd', MASTER_LOG_FILE='$master_log_file', MASTER_LOG_POS='$master_log_pos';"
+sql_command="CHANGE MASTER TO MASTER_HOST='$master_ip', MASTER_USER='replica_user', MASTER_PASSWORD='$pwd', MASTER_LOG_FILE='$master_log_file', MASTER_LOG_POS=$master_log_pos;"
 
 # if [grep -q '# bind-address' ]; then
    # echo 'you already commented out bind-address'
