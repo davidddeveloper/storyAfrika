@@ -31,7 +31,7 @@ sql_command="CHANGE MASTER TO MASTER_HOST='$master_ip', MASTER_USER='replica_use
 # fi
 
 # import the snapshot of tyrell_corp.sql
-sudo sh -c 'mysql replica_user < /tmp/replica_user_storyafrika_dump.sql'
+sudo sh -c 'mysql storyafrika < /tmp/replica_user_storyafrika_dump.sql'
 
 # configure slave
 echo "$config_text" | sudo tee -a "$config_file"
