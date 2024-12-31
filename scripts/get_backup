@@ -10,8 +10,7 @@ curl -o "$(date +"%d-%m-%y").tar.gz" "https://storyafrika.live/backups/$name"
 # Extract the backup file
 tar -zxvf "$(date +"%d-%m-%y").tar.gz"
 
-# Assuming the extracted SQL file has the same date format
-sql_file="$(date +"%d-%m-%y").sql"
+sql_file="backup.sql"
 
 # Check if the SQL file exists
 if [ -f "$sql_file" ]; then
