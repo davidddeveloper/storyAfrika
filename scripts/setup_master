@@ -10,7 +10,7 @@ config_file="/etc/mysql/mysql.conf.d/mysqld.cnf"
 config_text="
 server-id        = 1
 log_bin          = /var/log/mysql/mysql-bin.log # binary log - record changes made to the db in binary formart
-binlog_do_db     = tyrell_corp
+binlog_do_db     = replica_user
 "
 sql_command="FLUSH TABLES WITH READ LOCK; SHOW MASTER STATUS;"
 priv_key="$1"
@@ -33,11 +33,11 @@ sudo service mysql start
 echo "$sql_command" | sudo mysql -u root
 
 # create a dump
-sudo sh -c 'mysqldump replica_user > replica_user_storyafrika_dump.sql'
+sudo sh -c 'mysqldump storyafrika > replica_user_storyafrika_dump.sql'
 
 # push dump to slave
 if [ "$priv_key" ] || [ "$slave_ip" ]; then
-	scp -i "$priv_key" replica_user_storyafrika_dump.sql "ubuntu@$slave_ip:/tmp/"
+	scp -i "$priv_key" replica_user_storyafrika_dump.sql "azureuser@$slave_ip:/tmp/"
 else
 	echo "You'll have to manually push the dump file to slave"
 fi
