@@ -33,11 +33,11 @@ sudo service mysql start
 echo "$sql_command" | sudo mysql -u root
 
 # create a dump
-sudo sh -c 'mysqldump tyrell_corp > tyrell_corp.sql'
+sudo sh -c 'mysqldump replica_user > replica_user_storyafrika_dump.sql'
 
 # push dump to slave
 if [ "$priv_key" ] || [ "$slave_ip" ]; then
-	scp -i "$priv_key" tyrell_corp.sql "ubuntu@$slave_ip:/tmp/"
+	scp -i "$priv_key" replica_user_storyafrika_dump.sql "ubuntu@$slave_ip:/tmp/"
 else
 	echo "You'll have to manually push the dump file to slave"
 fi
