@@ -768,8 +768,7 @@
             }
         });
     </script>-->
-
-    <!-- uSING AZURE TEXT TO SPEECH -->
+    <!-- Using Azure Text to Speech -->
     <script src="https://aka.ms/csspeech/jsbrowserpackageraw"></script>
     <script>
         const listenBtn = document.getElementById('listen-btn');
@@ -778,62 +777,26 @@
         const bottomListenBtn = document.querySelector('.listen-container.bottom #listen-btn');
         const bottomListenPauseBtn = document.querySelector('.listen-container.bottom #listen-pause-btn');
         const storyText = document.getElementById('story-text');
-    
+
         let currentUtterance = null;
         let isPaused = false;
         let synthesizer = null;
         let isSpeaking = false;
-    
+
         // Azure setup (replace with your API key and region)
         const apiKey = '8dcrzZYDDPvJk2dn8C4WHNXLSW17F4R4cFOvYJlTv0xvS9noQRbOJQQJ99ALACYeBjFXJ3w3AAAYACOGWRep';
         const region = 'eastus';
-    
-        // Split story into words
-        const words = storyText.textContent.split(' ');
-        storyText.innerHTML = words.map((word, index) => `<span id="word-${index}" class="story-word">${word}</span>`).join(' ');
-    
+
         let currentWordIndex = 0;
-    
-        // Create the Speech Synthesis instance
-        function createSpeechSynthesis() {
-            const speechConfig = SpeechSDK.SpeechConfig.fromSubscription(apiKey, region);
-            speechConfig.speechSynthesisVoiceName = "en-US-SteffanMultilingualNeural"; // You can change the voice
-            const audioConfig = SpeechSDK.AudioConfig.fromDefaultSpeakerOutput();
-            synthesizer = new SpeechSDK.SpeechSynthesizer(speechConfig, audioConfig);
+        let player = null; // to control the audio
+
+        function removeEmojis(text) {
+            // Regular expression to match emojis and non-ASCII characters
+            const emojiRegex = /[^\x00-\x7F]+/g; // Matches any character outside the ASCII range, including emojis
+            return text.replace(emojiRegex, ''); // Replace emojis with an empty string
         }
-    
-        function playNarration() {
-            if (!synthesizer) {
-                createSpeechSynthesis();
-            }
-            
-            if (isPaused) {
-                synthesizer.resume();
-                isPaused = false;
-                return;
-            }
-    
-            currentWordIndex = 0;
-            const textToSpeak = storyText.innerText;
-            
-            synthesizer.speakTextAsync(textToSpeak,
-                function (result) {
-                    if (result.reason === SpeechSDK.ResultReason.SynthesizingAudioCompleted) {
-                        console.log(synthesizer)
-                        console.log('okx')
-                        resetHighlighting();
-                        listenBtn.style.display = 'flex';
-                        listenPauseBtn.style.display = 'none';
-                    }
-                },
-                function (error) {
-                    console.error(error);
-                }
-            );
-    
-            isSpeaking = true;
-        }
-    
+
+        // Function to highlight words as they are read
         function highlightWord(index) {
             if (index > 0) {
                 document.getElementById(`word-${index - 1}`).classList.remove('highlighted');
@@ -844,13 +807,60 @@
                 currentWord.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         }
-    
-        function resetHighlighting() {
-            words.forEach((_, index) => {
-                document.getElementById(`word-${index}`).classList.remove('highlighted');
-            });
+
+        // Create the Speech Synthesis instance with SpeakerAudioDestination configurations
+        function createSpeechSynthesis() {
+            const speechConfig = SpeechSDK.SpeechConfig.fromSubscription(apiKey, region);
+            speechConfig.speechSynthesisVoiceName = "en-US-SteffanMultilingualNeural"; // steffan-multilingual
+            player = new SpeechSDK.SpeakerAudioDestination();  // This will allow me to pause and resume
+            const audioConfig = SpeechSDK.AudioConfig.fromSpeakerOutput(player);
+            synthesizer = new SpeechSDK.SpeechSynthesizer(speechConfig, audioConfig);
         }
-    
+
+        function playNarration() {
+            if (!synthesizer) {
+                createSpeechSynthesis();
+            }
+
+            if (isPaused) {
+                player.resume(); // resume the playback from where it was paused
+                isPaused = false;
+                return;
+            }
+
+            currentWordIndex = 0;
+            let textToSpeak = storyText.innerText;
+
+            textToSpeak = removeEmojis(textToSpeak);
+
+            // split the text into words
+            const words = storyText.innerHTML.split(/(<[^>]*>|&nbsp;| )/).filter(Boolean);
+
+            // replace the story text with spans
+            //storyText.innerHTML = words.map((word, index) => `<span id="word-${index}" class="story-word">${word}</span>`).join('');
+            
+            // play the text to speech
+            synthesizer.speakTextAsync(textToSpeak,
+                function (result) {
+                    if (result.reason === SpeechSDK.ResultReason.SynthesizingAudioCompleted) {
+                        //listenBtn.style.display = 'flex';
+                        //listenPauseBtn.style.display = 'none';
+                    }
+                    else if (result.reason === SpeechSDK.ResultReason.WordBoundary) {
+                        console.log('word boundary');
+                        const wordIndex = result.audioOffset / 10000000;
+                        highlightWord(Math.floor(wordIndex));
+                    }
+                },
+                function (error) {
+                    console.error(error);
+                }
+            );
+
+            isSpeaking = true;
+        }
+
+        // listen button
         listenBtn.addEventListener('click', () => {
             listenBtn.style.display = 'none';
             listenPauseBtn.style.display = 'flex';
@@ -859,10 +869,11 @@
             bottomListenPauseBtn.style.display = 'flex';
             playNarration();
         });
-    
+
+        // pause button
         listenPauseBtn.addEventListener('click', () => {
             if (isSpeaking) {
-                synthesizer.pause();
+                player.pause(); // pause the audio playback
                 isPaused = true;
                 listenBtn.style.display = 'flex';
                 listenPauseBtn.style.display = 'none';
@@ -871,7 +882,8 @@
                 bottomListenPauseBtn.style.display = 'none';
             }
         });
-    
+
+        // bottom listen button
         bottomListenBtn.addEventListener('click', () => {
             listenBtn.style.display = 'none';
             listenPauseBtn.style.display = 'flex';
@@ -879,19 +891,20 @@
             bottomListenPauseBtn.style.display = 'flex';
             playNarration();
         });
-    
+
+        // bottom pause button
         bottomListenPauseBtn.addEventListener('click', () => {
             if (isSpeaking) {
-                synthesizer.pause();
+                player.pause(); // pause the audio
                 isPaused = true;
                 listenBtn.style.display = 'flex';
                 listenPauseBtn.style.display = 'none';
-                bottomContainer.style.display = 'none';
+                bottomContainer.style.display = 'flex';
                 bottomListenBtn.style.display = 'flex';
                 bottomListenPauseBtn.style.display = 'none';
             }
         });
-    
+
         // Stop narration when the user navigates away
         window.addEventListener('beforeunload', () => {
             if (isSpeaking) {
@@ -899,7 +912,6 @@
             }
         });
     </script>
-
 
     
     <script>
