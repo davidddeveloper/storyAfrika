@@ -520,7 +520,15 @@
                 {% for story in stories %}
                 {% if forloop.counter <= 5 %}
                 <div class="item" class="active">
+                    {% if forloop.counter0 > 0 and story.topics.first == stories[forloop.counter0-1].topics.first %}
+                    {% if story.topics.count > 1 %}
+                    <img src="{{ story.topics.all|index:1|getattr:'banner' }}" alt="Image 2">
+                    {% else %}
                     <img src="{{ story.topics.first.banner }}" alt="Image 2">
+                    {% endif %}
+                    {% else %}
+                    <img src="{{ story.topics.first.banner }}" alt="Image 2">
+                    {% endif %}
                     <div class="text">
                         <p class="topic"><a href="">{{ story.topics.first.name }}</a></p>
                         <h2><a href="{% url 'app:build_story_detail' story.slug story.id %}" style="text-decoration: none; color: inherit;">{{ story.title }}</a></h2>
