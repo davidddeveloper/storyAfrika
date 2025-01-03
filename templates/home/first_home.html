@@ -520,7 +520,7 @@
                 {% for story in stories %}
                 {% if forloop.counter <= 5 %}
                 <div class="item" class="active">
-                    {% if forloop.counter0 > 0 and story.topics.first == stories[forloop.counter0-1].topics.first %}
+                    {% if story.topics.first == stories|previous_item:forloop.counter0|getattr:'topics.first' %}
                     {% if story.topics.count > 1 %}
                     <img src="{{ story.topics.all|index:1|getattr:'banner' }}" alt="Image 2">
                     {% else %}
