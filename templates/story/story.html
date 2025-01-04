@@ -811,7 +811,8 @@
         // Create the Speech Synthesis instance with SpeakerAudioDestination configurations
         function createSpeechSynthesis() {
             const speechConfig = SpeechSDK.SpeechConfig.fromSubscription(apiKey, region);
-            speechConfig.speechSynthesisVoiceName = "en-US-SteffanMultilingualNeural"; // steffan-multilingual
+            //speechConfig.speechSynthesisVoiceName = "en-US-SteffanMultilingualNeural"; // steffan-multilingual
+            speechConfig.speechSynthesisVoiceName = "en-US-LolaMultilingualNeural"; // en-US-LolaMultilingualNeural
             player = new SpeechSDK.SpeakerAudioDestination();  // This will allow me to pause and resume
             const audioConfig = SpeechSDK.AudioConfig.fromSpeakerOutput(player);
             synthesizer = new SpeechSDK.SpeechSynthesizer(speechConfig, audioConfig);
