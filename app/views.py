@@ -351,3 +351,15 @@ def editor_delete_story(request, story_id=None):
     if request.method == 'POST':
         story.delete()
         return JsonResponse({'status': 'success'})
+
+def about_us(request):
+    return render(request, 'about-us.html')
+
+def our_story(request):
+    return render(request, 'our-story.html')
+
+def for_readers(request):
+    return render(request, 'for-readers.html')
+
+def for_writers(request):
+    return render(request, 'for-writers.html')

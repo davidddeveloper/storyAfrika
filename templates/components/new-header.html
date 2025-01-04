@@ -142,6 +142,7 @@
             {% else %}
             <h2><a href="{% url 'app:join_us' %}" style="font-size: 18px;">Join Us.</a></h2>
             {% endif %}
+            {% include 'components/menu.html' %}
         </nav>
     </header>
     <script>
@@ -171,6 +172,11 @@
                 });
             }
                     }*/
+    </script>
+    <script>
+        document.querySelector('.user-profile-link').addEventListener('click', () => {
+            document.querySelector('#menu').classList.toggle('hidden');
+        })
     </script>
 </body>
 </html>

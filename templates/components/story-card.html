@@ -143,9 +143,9 @@
         </div>
     </div>-->
         <div class="card">
-            <a href="{% url 'app:story' story.id %}" style="text-decoration: none; color: #000"><img src="{{story.images.first.image.url}}" alt="Story Image"></a>
+            <a href="{% url 'app:build_story_detail' story.slug story.id %}" style="text-decoration: none; color: #000"><img src="{{story.images.first.image.url}}" alt="Story Image"></a>
             <div class="card-content">
-                <h3 class="card-title"><a href="{% url 'app:story' story.id %}" style="text-decoration: none; color: #000">{{story.title}}</a></h3>
+                <h3 class="card-title"><a href="{% url 'app:build_story_detail' story.slug story.id %}" style="text-decoration: none; color: #000">{{story.title}}</a></h3>
                 <p class="card-description">
                     {{story.plain_text}}
                 </p>

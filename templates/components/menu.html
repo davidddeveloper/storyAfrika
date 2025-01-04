@@ -12,7 +12,7 @@
     </div>
     <section>
         <article class="mt-8 my-8 px-8">
-            <h2 class="text-lightblue text-2xl">Welcome {{ request.user.username|capfirst }}!</h2>
+            <h2 class="text-lightblue text-lg">Welcome {{ request.user.username|capfirst }}!</h2>
         </article>
         {% include 'components/divider-black.html' %}
         <!-- write -->
@@ -39,12 +39,12 @@
                 </div>
             </article>-->
             <!-- stories-->
-            <!--<article class="my-4 px-8">
+            <article class="my-4 px-8">
                 <div class="flex gap-2 items-center">
                     <a href="" class="self-start"><img src="/static/icons/books.svg" alt=""></a>
-                    <a href=""><p class="text-lightgray text-base">Stories</p></a>
+                    <a href="/stories"><p class="text-lightgray text-base">Stories</p></a>
                 </div>
-            </article>-->
+            </article>
             <!-- Likes -->
             <!--<article class="my-4 px-8">
                 <div class="flex gap-2 items-center">
@@ -56,8 +56,10 @@
         {% include 'components/divider-black.html' %}
         <article class="mt-8 my-8 px-8">
             <p class="text-black text-base">Terms of Service</p>
-            <p class="text-black text-base my-4"><a href="https://storyafrika.live/about-us">About Us</a></p>
-            <p class="text-black text-base"><a href="https://storyafrika.live/out-story">Our Story</a></p>
+            <p class="text-black text-base my-4"><a href="/about-us">About Us</a></p>
+            <p class="text-black text-base my-4 text-lightgray"><a class="text-lightgray" href="/our-story">Our Story</a></p>
+            <p class="text-black text-base my-4 text-lightgray"><a class="text-lightgray" href="for-readerrs">For Readers</a></p>
+            <p class="text-black text-base my-4 text-lightgray"><a class="text-lightgray" href="/for-writers">For Writers</a></p>
         </article>
         {% include 'components/divider-black.html' %}
         <!-- donate -->

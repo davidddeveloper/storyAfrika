@@ -13,6 +13,10 @@ from .views import (
     story_view,
     build_story_detail,
     story_detail,
+    about_us,
+    our_story,
+    for_readers,
+    for_writers,
     subscribe,
     search,
     super_editor,
@@ -54,6 +58,12 @@ urlpatterns = [
 
     path('editor/<str:story_id>/save', view=super_editor_save, name='super_editor_save'),
     path('editor/<str:story_id>/delete', view=editor_delete_story, name='editor_delete_story'),
+    
+    
+    path('about-us', view=about_us, name='about-us'),
+    path('our-story', view=our_story, name='our-story'),
+    path('for-readers', view=for_readers, name='for-readers'),
+    path('for-writers', view=for_writers, name='for-writers'),
     # Password reset URLs
     #path('password-reset/', 
     #     auth_views.PasswordResetView.as_view(template_name='user/password_reset.html'), 
