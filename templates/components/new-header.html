@@ -177,6 +177,20 @@
         document.querySelector('.user-profile-link').addEventListener('click', () => {
             document.querySelector('#menu').classList.toggle('hidden');
         })
+
+        document.body.addEventListener('click', (event) => {
+            if (event.target !== document.querySelector('.user-profile-img') && !event.target.closest('#menu')) {
+                    console.log(event.target)
+                    document.querySelector('#menu').classList.add('hidden');
+                }
+                
+            })
+        
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                document.querySelector('#menu').classList.toggle('hidden');
+            }
+        })
     </script>
 </body>
 </html>
