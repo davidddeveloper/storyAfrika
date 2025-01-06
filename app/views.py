@@ -222,7 +222,7 @@ def search(request):
     category = request.GET.get('category')
     print(query)
     if category == 'stories':
-        stories = Story.objects.filter(Q(title__icontains=query) | Q(text__icontains=query))
+        stories = Story.objects.filter(status='p').filter(Q(title__icontains=query) | Q(text__icontains=query))
         return render(request, 'home/search.html', {'stories': stories, 'query': query})
     elif category == 'topics':
         topics = Topic.objects.filter(name__icontains=query)
