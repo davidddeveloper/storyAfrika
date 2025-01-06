@@ -16,7 +16,7 @@ sql_file="backup.sql"
 if [ -f "$sql_file" ]; then
     # Import the SQL file into MySQL
     cat "$sql_file" | sudo mysql -u root -p
-    eho "Done!"
+    echo "Done!"
 else
     echo "SQL file not found: $sql_file"
 fi
