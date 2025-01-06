@@ -506,6 +506,16 @@
             border-radius: 5px;
             color: #fff;
         }
+
+        .carousel .item:not(.active) .text {
+            transform: translateY(30px);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        .carousel .item.active .text {
+            transform: translateY(0);
+            opacity: 1;
+        }
         
     </style>
     <link rel="stylesheet" href="{% static 'css/global.css' %}">
