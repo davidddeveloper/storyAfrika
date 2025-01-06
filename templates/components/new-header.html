@@ -151,6 +151,9 @@
         searchForm.addEventListener('submit', (e) => {
             e.preventDefault()
             const searchQuery = searchInput.value;
+            if (!searchQuery) {
+                return;
+            }
             window.location.href = `/search?q=${searchQuery}&category=stories`
 
         })
