@@ -100,7 +100,9 @@
         searchForm.addEventListener('submit', (e) => {
             e.preventDefault()
             const searchQuery = searchInput.value;
-            window.location.href = `/search?q=${searchQuery}&category=${category}`
+            if (searchQuery !== '') {
+                window.location.href = `/search?q=${searchQuery}&category=${category}`
+            }
 
         })
         
