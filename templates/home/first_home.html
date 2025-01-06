@@ -523,7 +523,7 @@
                 {% for story in stories %}
                 {% if forloop.counter <= 5 %}
                 <div class="item" class="active">
-                    <img class="carousel-img" src="{{ story.images.first.image }}" alt="Image 2">
+                    <img class="carousel-img" src="{{ story.images.first.image.url }}" alt="Image 2">
                     <div class="text">
                         <p class="topic"><a href="">{{ story.topics.first.name }}</a></p>
                         <h2><a href="{% url 'app:build_story_detail' story.slug story.id %}" style="text-decoration: none; color: inherit;">{{ story.title }}</a></h2>
