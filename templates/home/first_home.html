@@ -518,6 +518,11 @@
             opacity: 1;
             display: flex;
         }
+
+        .carousel .item:not(.active) .text.gradient-text {
+            opacity: 1;
+            display: flex;
+        }
         
     </style>
     <link rel="stylesheet" href="{% static 'css/global.css' %}">
@@ -556,7 +561,7 @@
                 {% endfor %}
                 <div class="item" class="active">
                     <img src="" alt="" style="position: absolute;">
-                    <div class="text" style="
+                    <div class="text gradient-text" style="
                         background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
                         background-size: 400% 400%;
                         animation: gradient 15s ease infinite;
