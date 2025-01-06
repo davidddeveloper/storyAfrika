@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Header Example</title>
+    <title>Menu</title>
     <style>
         body {
             margin: 0;
@@ -151,10 +151,9 @@
         searchForm.addEventListener('submit', (e) => {
             e.preventDefault()
             const searchQuery = searchInput.value;
-            if (!searchQuery) {
-                return;
+            if (searchQuery !== '') {
+                window.location.href = `/search?q=${searchQuery}&category=stories`
             }
-            window.location.href = `/search?q=${searchQuery}&category=stories`
 
         })
 
