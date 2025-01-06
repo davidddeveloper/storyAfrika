@@ -494,6 +494,11 @@
         }
     }
 
+        .story-text {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
     </style>
 </head>
 <body>
@@ -835,7 +840,7 @@
             textToSpeak = removeEmojis(textToSpeak);
 
             // split the text into words
-            const words = storyText.innerHTML.split(/(<[^>]*>|&nbsp;| )/).filter(Boolean);
+            //const words = storyText.innerHTML.split(/(<[^>]*>|&nbsp;| )/).filter(Boolean);
 
             // replace the story text with spans
             //storyText.innerHTML = words.map((word, index) => `<span id="word-${index}" class="story-word">${word}</span>`).join('');
