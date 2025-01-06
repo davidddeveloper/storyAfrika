@@ -177,7 +177,8 @@
                     }*/
     </script>
     <script>
-        document.querySelector('.user-profile-link').addEventListener('click', () => {
+        let link = document.querySelector('.user-profile-link');
+        link.addEventListener('click', () => {
             document.querySelector('#menu').classList.toggle('hidden');
         })
 
