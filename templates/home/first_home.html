@@ -510,11 +510,13 @@
         .carousel .item:not(.active) .text {
             transform: translateY(30px);
             opacity: 0;
-            transition: transform 0.3s ease, opacity 0.3s ease;
+            transition: transform 0.15s ease, opacity 0.3s ease;
+            display: none;
         }
         .carousel .item.active .text {
             transform: translateY(0);
             opacity: 1;
+            display: flex;
         }
         
     </style>
