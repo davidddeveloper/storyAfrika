@@ -40,8 +40,12 @@ def sign_in(request):
             username = extract_username(email)
             password = form.cleaned_data['password']
 
-            user = get_object_or_404(User, email=email)
-            print(user)
+            user = None
+            try:
+                user = User.objects.get(email=email)
+            except Exception:
+                pass
+
             if user and user.check_password(password):
                 login(request, user)
                 messages.success(request, f'Welcome back {user.username}')
