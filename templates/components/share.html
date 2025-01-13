@@ -122,7 +122,7 @@
 
             function shareContent(platform) {
                 const url = encodeURIComponent(window.location.href);
-                const text = encodeURIComponent('{{story.plain_text|truncatechars:150}}');
+                const text = encodeURIComponent(`{{story.plain_text|truncatechars:150}}`);
                 let shareUrl;
 
                 switch (platform) {
