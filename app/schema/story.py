@@ -15,6 +15,7 @@ STATUS_CHOICES = {
     "d": "Draft",
     "p": "Published",
     "w": "Withdrawn",
+    "r": "Review"
 }
 
 class Story(Base):

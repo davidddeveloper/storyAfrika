@@ -25,6 +25,30 @@ def send_welcome_email(user):
 
     msg.send(fail_silently=False)
 
+def send_review_email(user, story):
+    subject = 'Your Story is Being Reviewed'
+    text_content = f''
+    from_email = 'david@storyafrika.live'
+    recipient_list = [user.email]
+    html_content = render_to_string('emails/review_story_email.html', context={"user": user, "story": story})
+
+    msg = EmailMultiAlternatives(subject, text_content, from_email, recipient_list)
+    msg.attach_alternative(html_content, "text/html")
+
+    msg.send(fail_silently=False)
+
+def send_review_pass_email(user, story):
+    subject = 'Your Story has been Publish'
+    text_content = f''
+    from_email = 'david@storyafrika.live'
+    recipient_list = [user.email]
+    html_content = render_to_string('emails/review_story_email.html', context={"user": user, "story": story})
+
+    msg = EmailMultiAlternatives(subject, text_content, from_email, recipient_list)
+    msg.attach_alternative(html_content, "text/html")
+
+    msg.send(fail_silently=False)
+
 def serialize_url(text: str) -> str:
         # remove username
         idx = 0

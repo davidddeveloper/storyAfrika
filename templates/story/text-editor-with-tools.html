@@ -101,7 +101,7 @@
         @media (max-width: 500px) {
             #toolbar {
                 position: fixed;
-                bottom: 0;
+                bottom: 5;
                 z-index: 20;
             }
 
@@ -177,6 +177,7 @@
         // Initialize Quill editor with the custom toolbar
         const quill = new Quill('#editor-container', {
             theme: 'snow',
+            placeholder: 'Tell Your Story',
             modules: {
                 toolbar: '#toolbar'
             }

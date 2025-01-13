@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .schema import Profile, Story, Topic, Comment, StoryImage, FeaturingStory, EmailList, NewsLetter
 from django.contrib.auth.models import User
-from .admin_actions import publish_stories, withdraw_stories, draft_stories
+from .admin_actions import publish_stories, withdraw_stories, draft_stories, accept_story
 from django.db import OperationalError
 # Register your models here.
 
@@ -20,7 +20,7 @@ class StoryAdmin(admin.ModelAdmin):
     exclude = common_field + [ 'likes', 'views']
     readonly_fields = ['unique_views']
     list_select_related = ['writer']
-    actions = [publish_stories, withdraw_stories, draft_stories]
+    actions = [publish_stories, withdraw_stories, draft_stories, accept_story]
 
 
 @admin.register(Topic)

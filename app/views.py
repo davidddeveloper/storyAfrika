@@ -3,7 +3,7 @@ from django.contrib.auth import login, logout
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
 from django.contrib import messages
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
@@ -12,7 +12,7 @@ from django.db.models import Q
 import bleach
 from .schema import EmailList, Comment
 from .forms import LoginForm, RegistrationForm
-from .helpers import extract_username, send_welcome_email, serialize_url
+from .helpers import extract_username, send_review_email, send_welcome_email, serialize_url
 from .schema import Story, StoryImage, Profile, FeaturingStory, Topic
 import json, os
 from django.conf import settings
@@ -162,6 +162,18 @@ def story_detail(request, username=None, slug=None):
         'comments': comments
     })
 
+# review page
+def story_review_status(request, story_id=None):
+    story = get_object_or_404(Story, id=story_id)
+
+    if story.status != 'r':
+        raise Http404("Can't access this page because the story has been reviewed.")
+
+    return render(request, 'story/story.html', context={
+        'story': story,
+    })
+
+
 def stories(request):
     stories = Story.objects.filter(status='p').order_by('-created_at')
     top_writers = Profile.top_writers
@@ -210,6 +222,9 @@ class CustomPasswordResetView(PasswordResetView):
 def like_story(request, story_id=None):
     story = get_object_or_404(Story, id=story_id)
     print(story.likes.count())
+    if story.status == 'r':
+        return JsonResponse({"ok": False, "message": "Cannot like a story under review.", "love_count": story.love_count}, status=403)
+
     story.likes.add(request.user.profile)
 
     return JsonResponse({"ok": True, "love_count": story.love_count}, status=200)
@@ -217,6 +232,10 @@ def like_story(request, story_id=None):
 
 def unlike_story(request, story_id=None):
     story = get_object_or_404(Story, id=story_id)
+
+    if story.status == 'r':
+        return JsonResponse({"ok": False, "message": "Cannot unlike a story under review.", "love_count": story.love_count}, status=403)
+
     story.likes.remove(request.user.profile)
 
     return JsonResponse({"ok": True, "love_count": story.love_count}, status=200)
@@ -239,6 +258,9 @@ def search(request):
 
 def comment(request, story_id=None):
     story = get_object_or_404(Story, id=story_id)
+
+    if story.status == 'r':
+        return JsonResponse({"ok": False, "message": "Cannot comment on a story that is under review."}, status=403)
 
     if request.method == 'POST':
         print(request.body.decode('utf-8'))
@@ -264,7 +286,7 @@ def super_editor(request):
     example_story = None
     if request.method == 'GET':
         example_story = Story.objects.create(
-        title='Enter the title of the Story here',
+        title='Your Story Title',
         text='This is an example story.',
         status='d',
         writer=request.user.profile
@@ -294,8 +316,15 @@ def super_editor_save(request, story_id=None):
         data = json.loads(request.body.decode('utf-8'))
         story.title = data.get('title')
         story.text = data.get('text')
-        story.status = data.get('status')
+
+        if data.get('status') == 'r':
+            story.status = data.get('status')
+        else:
+            story.status = 'd'
         story.save()
+
+        if data.get('status') == 'r':
+            send_review_email(request.user, story)
 
         return JsonResponse({'status': 'success'})
 

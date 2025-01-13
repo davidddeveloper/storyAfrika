@@ -11,6 +11,7 @@ from .views import (
     comment,
     stories,
     story_view,
+    story_review_status,
     build_story_detail,
     story_detail,
     about_us,
@@ -40,6 +41,7 @@ urlpatterns = [
     path('story/<str:story_id>/like', view=like_story, name='like_story'),
     path('story/<str:story_id>/unlike', view=unlike_story, name='unlike_story'),
     path('stories', view=stories, name='stories'),
+    path('story/<str:story_id>/review', view=story_review_status, name='story_review'),
 
     path('story_with_title/<str:story_title>', view=story_view,),
     path('<slug:slug>/<str:story_id>', view=build_story_detail, name='build_story_detail'),

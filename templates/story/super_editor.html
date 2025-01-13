@@ -298,11 +298,44 @@
             border-radius: 50%;
             background-color: #fff;
         }
+        .success-card {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+        }
+        .success-card.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .success-card-container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .success-card img {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 1rem;
+        }
 
         @media (max-width: 500px) {
             .profile-container {
                 left: 30%;
                 transform: translateX(-30%);
+            }
+
+            .success-card {
+                padding: 20px;
             }
 
             .main-container .carousel-nav, .main-container .profile-container {
@@ -414,6 +447,13 @@
             align-items: center;
             padding-top: 30px;
         }
+
+        img.image default-editor-story-image.image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 100%;
+        }
     </style>
 </head>
 <body class="editor">
@@ -435,9 +475,9 @@
                         {% for image in story.images.all %}
                         <img class="story-carousel-image image" src="{{ image.image.url }}" alt="{{image.alt}}"> <!--Image {{ forloop.counter }} -->
                         {% endfor %}
-                        <img src="{% static 'assets/images/welcome_email.png' %}" alt="Example Image" class="story-carousel-image image default-editor-story-img">
+                        <img src="{% static 'assets/images/add-images-to-your-story.png' %}" alt="Example Image" class="story-carousel-image image default-editor-story-img">
                         <!--<img src="{{story.topics.first.banner}}" alt="Image 4">-->
-                        
+            
                     </div>
                     <div class="carousel-nav">
                         <button class="carousel-prev" id="carousel-prev"><img src="{% static 'assets/svgs/prev-thick.svg' %}" alt=""></button>
@@ -785,11 +825,35 @@
             const statusElement = document.getElementById('auto-save-status');
             statusElement.style.display = 'none';
         }
+        function showSuccessCard() {
+            const successCard = document.createElement('div');
+            successCard.classList.add('success-card');
+            successCard.innerHTML = `
+                <div class="success-card-container">
+                    <img style='width: 40%; margin-inline: auto;' src="{% static 'assets/svgs/correct.svg' %}" alt="Check mark">
+                    <h2 style="color: #4a4a4a">Submitting story for <span style="color: #2699eb">review</span>...</h2></br>
+                    <p style="color: #4a4a4a">If all goes well, you'll be redirected shortly to the draft page in a few seconds.</p>
+                </div>
+            `;
+            document.body.appendChild(successCard);
+            
+            setTimeout(() => {
+                successCard.classList.add('show');
+            }, 50);
+
+            setTimeout(() => {
+                successCard.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(successCard);
+                }, 500);
+            }, 10000);
+        }
         const submitStory = (status) => {
             const storyTitle = storyTitleElement.textContent;
             const storyText = storyTextElement.outerHTML;
             
             showAutoSaveStatus();
+            
             fetch('/editor/{{story.id}}/save', {
                 method: 'POST',
                 headers: {
@@ -799,7 +863,7 @@
                 body: JSON.stringify({
                     title: storyTitle,
                     text: storyText,
-                    status: status === 'publish' ? 'p' : 'd'
+                    status: status === 'review' ? 'r' : 'd'
                 })
             }).then(response => {
                 if (response.ok) {
@@ -816,10 +880,13 @@
             storyTextElement.classList.remove('ql-editor')
             storyTextElement.classList.remove('ql-container')
             storyTextElement.classList.remove('ql-snow')
-            submitStory(status='publish');
+            showSuccessCard();
+            submitStory(status='review');
+            publishBtn.textContent = 'Publishing...'
             setTimeout(() => {
-                window.location.href = '/';
-            }, 1000);
+                window.location.href = '/story/{{story.id}}/review';
+            }, 10000);
+            
         });
 
         let timeoutId = null;
@@ -876,6 +943,57 @@
                 });
             }
         });
+
+        const addImageCoreFunctionality = () => {
+                    const input = document.createElement('input');
+                    input.type = 'file';
+                    input.accept = 'image/*';
+                    input.onchange = () => {
+                        const file = input.files[0];
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                            const img = document.createElement('img');
+                            img.src = reader.result;
+                            img.classList.add('story-image-small')
+                            const dot = document.createElement('div');
+                            dot.classList.add('dot');
+                            dot.appendChild(img);
+                            const removeSvg = document.createElement('img');
+                            removeSvg.src = "{% static 'assets/svgs/close-small.svg' %}";
+                            removeSvg.classList.add('remove-svg');
+                            dot.appendChild(removeSvg);
+                            document.querySelector('.dots-container').appendChild(dot);
+                            
+                            const carouselImage = document.createElement('img');
+                            carouselImage.src = reader.result;
+                            //carouselImage.classList.remove('story-image-small')
+                            
+                            carousel.appendChild(carouselImage)
+                            currentSlide = carousel.children.length -1
+
+                            updateSlide(currentSlide);
+                            updateDots();
+
+                            removeCarouselImage();
+                        };
+                        reader.readAsDataURL(file);
+                    };
+                    input.click();
+                }
+
+        // add images
+        const addImage = () => {
+            document.querySelector('.add-image').addEventListener('click', () => {
+                addImageCoreFunctionality()
+            })
+    }
+    
+    addImage()
+
+    document.querySelector('.default-editor-story-img').addEventListener('click', () => {
+        addImage()
+        addImageCoreFunctionality()
+    })
 
     </script>
     {% endif %}

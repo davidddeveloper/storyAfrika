@@ -85,20 +85,20 @@ WSGI_APPLICATION = 'storyafrika.wsgi.application'
 
 DATABASES = {
     'default': {
-        #'ENGINE': 'django.db.backends.sqlite3',
-        #'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
 
         # mysql
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": 'storyafrika',
-        "USER": os.getenv('MYSQL_USER'),
-        "PASSWORD": os.getenv('MYSQL_PASSWORD'),
-        "HOST": 'localhost',
-        "PORT": 3306,
-        'OPTIONS': {
-            'charset': 'utf8mb4',
-            'init_command': "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci",
-        },
+        #"ENGINE": "django.db.backends.mysql",
+        #"NAME": 'storyafrika',
+        #"USER": os.getenv('MYSQL_USER'),
+        #"PASSWORD": os.getenv('MYSQL_PASSWORD'),
+        #"HOST": 'localhost',
+        #"PORT": 3306,
+        #'OPTIONS': {
+        #    'charset': 'utf8mb4',
+        #    'init_command': "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci",
+        #},
     }
 }
 
@@ -151,6 +151,8 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 52428800 # 50mb
 
 # sending emails
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -232,6 +234,7 @@ TINYMCE_DEFAULT_CONFIG = {
     'setup': 'function(editor) { editor.ui.registry.addButton("custom_copy", { text: "Copy", onAction: function() { navigator.clipboard.writeText(editor.getContent()); } }); editor.ui.registry.addButton("custom_paste", { text: "Paste", onAction: function() { navigator.clipboard.readText().then(function(text) { editor.execCommand("mceInsertContent", false, text); }); } }); }',
     
     'permission': 'clipboard-read',
+    'placeholder': 'Tell your story...'
 }
 
 

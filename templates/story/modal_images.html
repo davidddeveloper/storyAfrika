@@ -322,43 +322,9 @@
     });
 
     // add images to carousel
-    document.querySelector('.add-image').addEventListener('click', () => {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = 'image/*';
-        input.onchange = () => {
-            const file = input.files[0];
-            const reader = new FileReader();
-            reader.onload = () => {
-                const img = document.createElement('img');
-                img.src = reader.result;
-                img.classList.add('story-image-small')
-                const dot = document.createElement('div');
-                dot.classList.add('dot');
-                dot.appendChild(img);
-                const removeSvg = document.createElement('img');
-                removeSvg.src = "{% static 'assets/svgs/close-small.svg' %}";
-                removeSvg.classList.add('remove-svg');
-                dot.appendChild(removeSvg);
-                document.querySelector('.dots-container').appendChild(dot);
-                
-                const carouselImage = document.createElement('img');
-                carouselImage.src = reader.result;
-                //carouselImage.classList.remove('story-image-small')
-                
-                carousel.appendChild(carouselImage)
-                currentSlide = carousel.children.length -1
+    
 
-                updateSlide(currentSlide);
-                updateDots();
-
-                removeCarouselImage();
-            };
-            reader.readAsDataURL(file);
-        };
-        input.click();
-        
-    })
+    
 
     // remove image
     removeCarouselImage()

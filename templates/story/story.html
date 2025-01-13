@@ -597,6 +597,10 @@
         <div id="caption" style="display: block; text-align: center; color: #fff; font-size: 16px; margin-top: 10px;"></div>
       </div>
 
+    {% if story.status == 'r' %}
+        {% include 'components/review-progress.html' %}
+    {% endif %}
+
       <script>
         // change ql-editor to false
         const qlEditor = document.querySelector('.ql-editor');
