@@ -536,6 +536,7 @@
                         {% endif %}
                         <button class="carousel-next" id="carousel-next"><img src="{% static 'assets/svgs/next-thick.svg' %}" alt=""></button>
                     </div>
+                    
                     <div class="profile-container">
                         <img src="{{ story.writer.avatar }}" alt="Profile Image" class="profile-image">
                         <div class="profile-info">
@@ -563,6 +564,8 @@
                     </div>
                                        
                 </button>
+                <div class="share-btn-container">{% include 'components/share.html' %}</div>
+
             </div>
             <div class="listen-container bottom">
                 <button class="listen-btn" id="listen-btn">
