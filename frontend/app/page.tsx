@@ -1,147 +1,125 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import Button from '@/components/ui/Button';
+import GradientStoryCard from '@/components/story/GradientStoryCard';
+import { storiesAPI } from '@/lib/api';
+import type { Story } from '@/types';
 
 export default function HomePage() {
+  const [featuredStories, setFeaturedStories] = useState<Story[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadStories = async () => {
+      try {
+        const response = await storiesAPI.list({ page: 1 });
+        setFeaturedStories(response.results.slice(0, 6));
+      } catch (error) {
+        console.error('Failed to load stories:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadStories();
+  }, []);
+
+  const gradients = ['blue', 'purple', 'orange', 'green', 'cyan', 'blue'] as const;
+
   return (
     <>
       <Header />
-      <main>
+      <main className="bg-background">
         {/* Hero Section */}
-        <section className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden">
-          {/* Background Pattern - Subtle */}
-          <div className="absolute inset-0 -z-10">
-            <div className="absolute top-20 left-10 w-72 h-72 bg-accent/5 rounded-full blur-3xl" />
-            <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
-          </div>
-
-          <div className="container mx-auto max-w-5xl text-center">
+        <section className="relative min-h-screen flex items-center justify-center px-4 pt-16">
+          <div className="container mx-auto max-w-6xl text-center">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: 'easeOut' }}
+              transition={{ duration: 0.8 }}
             >
               {/* Badge */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2 }}
-                className="inline-flex items-center px-3 py-1 rounded-full border border-border bg-card mb-8"
+                className="inline-flex items-center px-4 py-1.5 rounded-full border border-border bg-surface/50 backdrop-blur-sm mb-8"
               >
-                <span className="text-sm text-muted-foreground">
-                  Preserving Cultural Heritage
-                </span>
+                <span className="text-sm text-muted">Preserving African Stories</span>
               </motion.div>
 
-              {/* Main Headline */}
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 tracking-tight leading-tight">
+              {/* Main Headline - Larger */}
+              <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold mb-8 leading-tight">
                 Stories That
                 <br />
-                <span className="text-accent">Shape Africa</span>
+                <span className="text-gradient">Shape Africa</span>
               </h1>
 
               {/* Subtitle */}
-              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-                Discover, preserve, and share African stories, folklore, and cultural heritage.
+              <p className="text-lg md:text-xl text-muted max-w-3xl mx-auto mb-12 leading-relaxed">
+                Discover, preserve, and share African folklore, mythology, and cultural heritage.
                 A digital archive for future generations.
               </p>
 
               {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Link href="/stories">
-                  <Button size="lg" className="min-w-[160px]">
+                  <Button size="lg" className="min-w-[180px]">
                     Explore Stories
                   </Button>
                 </Link>
-                <Link href="/apply">
-                  <Button size="lg" variant="outline" className="min-w-[160px]">
-                    Become a Writer
+                <Link href="/about">
+                  <Button size="lg" variant="outline" className="min-w-[180px]">
+                    Learn More
                   </Button>
                 </Link>
               </div>
-
-              {/* Stats */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.6 }}
-                className="flex flex-wrap items-center justify-center gap-8 text-sm text-muted-foreground"
-              >
-                <div className="flex items-center space-x-2">
-                  <span className="text-2xl font-bold text-foreground">500+</span>
-                  <span>Stories</span>
-                </div>
-                <div className="w-px h-4 bg-border" />
-                <div className="flex items-center space-x-2">
-                  <span className="text-2xl font-bold text-foreground">50+</span>
-                  <span>Countries</span>
-                </div>
-                <div className="w-px h-4 bg-border" />
-                <div className="flex items-center space-x-2">
-                  <span className="text-2xl font-bold text-foreground">100+</span>
-                  <span>Contributors</span>
-                </div>
-              </motion.div>
             </motion.div>
           </div>
-
-          {/* Scroll Indicator */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1, repeat: Infinity, duration: 1.5 }}
-            className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-          >
-            <div className="w-6 h-10 border-2 border-muted-foreground rounded-full flex items-start justify-center p-2">
-              <motion.div
-                animate={{ y: [0, 12, 0] }}
-                transition={{ repeat: Infinity, duration: 1.5 }}
-                className="w-1.5 h-1.5 bg-muted-foreground rounded-full"
-              />
-            </div>
-          </motion.div>
         </section>
 
         {/* Featured Stories Section */}
-        <section className="py-24 bg-white">
-          <div className="container mx-auto px-4">
-            <div className="max-w-3xl mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+        <section className="py-32 px-4">
+          <div className="container mx-auto">
+            <div className="max-w-3xl mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold mb-6">
                 Featured Stories
               </h2>
-              <p className="text-lg text-muted-foreground">
-                Handpicked stories from across the continent, carefully curated to bring you the
-                best of African storytelling.
+              <p className="text-lg md:text-xl text-muted leading-relaxed">
+                Handpicked narratives from across the continent, preserving the richness
+                of African storytelling traditions.
               </p>
             </div>
 
-            {/* Placeholder for stories - will be populated with real data */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[1, 2, 3].map((i) => (
-                <div
-                  key={i}
-                  className="p-6 rounded-lg border border-border bg-card hover:shadow-md transition-all duration-300"
-                >
-                  <div className="flex items-center space-x-2 mb-3">
-                    <div className="h-5 w-20 bg-accent/10 rounded skeleton" />
-                    <div className="h-4 w-16 bg-gray-200 rounded skeleton" />
-                  </div>
-                  <div className="h-6 w-full bg-gray-200 rounded mb-2 skeleton" />
-                  <div className="h-6 w-2/3 bg-gray-200 rounded mb-4 skeleton" />
-                  <div className="space-y-2 mb-4">
-                    <div className="h-4 w-full bg-gray-200 rounded skeleton" />
-                    <div className="h-4 w-full bg-gray-200 rounded skeleton" />
-                    <div className="h-4 w-3/4 bg-gray-200 rounded skeleton" />
-                  </div>
-                </div>
-              ))}
-            </div>
+            {/* Stories Grid with Gradient Cards */}
+            {isLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <div
+                    key={i}
+                    className="surface-card h-[400px] skeleton"
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {featuredStories.map((story, index) => (
+                  <GradientStoryCard
+                    key={story.id}
+                    story={story}
+                    gradient={gradients[index % gradients.length]}
+                    index={index}
+                  />
+                ))}
+              </div>
+            )}
 
-            <div className="text-center mt-12">
+            <div className="text-center mt-16">
               <Link href="/stories">
                 <Button variant="outline" size="lg">
                   View All Stories
@@ -151,59 +129,64 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Countries Section */}
-        <section className="py-24 bg-background">
-          <div className="container mx-auto px-4">
-            <div className="max-w-3xl mx-auto text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                Explore by Country
-              </h2>
-              <p className="text-lg text-muted-foreground">
-                Dive into stories from different African nations, each with its unique cultural heritage.
-              </p>
-            </div>
+        {/* Stats Section */}
+        <section className="py-32 px-4 border-t border-border">
+          <div className="container mx-auto max-w-5xl">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+              >
+                <div className="text-5xl md:text-6xl font-bold text-gradient mb-4">
+                  500+
+                </div>
+                <p className="text-lg text-muted">African Stories</p>
+              </motion.div>
 
-            {/* Country Grid - Placeholder */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 max-w-5xl mx-auto">
-              {['Nigeria', 'Kenya', 'Ghana', 'South Africa', 'Ethiopia', 'Egypt', 'Morocco', 'Tanzania', 'Uganda', 'Senegal'].map((country) => (
-                <Link
-                  key={country}
-                  href={`/countries/${country.toLowerCase()}`}
-                  className="p-6 rounded-lg border border-border bg-card hover:shadow-md hover:border-accent transition-all duration-300 text-center group"
-                >
-                  <p className="font-medium text-foreground group-hover:text-accent transition-colors">
-                    {country}
-                  </p>
-                </Link>
-              ))}
-            </div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 }}
+              >
+                <div className="text-5xl md:text-6xl font-bold text-gradient mb-4">
+                  50+
+                </div>
+                <p className="text-lg text-muted">Countries Represented</p>
+              </motion.div>
 
-            <div className="text-center mt-12">
-              <Link href="/countries">
-                <Button variant="outline" size="lg">
-                  View All Countries
-                </Button>
-              </Link>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3 }}
+              >
+                <div className="text-5xl md:text-6xl font-bold text-gradient mb-4">
+                  100+
+                </div>
+                <p className="text-lg text-muted">Cultural Contributors</p>
+              </motion.div>
             </div>
           </div>
         </section>
 
         {/* CTA Section */}
-        <section className="py-24 bg-white">
-          <div className="container mx-auto px-4">
-            <div className="max-w-3xl mx-auto text-center">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                Become a Storyteller
-              </h2>
-              <p className="text-lg text-muted-foreground mb-8">
-                Share your stories, preserve your culture, and contribute to Africa's digital heritage.
-              </p>
-              <Link href="/apply">
-                <Button size="lg">
-                  Apply to Write
-                </Button>
-              </Link>
-            </div>
+        <section className="py-32 px-4 border-t border-border">
+          <div className="container mx-auto max-w-4xl text-center">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Become a Storyteller
+            </h2>
+            <p className="text-lg md:text-xl text-muted mb-12 leading-relaxed max-w-2xl mx-auto">
+              Share your stories, preserve your culture, and contribute to Africa's
+              digital heritage for future generations.
+            </p>
+            <Link href="/apply">
+              <Button size="lg" className="min-w-[200px]">
+                Apply to Write
+              </Button>
+            </Link>
           </div>
         </section>
       </main>

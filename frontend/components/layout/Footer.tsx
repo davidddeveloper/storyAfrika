@@ -24,9 +24,9 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-white border-t border-border mt-24">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+    <footer className="bg-background border-t border-border mt-24">
+      <div className="container mx-auto px-6 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           {/* Brand */}
           <div className="col-span-1">
             <Link href="/" className="inline-block mb-4">
@@ -34,7 +34,7 @@ export default function Footer() {
                 StoryAfrika
               </span>
             </Link>
-            <p className="text-sm text-muted-foreground leading-relaxed">
+            <p className="text-sm text-muted leading-relaxed">
               Preserving African stories, folklore, and cultural heritage for future generations.
             </p>
           </div>
@@ -50,7 +50,7 @@ export default function Footer() {
                   <li key={link.name}>
                     <Link
                       href={link.href}
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                      className="text-sm text-muted hover:text-foreground transition-colors"
                     >
                       {link.name}
                     </Link>
@@ -63,7 +63,7 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted">
             © {currentYear} StoryAfrika. All rights reserved.
           </p>
           <div className="flex items-center space-x-6">
