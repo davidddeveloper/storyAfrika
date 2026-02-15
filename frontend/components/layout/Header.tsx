@@ -3,10 +3,13 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '@/lib/context/AuthContext';
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const { user, isAuthenticated, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -54,20 +57,78 @@ export default function Header() {
             ))}
           </div>
 
-          {/* Auth Buttons */}
+          {/* Auth Buttons / User Menu */}
           <div className="hidden md:flex items-center space-x-3">
-            <Link
-              href="/login"
-              className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Login
-            </Link>
-            <Link
-              href="/register"
-              className="px-5 py-2 text-sm font-medium bg-accent text-white rounded-md hover:bg-accent-hover transition-colors"
-            >
-              Sign Up
-            </Link>
+            {isAuthenticated && user ? (
+              <div className="relative">
+                <button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-gray-100 transition-colors"
+                >
+                  <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center">
+                    <span className="text-sm font-medium text-accent">
+                      {user.full_name.charAt(0)}
+                    </span>
+                  </div>
+                  <span className="text-sm font-medium text-foreground">
+                    {user.full_name.split(' ')[0]}
+                  </span>
+                </button>
+
+                {showUserMenu && (
+                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-border py-2 z-50">
+                    <Link
+                      href="/dashboard"
+                      className="block px-4 py-2 text-sm text-foreground hover:bg-gray-50"
+                      onClick={() => setShowUserMenu(false)}
+                    >
+                      Dashboard
+                    </Link>
+                    {user.is_writer && (
+                      <Link
+                        href="/dashboard/stories"
+                        className="block px-4 py-2 text-sm text-foreground hover:bg-gray-50"
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        My Stories
+                      </Link>
+                    )}
+                    <Link
+                      href="/bookmarks"
+                      className="block px-4 py-2 text-sm text-foreground hover:bg-gray-50"
+                      onClick={() => setShowUserMenu(false)}
+                    >
+                      Bookmarks
+                    </Link>
+                    <div className="border-t border-border my-2" />
+                    <button
+                      onClick={() => {
+                        setShowUserMenu(false);
+                        logout();
+                      }}
+                      className="w-full text-left px-4 py-2 text-sm text-error hover:bg-gray-50"
+                    >
+                      Sign out
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/register"
+                  className="px-5 py-2 text-sm font-medium bg-accent text-white rounded-md hover:bg-accent-hover transition-colors"
+                >
+                  Sign Up
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
